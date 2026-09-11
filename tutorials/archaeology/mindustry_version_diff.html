@@ -1,0 +1,124 @@
+<html style="margin:0;padding:0;">
+<meta charset="utf-8">
+<div style="width:100%;box-sizing:border-box;background:#f6f8fa;font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;padding:24px 18px;color:#1f2937;">
+  <div style="font-size:20px;font-weight:700;margin-bottom:4px;">Mindustry 版本差异调查：模组 · 设置 · 像素风</div>
+  <div style="font-size:13px;color:#6b7280;margin-bottom:22px;">全部结论基于 Mindustry 仓库 git 历史核验（提交、日期、所属 tag）</div>
+
+  <!-- ========== 一、像素风 ========== -->
+  <div style="font-size:16px;font-weight:700;margin-bottom:10px;">一、像素风演进：哪个版本开始不再是传统像素风</div>
+  <div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:14px 16px;margin-bottom:14px;">
+    <div style="font-size:13px;line-height:1.8;margin-bottom:10px;">设置项「<b>Pixelate Screen</b>」（像素化屏幕）的历史，决定"默认画面是否像素风"：</div>
+    <table style="width:100%;border-collapse:collapse;font-size:13px;">
+      <tr style="background:#f3f4f6;"><th style="text-align:left;padding:5px 8px;border:1px solid #e5e7eb;width:20%;">时间</th><th style="text-align:left;padding:5px 8px;border:1px solid #e5e7eb;width:14%;">版本</th><th style="text-align:left;padding:5px 8px;border:1px solid #e5e7eb;">事件</th><th style="text-align:left;padding:5px 8px;border:1px solid #e5e7eb;width:16%;">默认画面</th></tr>
+      <tr><td style="padding:5px 8px;border:1px solid #e5e7eb;">2017-05-14</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">v33 前</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">像素化渲染机制引入（低分辨率表面放大）</td><td style="padding:5px 8px;border:1px solid #e5e7eb;font-weight:600;">像素</td></tr>
+      <tr><td style="padding:5px 8px;border:1px solid #e5e7eb;">2017-11-20</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">v33</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">新增设置「Pixelate Screen」，默认开启（可选关闭）</td><td style="padding:5px 8px;border:1px solid #e5e7eb;font-weight:600;">像素（可关）</td></tr>
+      <tr><td style="padding:5px 8px;border:1px solid #e5e7eb;">2018-07~08</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">v41~v48</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">pixelate 设置被移除，渲染器重构（强制像素化，无开关）</td><td style="padding:5px 8px;border:1px solid #e5e7eb;font-weight:600;">像素（强制）</td></tr>
+      <tr style="background:#f0fdf4;"><td style="padding:5px 8px;border:1px solid #e5e7eb;font-weight:700;">2019-04-02</td><td style="padding:5px 8px;border:1px solid #e5e7eb;font-weight:700;">v70</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">pixelate 设置回归，<b>默认改为关闭</b>（提交 67a12eecad）——传统像素风结束，之后可手动开启像素化</td><td style="padding:5px 8px;border:1px solid #e5e7eb;font-weight:700;">高清（默认）</td></tr>
+    </table>
+    <div style="font-size:12px;color:#6b7280;margin-top:6px;">结论：<b>v70（2019-04-04）起默认不再像素风</b>；想怀旧可随时在设置里重新开启 Pixelate。v7（v100+）之后画面与滤镜系统又整体升级过一次。</div>
+  </div>
+
+  <!-- ========== 二、模组 ========== -->
+  <div style="font-size:16px;font-weight:700;margin-bottom:10px;">二、模组支持历史（含 minGameVersion）</div>
+  <div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:14px 16px;margin-bottom:14px;">
+    <div style="position:relative;margin:6px 0 16px 10px;padding-left:22px;border-left:3px solid #2563eb;">
+      <div style="position:absolute;left:-8px;top:2px;width:13px;height:13px;border-radius:50%;background:#2563eb;"></div>
+      <div style="font-size:14px;font-weight:600;">v97 · 2019-10-24 — 模组系统诞生</div>
+      <div style="font-size:13px;color:#6b7280;">Mods.java 引入（提交 70ab102d8c），支持 jar / zip / 含 mod.json 的文件夹；mod.json 字段：name, author, description, version, main, dependencies, hidden</div>
+    </div>
+    <div style="position:relative;margin:0 0 16px 10px;padding-left:22px;border-left:3px solid #16a34a;">
+      <div style="position:absolute;left:-8px;top:2px;width:13px;height:13px;border-radius:50%;background:#16a34a;"></div>
+      <div style="font-size:14px;font-weight:600;">v101 · 2019-11-21 — minGameVersion 加入</div>
+      <div style="font-size:13px;color:#6b7280;">mod.json 可选字段「最低游戏版本」（提交 2c61fcdfa6）；isSupported() 校验：游戏 build/revision ≥ 模组要求才允许启用，旧版本地解析</div>
+    </div>
+    <div style="position:relative;margin:0 0 16px 10px;padding-left:22px;border-left:3px solid #16a34a;">
+      <div style="position:absolute;left:-8px;top:2px;width:13px;height:13px;border-radius:50%;background:#16a34a;"></div>
+      <div style="font-size:14px;font-weight:600;">v122 · 2020-12-23 — 模组浏览器 + 版本比较统一</div>
+      <div style="font-size:13px;color:#6b7280;">游戏内模组浏览器上线（提交 79423e4c60）；Version.isAtLeast() 引入（8ac027af70），版本判断集中化</div>
+    </div>
+    <div style="position:relative;margin:0 0 16px 10px;padding-left:22px;border-left:3px solid #16a34a;">
+      <div style="position:absolute;left:-8px;top:2px;width:13px;height:13px;border-radius:50%;background:#16a34a;"></div>
+      <div style="font-size:14px;font-weight:600;">v124 · 2021-02-04 — Java 模组 + repo 字段</div>
+      <div style="font-size:13px;color:#6b7280;">java 字段（Java 类模组导入，fc3352bcb1）、repo 字段（模组源仓库保存/重新导入，3784bfac77）</div>
+    </div>
+    <div style="position:relative;margin:0 0 16px 10px;padding-left:22px;border-left:3px solid #16a34a;">
+      <div style="position:absolute;left:-8px;top:2px;width:13px;height:13px;border-radius:50%;background:#16a34a;"></div>
+      <div style="font-size:14px;font-weight:600;">v125~v126 · 2021-01 — 版本检查改用 Version.isAtLeast</div>
+      <div style="font-size:13px;color:#6b7280;">Mods.java 改用统一版本比较（提交 0cc9b0b0a3），支持 "140.1" 语义化格式</div>
+    </div>
+    <div style="position:relative;margin:0 0 16px 10px;padding-left:22px;border-left:3px solid #16a34a;">
+      <div style="position:absolute;left:-8px;top:2px;width:13px;height:13px;border-radius:50%;background:#16a34a;"></div>
+      <div style="font-size:14px;font-weight:600;">v142 · 2023-02-01 — 软依赖 softDependencies</div>
+      <div style="font-size:13px;color:#6b7280;">依赖解析改进（0d2dfadba7），软依赖缺失时提示而非禁用</div>
+    </div>
+    <div style="position:relative;margin:0 0 16px 10px;padding-left:22px;border-left:3px solid #16a34a;">
+      <div style="position:absolute;left:-8px;top:2px;width:13px;height:13px;border-radius:50%;background:#16a34a;"></div>
+      <div style="font-size:14px;font-weight:600;">v146 · 2023-07-29 — internalName</div>
+      <div style="font-size:13px;color:#6b7280;">新增 internalName（去空格小写内部名，1968da9409），依赖按内部名解析，容错更名</div>
+    </div>
+    <div style="position:relative;margin:0 0 6px 10px;padding-left:22px;border-left:3px solid #16a34a;">
+      <div style="position:absolute;left:-8px;top:2px;width:13px;height:13px;border-radius:50%;background:#16a34a;"></div>
+      <div style="font-size:14px;font-weight:600;">v154.3 · 2025-12-18 — iosCompatible 标志</div>
+      <div style="font-size:13px;color:#6b7280;">脚本模组 iOS 兼容声明（8e7eeb2573）</div>
+    </div>
+    <div style="font-size:12px;color:#6b7280;margin-top:8px;">当前 mod.json 完整字段：name, internalName, minGameVersion, displayName, author, description, subtitle, version, main, repo, dependencies, softDependencies, hidden, java, iosCompatible</div>
+  </div>
+
+  <!-- ========== 二·五、minGameVersion 矩阵 ========== -->
+  <div style="font-size:16px;font-weight:700;margin-bottom:10px;">二·五、minGameVersion 各版本支持矩阵</div>
+  <div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:14px 16px;margin-bottom:14px;">
+    <div style="font-size:13px;line-height:1.7;margin-bottom:10px;">mod.json 里写 <code style="background:#f3f4f6;padding:1px 6px;border-radius:4px;font-size:12px;">"minGameVersion": "140.1"</code>，游戏用它判断"我这个版本能不能跑这个模组"。检查逻辑与阈值随版本演进：</div>
+    <table style="width:100%;border-collapse:collapse;font-size:13px;">
+      <tr style="background:#f3f4f6;"><th style="text-align:left;padding:5px 8px;border:1px solid #e5e7eb;width:16%;">版本范围</th><th style="text-align:left;padding:5px 8px;border:1px solid #e5e7eb;width:22%;">字段与检查实现</th><th style="text-align:left;padding:5px 8px;border:1px solid #e5e7eb;">过时/兼容阈值（模组声明值需 ≥）</th></tr>
+      <tr><td style="padding:5px 8px;border:1px solid #e5e7eb;font-weight:600;">v97–v100</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">无字段，不检查</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">—</td></tr>
+      <tr><td style="padding:5px 8px;border:1px solid #e5e7eb;font-weight:600;">v101–v104</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">字段引入；isSupported() 自定义数字解析（build/revision 比较）</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">无额外阈值</td></tr>
+      <tr><td style="padding:5px 8px;border:1px solid #e5e7eb;font-weight:600;">v105–v124</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">自定义解析 + isOutdated() 判断</td><td style="padding:5px 8px;border:1px solid #e5e7eb;"><b>105</b>（&lt;105 视为 v6 遗留模组 → 标记过时不加载）</td></tr>
+      <tr><td style="padding:5px 8px;border:1px solid #e5e7eb;font-weight:600;">v125–v135</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">改用统一 Version.isAtLeast()（语义化 "140.1" 格式）</td><td style="padding:5px 8px;border:1px solid #e5e7eb;"><b>105</b></td></tr>
+      <tr><td style="padding:5px 8px;border:1px solid #e5e7eb;font-weight:600;">v136–v146</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">Version.isAtLeast()；阈值随 v136 同步提高（d92c9cfcf8）</td><td style="padding:5px 8px;border:1px solid #e5e7eb;"><b>136</b>（v8 时代，&lt;136 视为 v7 遗留）</td></tr>
+      <tr><td style="padding:5px 8px;border:1px solid #e5e7eb;font-weight:600;">v147–v154.1</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">Version.isAtLeast()；<b>分模组类型设不同阈值</b>（Vars.minModGameVersion / minJavaModGameVersion）</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">脚本模组 <b>136</b> / Java 模组 <b>147</b></td></tr>
+      <tr><td style="padding:5px 8px;border:1px solid #e5e7eb;font-weight:600;">v154.2–v155</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">同上（a552908d76 提高 Java 阈值）</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">脚本 <b>136</b> / Java <b>154</b></td></tr>
+      <tr style="background:#f0fdf4;"><td style="padding:5px 8px;border:1px solid #e5e7eb;font-weight:700;">v156 起（当前 v159.7）</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">Version.isAtLeast() + <b>legacyCompatible</b> 例外（16bbcb62e6）：仍兼容 v8 的 v7 模组可标记，旧 repo 双版本通用</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">脚本 <b>136</b> / Java <b>154</b>（标记 legacyCompatible 可豁免）</td></tr>
+    </table>
+    <div style="font-size:12px;color:#6b7280;margin-top:6px;">要点：写模组时 minGameVersion 应 >= 当前目标版本的阈值；Java 模组在 v147 后被单独要求更高版本。当前（v159.7）数值定义在 Vars.java：minModGameVersion=136、minJavaModGameVersion=154。</div>
+  </div>
+
+  <!-- ========== 三、设置演进 ========== -->
+  <div style="font-size:16px;font-weight:700;margin-bottom:10px;">三、设置项演进：各版本设置菜单全量差异</div>
+  <div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:14px 16px;margin-bottom:14px;">
+    <div style="font-size:13px;line-height:1.7;margin-bottom:10px;">基于 16 个采样版本（v33→v159.7）逐版提取 SettingsMenuDialog/UI.java 全部设置键名后对比，标注每版相对上一版的<b>新增/移除</b>（键名为源码原始名）：</div>
+    <table style="width:100%;border-collapse:collapse;font-size:12.5px;">
+      <tr style="background:#f3f4f6;"><th style="text-align:left;padding:5px 8px;border:1px solid #e5e7eb;width:10%;">版本</th><th style="text-align:left;padding:5px 8px;border:1px solid #e5e7eb;width:10%;">时间</th><th style="text-align:left;padding:5px 8px;border:1px solid #e5e7eb;">新增设置</th><th style="text-align:left;padding:5px 8px;border:1px solid #e5e7eb;width:22%;">移除设置</th></tr>
+      <tr><td style="padding:5px 8px;border:1px solid #e5e7eb;font-weight:600;">v33</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">2018-03</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">effects, fps, fullscreen, healthbars, indicators, lasers, multithread, pixelate, smoothcam, vsync（初始 10 项）</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">—</td></tr>
+      <tr><td style="padding:5px 8px;border:1px solid #e5e7eb;font-weight:600;">v50</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">2018-08</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">minimap</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">indicators, pixelate（设置被移除期）</td></tr>
+      <tr><td style="padding:5px 8px;border:1px solid #e5e7eb;font-weight:600;">v70</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">2019-04</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">animatedshields, animatedwater, autotarget, crashreport, indicators（回归）, landscape, pixelate（回归）, swapdiagonal</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">healthbars, multithread, smoothcam</td></tr>
+      <tr><td style="padding:5px 8px;border:1px solid #e5e7eb;font-weight:600;">v90</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">2019-08</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">bloom, borderlesswindow, keyboard, linear, playerchat</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">swapdiagonal</td></tr>
+      <tr><td style="padding:5px 8px;border:1px solid #e5e7eb;font-weight:600;">v97</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">2019-10</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">hints, position, publichost, savecreate, touchscreen</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">lasers</td></tr>
+      <tr><td style="padding:5px 8px;border:1px solid #e5e7eb;font-weight:600;">v100</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">2019-11</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">blockreplace, blockselectkeys, buildautopause, conveyorpathfinding, destroyedblocks</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">—</td></tr>
+      <tr><td style="padding:5px 8px;border:1px solid #e5e7eb;font-weight:600;">v105</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">2020-09</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">atmosphere, blockstatus, coreitems, flow, mapcenter, playerindicators, smoothcamera（平滑相机回归）</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">—</td></tr>
+      <tr><td style="padding:5px 8px;border:1px solid #e5e7eb;font-weight:600;">v110</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">2021-01</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">—</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">blockselectkeys, mapcenter</td></tr>
+      <tr><td style="padding:5px 8px;border:1px solid #e5e7eb;font-weight:600;">v120</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">2021-03</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">backgroundpause</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">—</td></tr>
+      <tr><td style="padding:5px 8px;border:1px solid #e5e7eb;font-weight:600;">v121.3</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">2020-12</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">showweather</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">—</td></tr>
+      <tr><td style="padding:5px 8px;border:1px solid #e5e7eb;font-weight:600;">v125</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">2021-02</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">logichints</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">—</td></tr>
+      <tr><td style="padding:5px 8px;border:1px solid #e5e7eb;font-weight:600;">v125.1</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">2021-02</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">modcrashdisable</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">—</td></tr>
+      <tr><td style="padding:5px 8px;border:1px solid #e5e7eb;font-weight:600;">v126</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">2021-03</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">doubletapmine</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">—</td></tr>
+      <tr><td style="padding:5px 8px;border:1px solid #e5e7eb;font-weight:600;">v129</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">2021-07</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">skipcoreanimation</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">flow</td></tr>
+      <tr style="background:#fefce8;"><td style="padding:5px 8px;border:1px solid #e5e7eb;font-weight:700;">v136</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">2022-07</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">commandmodehold, console, hidedisplays, mouseposition（v8 首版）</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">—</td></tr>
+      <tr><td style="padding:5px 8px;border:1px solid #e5e7eb;font-weight:600;">v143</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">2023-03</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">steampublichost（取代 publichost）</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">publichost</td></tr>
+      <tr><td style="padding:5px 8px;border:1px solid #e5e7eb;font-weight:600;">v145</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">2023-06</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">macnotch</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">—</td></tr>
+      <tr><td style="padding:5px 8px;border:1px solid #e5e7eb;font-weight:600;">v146</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">2023-09</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">drawlight</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">—</td></tr>
+      <tr><td style="padding:5px 8px;border:1px solid #e5e7eb;font-weight:600;">v147</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">2025-04</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">alwaysmusic, communityservers, distinctcontrolgroups</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">—</td></tr>
+      <tr><td style="padding:5px 8px;border:1px solid #e5e7eb;font-weight:600;">v150</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">2025-07</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">detach-camera</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">—</td></tr>
+      <tr><td style="padding:5px 8px;border:1px solid #e5e7eb;font-weight:600;">v155.1→v155.4</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">2026-02</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">borderlesswindow 短暂移除后恢复（窗口重构波动）</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">—</td></tr>
+      <tr><td style="padding:5px 8px;border:1px solid #e5e7eb;font-weight:600;">v156</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">2026-03</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">showotherbuildplans, showpings</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">—</td></tr>
+      <tr><td style="padding:5px 8px;border:1px solid #e5e7eb;font-weight:600;">v157</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">2026-04</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">—</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">borderlesswindow, crashreport</td></tr>
+      <tr><td style="padding:5px 8px;border:1px solid #e5e7eb;font-weight:600;">v157.3</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">2026-04</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">—</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">logichints</td></tr>
+      <tr style="background:#f0fdf4;"><td style="padding:5px 8px;border:1px solid #e5e7eb;font-weight:700;">v159</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">2026-07</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">drawhitboxes, showperformance</td><td style="padding:5px 8px;border:1px solid #e5e7eb;">steampublichost</td></tr>
+    </table>
+    <div style="font-size:12px;color:#6b7280;margin-top:8px;">【v136 起（v8 时代）起点完整清单 · 42 项】animatedshields, animatedwater, atmosphere, autotarget, backgroundpause, blockreplace, blockstatus, bloom, borderlesswindow, buildautopause, commandmodehold, console, conveyorpathfinding, coreitems, crashreport, destroyedblocks, doubletapmine, effects, fps, fullscreen, hidedisplays, hints, indicators, keyboard, landscape, linear, logichints, minimap, modcrashdisable, mouseposition, pixelate, playerchat, playerindicators, position, publichost, savecreate, showweather, skipcoreanimation, smoothcamera, touchscreen, vsync —— 此后每次变动见上表 v136 以下各行，其余版本号（如 v136.1~v142、v144.x、v148~v149 等）设置面无变化。</div>
+    <div style="font-size:12px;color:#6b7280;margin-top:6px;">补充：<b>uiscale</b>（界面缩放）于 2019-07（v83）加入、<b>musicvol</b>（音乐音量）于 2019-08（v84）加入（在采样版本差异中分别并入 v90/v97 行）；<b>antialias</b> 于 2019-03（v65）加入；<b>fpscap</b>（帧数上限）于 2018-07（v48）加入。v7（v100 起）设置页按 图形/视频/界面/游戏/声音 分类组织。</div>
+  </div>
+
+  <div style="font-size:12px;color:#9ca3af;margin-top:14px;line-height:1.7;">核验方式：v33–v120 段基于 16 个采样版本 git show 提取 + git log -S 交叉验证；v120 之后对全部 tag 逐版提取 SettingsMenuDialog 键名（comm 集合对比），所有移除项均经 grep 反查确认；git tag --contains 映射版本。仓库：Mindustry@master（完整历史，197 个 tag）。</div>
+</div>
+</html>
+

@@ -1,0 +1,4755 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mindustry v159.7 Java 模组 API 参考表</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css">
+<style>
+:root{
+  --bg:#0f0f1a;
+  --bg2:#1a1a2e;
+  --bg3:#16162a;
+  --code-bg:#1e1e2e;
+  --accent:#f39c12;
+  --accent2:#e67e22;
+  --text:#d6d6e8;
+  --muted:#8a8aa8;
+  --border:#2a2a48;
+  --sidebar-w:250px;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;scroll-padding-top:20px;}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  line-height:1.75;
+  font-size:15.5px;
+}
+a{color:var(--accent);text-decoration:none;}
+a:hover{text-decoration:underline;}
+
+/* Sidebar */
+#sidebar{
+  position:fixed;top:0;left:0;width:var(--sidebar-w);height:100vh;
+  background:var(--bg2);border-right:1px solid var(--border);
+  overflow-y:auto;padding:24px 0 40px;z-index:100;
+}
+#sidebar .brand{
+  padding:0 22px 18px;border-bottom:1px solid var(--border);margin-bottom:14px;
+}
+#sidebar .brand .logo{
+  font-weight:800;font-size:16px;color:#fff;letter-spacing:.5px;
+}
+#sidebar .brand .sub{font-size:12px;color:var(--accent);margin-top:4px;}
+#sidebar nav{padding:0 10px;}
+#sidebar nav .nav-group{
+  font-size:11px;text-transform:uppercase;letter-spacing:1.5px;
+  color:var(--muted);padding:14px 12px 6px;
+}
+#sidebar nav a{
+  display:block;padding:6px 12px;color:#b9b9d0;border-radius:6px;
+  font-size:13.5px;line-height:1.4;
+}
+#sidebar nav a:hover{background:rgba(243,156,18,.08);color:var(--accent);text-decoration:none;}
+#sidebar nav a.active{background:rgba(243,156,18,.14);color:var(--accent);border-left:3px solid var(--accent);padding-left:9px;}
+
+/* Mobile top bar */
+#topbar{
+  display:none;position:fixed;top:0;left:0;right:0;height:54px;z-index:200;
+  background:var(--bg2);border-bottom:1px solid var(--border);
+  align-items:center;padding:0 16px;gap:12px;
+}
+#hamburger{
+  background:none;border:1px solid var(--border);color:var(--text);
+  width:38px;height:38px;border-radius:8px;cursor:pointer;font-size:18px;
+  display:flex;align-items:center;justify-content:center;
+}
+#topbar .tb-title{font-weight:700;color:#fff;font-size:15px;}
+#overlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:99;
+}
+body.nav-open #overlay{display:block;}
+
+/* Main */
+main{
+  margin-left:var(--sidebar-w);
+  max-width:calc(900px + 48px);
+  padding:48px 48px 120px;
+}
+.hero{
+  border:1px solid var(--border);border-radius:14px;padding:32px 34px;
+  background:linear-gradient(135deg,rgba(243,156,18,.08),rgba(230,126,34,.03));
+  margin-bottom:36px;
+}
+.hero h1{margin:0 0 10px;font-size:30px;color:#fff;line-height:1.3;}
+.hero .meta{color:var(--muted);font-size:13.5px;}
+.hero .badge{
+  display:inline-block;background:var(--accent);color:#1a1a2e;
+  font-weight:700;font-size:12px;padding:2px 10px;border-radius:20px;margin-right:8px;
+}
+
+h1{font-size:26px;color:#fff;border-bottom:2px solid var(--accent);padding-bottom:10px;margin-top:56px;}
+h2{font-size:21px;color:#fff;margin-top:44px;padding-left:12px;border-left:4px solid var(--accent);}
+h3{font-size:17.5px;color:#f0c060;margin-top:30px;}
+h4{font-size:15.5px;color:#e8e8f4;margin-top:22px;}
+
+blockquote{
+  margin:20px 0;padding:14px 18px;background:rgba(243,156,18,.06);
+  border-left:4px solid var(--accent);border-radius:0 8px 8px 0;color:#cfcfe4;
+}
+blockquote p{margin:6px 0;}
+blockquote p:first-child{margin-top:0;}blockquote p:last-child{margin-bottom:0;}
+
+.newbox{
+  border:1px solid rgba(46,204,113,.55);
+  background:rgba(46,204,113,.07);
+  border-radius:8px;padding:14px 18px;margin:24px 0;
+}
+.newbox h3{color:#58d68d;}
+.newbadge{
+  display:inline-block;background:#2ecc71;color:#04220f;font-size:11px;
+  padding:1px 8px;border-radius:10px;font-weight:700;vertical-align:middle;
+}
+.newtip{
+  font-size:13px;color:#bfe9c9;
+  background:rgba(46,204,113,.1);
+  border:1px solid rgba(46,204,113,.45);
+  border-radius:6px;padding:8px 12px;margin:12px 0;
+}
+.newtip b{color:#58d68d;}
+
+table{
+  width:100%;border-collapse:collapse;margin:20px 0;font-size:14px;
+  border:1px solid var(--border);border-radius:8px;overflow:hidden;
+}
+th,td{padding:10px 14px;text-align:left;border:1px solid var(--border);}
+th{background:var(--bg3);color:#fff;font-weight:600;}
+tr:nth-child(even) td{background:rgba(255,255,255,.025);}
+tr:hover td{background:rgba(243,156,18,.05);}
+
+hr{border:none;border-top:1px dashed var(--border);margin:44px 0;}
+
+code:not(pre code){
+  background:rgba(243,156,18,.12);color:#f5b95c;
+  padding:1px 6px;border-radius:4px;font-size:.88em;
+  font-family:"JetBrains Mono","Fira Code",Consolas,Monaco,monospace;
+}
+ul,ol{padding-left:24px;}
+li{margin:5px 0;}
+
+/* Code blocks */
+.codeblock{
+  margin:20px 0;border:1px solid var(--border);border-radius:8px;
+  background:var(--code-bg);overflow:hidden;position:relative;
+}
+.codebar{
+  display:flex;align-items:center;gap:10px;
+  background:#181826;padding:5px 14px;border-bottom:1px solid var(--border);
+  font-size:11.5px;color:var(--muted);
+}
+.codebar .ver{
+  background:var(--accent);color:#1a1a2e;font-weight:700;
+  padding:1px 8px;border-radius:10px;font-size:10.5px;
+}
+.codebar .lang{text-transform:uppercase;letter-spacing:1px;}
+.codebar .copy-btn{
+  margin-left:auto;background:transparent;border:1px solid var(--border);
+  color:var(--muted);border-radius:5px;padding:2px 10px;cursor:pointer;
+  font-size:11.5px;font-family:inherit;transition:all .15s;
+}
+.codebar .copy-btn:hover{color:var(--accent);border-color:var(--accent);}
+.codebar .copy-btn.ok{color:#7fdc8a;border-color:#7fdc8a;}
+.codeblock pre{
+  margin:0;padding:16px 18px;overflow-x:auto;
+  font-family:"JetBrains Mono","Fira Code",Consolas,Monaco,monospace;
+  font-size:13px;line-height:1.65;
+}
+.codeblock pre code{background:none;padding:0;font-family:inherit;}
+
+/* Fun implementation highlight */
+.fun-block{
+  margin:20px 0;padding:18px 22px;
+  background:rgba(243,156,18,.05);
+  border-left:4px solid var(--accent);
+  border-radius:0 8px 8px 0;
+}
+
+/* Back to top */
+#toTop{
+  position:fixed;right:28px;bottom:28px;width:46px;height:46px;border-radius:50%;
+  background:var(--accent);color:#1a1a2e;border:none;cursor:pointer;
+  font-size:18px;font-weight:700;display:none;align-items:center;justify-content:center;
+  box-shadow:0 4px 16px rgba(243,156,18,.4);z-index:150;
+}
+#toTop:hover{background:var(--accent2);}
+
+/* Responsive */
+@media (max-width:768px){
+  #topbar{display:flex;}
+  #sidebar{
+    transform:translateX(-100%);transition:transform .25s ease;
+    width:270px;box-shadow:4px 0 24px rgba(0,0,0,.5);
+  }
+  body.nav-open #sidebar{transform:translateX(0);}
+  main{margin-left:0;padding:80px 18px 100px;}
+  .hero h1{font-size:23px;}
+  h1{font-size:22px;}
+  table{font-size:12.5px;}
+  th,td{padding:7px 9px;}
+}
+</style>
+</head>
+<body>
+
+<div id="topbar">
+  <button id="hamburger" aria-label="目录">&#9776;</button>
+  <div class="tb-title">API 参考表 v159.7</div>
+</div>
+<div id="overlay"></div>
+
+<aside id="sidebar">
+  <div class="brand">
+    <div class="logo">Mindustry Mod Dev</div>
+    <div class="sub">Java 模组 API 参考表 · v159.7</div>
+  </div>
+  <nav id="toc">
+    <div class="nav-group">目录</div>
+    <a href="#mindustry-v1597-java-api">Mindustry v159.7 Java 模组 API 参考表</a>
+    <a href="#_1" style="padding-left:24px;font-size:12.5px;">使用指南</a>
+    <a href="#_2" style="padding-left:24px;font-size:12.5px;">目录</a>
+    <a href="#defense" style="padding-left:24px;font-size:12.5px;">一、defense（防御）</a>
+    <a href="#distribution" style="padding-left:24px;font-size:12.5px;">二、distribution（物流）</a>
+    <a href="#environment" style="padding-left:24px;font-size:12.5px;">三、environment（环境）</a>
+    <a href="#liquid" style="padding-left:24px;font-size:12.5px;">四、liquid（液体）</a>
+    <a href="#power" style="padding-left:24px;font-size:12.5px;">五、power（电力）</a>
+    <a href="#production" style="padding-left:24px;font-size:12.5px;">六、production（生产）</a>
+    <a href="#storage" style="padding-left:24px;font-size:12.5px;">七、storage（存储）</a>
+    <a href="#turrets" style="padding-left:24px;font-size:12.5px;">八、turrets（炮塔）</a>
+    <a href="#units" style="padding-left:24px;font-size:12.5px;">九、units（单位）</a>
+    <a href="#payloads" style="padding-left:24px;font-size:12.5px;">十、payloads（载荷）</a>
+    <a href="#sandbox" style="padding-left:24px;font-size:12.5px;">十一、sandbox（沙盒）</a>
+    <a href="#fx" style="padding-left:24px;font-size:12.5px;">十二、Fx 视觉特效</a>
+    <a href="#statuseffect" style="padding-left:24px;font-size:12.5px;">十三、StatusEffect 状态效果</a>
+    <a href="#block-building-binding" style="padding-left:24px;font-size:12.5px;">附录：Block↔Building 绑定机制</a>
+    <a href="#_3" style="padding-left:24px;font-size:12.5px;">附录：快速索引</a>
+  </nav>
+</aside>
+
+<main>
+  <div class="hero">
+    <h1>Mindustry v159.7 Java 模组 API 参考表</h1>
+    <div class="meta">
+      <span class="badge">v159.7</span>
+      配套教程工具书 · 已通读教程的读者 · 按分类查阅参数与代码
+    </div>
+  </div>
+
+  <h1 id="mindustry-v1597-java-api">Mindustry v159.7 Java 模组 API 参考表</h1>
+<blockquote>
+<p>本参考表是《Mindustry Java 模组开发循序渐进教程》的配套工具书。
+所有 API 均从本地源码逐条核验（v159.7，HEAD <code>b3317f3</code>），标注源码文件路径。
+读者对象：已通读教程、想查参数或写自己内容的萌新。</p>
+</blockquote>
+<h2 id="_1">使用指南</h2>
+<ul>
+<li><strong>最小实现</strong>：照抄能跑的基础用法，展示如何创建并注册一个实例。</li>
+<li><strong>有趣实现</strong>：花样式创意玩法，展示该分类 API 的非常规用法。</li>
+<li><strong>构造参数表</strong>：列名「参数名 | 类型 | 默认值 | 含义」，列出该类及其父类中最常用的字段。</li>
+<li>所有代码使用 <code>new Xxx("name"){{ ... }}</code> 匿名内部类写法，构造即自动注册（<code>Content.java:20</code>）。</li>
+<li>需求数组用 <code>ItemStack.with(Items.xxx, n)</code> 构造（<code>ItemStack.java:47</code>）。</li>
+<li>分类枚举 <code>Category</code> 的实际值：<code>turret, production, distribution, liquid, power, defense, crafting, units, effect, logic</code>（<code>Category.java:3-23</code>）。</li>
+</ul>
+<hr />
+<h2 id="_2">目录</h2>
+<ul>
+<li><a href="#一defense防御">一、defense（防御）</a></li>
+<li><a href="#二distribution物流">二、distribution（物流）</a></li>
+<li><a href="#三environment环境">三、environment（环境）</a></li>
+<li><a href="#四liquid液体">四、liquid（液体）</a></li>
+<li><a href="#五power电力">五、power（电力）</a></li>
+<li><a href="#六production生产">六、production（生产）</a></li>
+<li><a href="#七storage存储">七、storage（存储）</a></li>
+<li><a href="#八turrets炮塔">八、turrets（炮塔）</a></li>
+<li><a href="#九units单位">九、units（单位）</a></li>
+<li><a href="#十payloads载荷">十、payloads（载荷）</a></li>
+<li><a href="#十一sandbox沙盒">十一、sandbox（沙盒）</a></li>
+<li><a href="#十二fx-视觉特效">十二、Fx 视觉特效</a></li>
+<li><a href="#十三statuseffect-状态效果">十三、StatusEffect 状态效果</a></li>
+<li><a href="#block--building-绑定机制深度解析">附录：Block ↔ Building 绑定机制深度解析</a></li>
+<li><a href="#附录快速索引">附录：快速索引</a></li>
+</ul>
+<hr />
+<h2 id="defense">一、defense（防御）</h2>
+<h3 id="11-wall">1.1 Wall —— 基础墙</h3>
+<p><strong>一句话描述</strong>：最基础的可建造防御墙，实心、可被攻击、可 autotile 拼接。</p>
+<ul>
+<li><strong>类全名</strong>：<code>mindustry.world.blocks.defense.Wall</code></li>
+<li><strong>源码路径</strong>：<code>core/src/mindustry/world/blocks/defense/Wall.java</code></li>
+<li><strong>继承</strong>：<code>Wall extends Block</code></li>
+</ul>
+<p><strong>关键构造参数表</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>默认值</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>health</td>
+<td>int</td>
+<td>-1（Block 默认）</td>
+<td>生命值，<code>health = 80</code> 即 80 血</td>
+</tr>
+<tr>
+<td>size</td>
+<td>int</td>
+<td>1</td>
+<td>占地格数（边长）</td>
+</tr>
+<tr>
+<td>requirements</td>
+<td>ItemStack[]</td>
+<td>{}</td>
+<td>建造需求，用 <code>requirements()</code> 方法设置</td>
+</tr>
+<tr>
+<td>chanceDeflect</td>
+<td>float</td>
+<td>-1f</td>
+<td>反弹子弹概率，-1 禁用；&gt;0 时碰撞子弹按概率反弹</td>
+</tr>
+<tr>
+<td>flashHit</td>
+<td>boolean</td>
+<td>false</td>
+<td>受击时是否闪白</td>
+</tr>
+<tr>
+<td>flashColor</td>
+<td>Color</td>
+<td>Color.white</td>
+<td>闪白颜色</td>
+</tr>
+<tr>
+<td>lightningChance</td>
+<td>float</td>
+<td>-1f</td>
+<td>受击产生闪电的概率，-1 禁用</td>
+</tr>
+<tr>
+<td>lightningDamage</td>
+<td>float</td>
+<td>20f</td>
+<td>闪电伤害</td>
+</tr>
+<tr>
+<td>lightningLength</td>
+<td>int</td>
+<td>17</td>
+<td>闪电长度（格）</td>
+</tr>
+<tr>
+<td>autotile</td>
+<td>boolean</td>
+<td>false</td>
+<td>是否使用 autotile 贴图</td>
+</tr>
+<tr>
+<td>insulated</td>
+<td>boolean</td>
+<td>false</td>
+<td>是否绝缘（不导电）</td>
+</tr>
+<tr>
+<td>absorbLasers</td>
+<td>boolean</td>
+<td>false</td>
+<td>是否吸收激光</td>
+</tr>
+</tbody>
+</table>
+<p><strong>最小实现</strong>：</p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">import mindustry.world.blocks.defense.Wall;
+import mindustry.world.meta.Category;
+import static mindustry.type.ItemStack.with;
+import mindustry.content.Items;
+
+// 在 ModBlocks.loadContent() 中
+myWall = new Wall(&quot;my-wall&quot;) {{
+    requirements(Category.defense, with(Items.copper, 6));
+    health = 120;
+}};
+</code></pre>
+</div>
+<p><strong>有趣实现：受击闪电流星墙</strong></p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">import mindustry.world.blocks.defense.Wall;
+import mindustry.gen.Building;
+import mindustry.world.Block;
+import mindustry.content.Fx;
+import arc.graphics.Color;
+
+// 受击时必定放电，并反弹子弹
+public class ThunderWall extends Wall {
+    public ThunderWall(String name) {
+        super(name);
+        lightningChance = 1f;          // 每次受击都触发
+        lightningDamage = 30f;
+        lightningLength = 20;
+        lightningColor = Color.cyan;
+        chanceDeflect = 100f;          // 必定反弹
+        flashHit = true;
+        flashColor = Color.cyan;
+    }
+}
+</code></pre>
+</div>
+<p><strong>实现原理</strong>：覆写 <code>WallBuild.collision(Bullet)</code>（<code>Wall.java:164</code>），当 <code>lightningChance &gt; 0</code> 时按概率创建 <code>Lightning.create()</code>；当 <code>chanceDeflect &gt; 0</code> 时反转子弹速度向量并返回 <code>false</code> 阻止进一步碰撞。这里把 <code>lightningChance</code> 设为 1f、<code>chanceDeflect</code> 设为 100f，即可让每颗击中它的子弹都被电击并反弹。</p>
+<hr />
+<h3 id="12-door">1.2 Door —— 可开关门</h3>
+<p><strong>一句话描述</strong>：继承 Wall，可点击开关、可被逻辑控制、可串联开合的门。</p>
+<ul>
+<li><strong>类全名</strong>：<code>mindustry.world.blocks.defense.Door</code></li>
+<li><strong>源码路径</strong>：<code>core/src/mindustry/world/blocks/defense/Door.java</code></li>
+<li><strong>继承</strong>：<code>Door extends Wall</code></li>
+</ul>
+<p><strong>关键构造参数表</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>默认值</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>openfx</td>
+<td>Effect</td>
+<td>Fx.dooropen</td>
+<td>开门特效</td>
+</tr>
+<tr>
+<td>closefx</td>
+<td>Effect</td>
+<td>Fx.doorclose</td>
+<td>关门特效</td>
+</tr>
+<tr>
+<td>doorSound</td>
+<td>Sound</td>
+<td>Sounds.door</td>
+<td>开关门音效</td>
+</tr>
+<tr>
+<td>chainEffect</td>
+<td>boolean</td>
+<td>false</td>
+<td>串联门是否同步播放特效</td>
+</tr>
+<tr>
+<td>health</td>
+<td>int</td>
+<td>-1</td>
+<td>生命值</td>
+</tr>
+<tr>
+<td>size</td>
+<td>int</td>
+<td>1</td>
+<td>占地格数</td>
+</tr>
+</tbody>
+</table>
+<p><strong>最小实现</strong>：</p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">import mindustry.world.blocks.defense.Door;
+import mindustry.world.meta.Category;
+import static mindustry.type.ItemStack.with;
+import mindustry.content.Items;
+
+myDoor = new Door(&quot;my-door&quot;) {{
+    requirements(Category.defense, with(Items.titanium, 6, Items.silicon, 4));
+    health = 100;
+}};
+</code></pre>
+</div>
+<hr />
+<h3 id="13-forceprojector">1.3 ForceProjector —— 力场护盾</h3>
+<p><strong>一句话描述</strong>：生成一个多边形力场，吸收子弹和爆炸，消耗电力和相 Fabric 充能。</p>
+<ul>
+<li><strong>类全名</strong>：<code>mindustry.world.blocks.defense.ForceProjector</code></li>
+<li><strong>源码路径</strong>：<code>core/src/mindustry/world/blocks/defense/ForceProjector.java</code></li>
+<li><strong>继承</strong>：<code>ForceProjector extends Block</code></li>
+</ul>
+<p><strong>关键构造参数表</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>默认值</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>radius</td>
+<td>float</td>
+<td>101.7f</td>
+<td>力场半径</td>
+</tr>
+<tr>
+<td>shieldHealth</td>
+<td>float</td>
+<td>700f</td>
+<td>护盾容量（吸收伤害量）</td>
+</tr>
+<tr>
+<td>sides</td>
+<td>int</td>
+<td>6</td>
+<td>多边形边数</td>
+</tr>
+<tr>
+<td>shieldRotation</td>
+<td>float</td>
+<td>0f</td>
+<td>多边形旋转角度</td>
+</tr>
+<tr>
+<td>cooldownNormal</td>
+<td>float</td>
+<td>1.75f</td>
+<td>正常状态下回复速度（每帧 buildup 减少量）</td>
+</tr>
+<tr>
+<td>cooldownLiquid</td>
+<td>float</td>
+<td>1.5f</td>
+<td>冷却液加速倍率</td>
+</tr>
+<tr>
+<td>cooldownBrokenBase</td>
+<td>float</td>
+<td>0.35f</td>
+<td>破碎后回复速度</td>
+</tr>
+<tr>
+<td>phaseRadiusBoost</td>
+<td>float</td>
+<td>80f</td>
+<td>消耗相 Fabric 时的半径加成</td>
+</tr>
+<tr>
+<td>phaseShieldBoost</td>
+<td>float</td>
+<td>400f</td>
+<td>消耗相 Fabric 时的护盾加成</td>
+</tr>
+<tr>
+<td>phaseUseTime</td>
+<td>float</td>
+<td>350f</td>
+<td>消耗一次相 Fabric 的周期（帧）</td>
+</tr>
+<tr>
+<td>consumeCoolant</td>
+<td>boolean</td>
+<td>true</td>
+<td>是否消耗冷却液</td>
+</tr>
+<tr>
+<td>size</td>
+<td>int</td>
+<td>1</td>
+<td>占地格数（原版 force-projector 为 3）</td>
+</tr>
+<tr>
+<td>hasPower</td>
+<td>boolean</td>
+<td>true</td>
+<td>是否需要电力（构造函数自动设 true）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>最小实现</strong>：</p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">import mindustry.world.blocks.defense.ForceProjector;
+import mindustry.world.meta.Category;
+import static mindustry.type.ItemStack.with;
+import mindustry.content.Items;
+
+myShield = new ForceProjector(&quot;my-shield&quot;) {{
+    requirements(Category.effect, with(Items.lead, 100, Items.titanium, 75, Items.silicon, 125));
+    size = 3;
+    radius = 100f;
+    shieldHealth = 750f;
+    consumePower(4f);
+    itemConsumer = consumeItem(Items.phaseFabric).boost();
+}};
+</code></pre>
+</div>
+<p><strong>有趣实现：六边形巨型护盾塔</strong></p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">import mindustry.world.blocks.defense.ForceProjector;
+import mindustry.graphics.Pal;
+
+// 超大范围、高血量的六边形护盾
+megaShield = new ForceProjector(&quot;mega-shield&quot;) {{
+    requirements(Category.effect, with(Items.surgeAlloy, 100, Items.phaseFabric, 50, Items.silicon, 200));
+    size = 4;
+    radius = 200f;
+    shieldHealth = 3000f;
+    sides = 8;
+    shieldRotation = 0f;
+    cooldownNormal = 2f;
+    consumePower(10f);
+    consumeItem(Items.phaseFabric).boost();
+}};
+</code></pre>
+</div>
+<p><strong>实现原理</strong>：<code>radius</code>（<code>ForceProjector.java:36</code>）控制力场多边形半径，<code>shieldHealth</code>（<code>ForceProjector.java:39</code>）控制吸收量，<code>sides</code>（<code>ForceProjector.java:37</code>）控制边数。把这三个值拉到极限即可做出巨型护盾。</p>
+<hr />
+<h3 id="14-mendprojector">1.4 MendProjector —— 修复投影仪</h3>
+<p><strong>一句话描述</strong>：周期性修复范围内友方建筑，消耗电力和相 Fabric 可加成。</p>
+<ul>
+<li><strong>类全名</strong>：<code>mindustry.world.blocks.defense.MendProjector</code></li>
+<li><strong>源码路径</strong>：<code>core/src/mindustry/world/blocks/defense/MendProjector.java</code></li>
+<li><strong>继承</strong>：<code>MendProjector extends Block</code></li>
+</ul>
+<p><strong>关键构造参数表</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>默认值</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>reload</td>
+<td>float</td>
+<td>250f</td>
+<td>两次修复之间的间隔（帧）</td>
+</tr>
+<tr>
+<td>range</td>
+<td>float</td>
+<td>60f</td>
+<td>修复范围</td>
+</tr>
+<tr>
+<td>healPercent</td>
+<td>float</td>
+<td>12f</td>
+<td>每次修复恢复建筑最大血量的百分比</td>
+</tr>
+<tr>
+<td>phaseBoost</td>
+<td>float</td>
+<td>12f</td>
+<td>相 Fabric 加成的修复量</td>
+</tr>
+<tr>
+<td>phaseRangeBoost</td>
+<td>float</td>
+<td>50f</td>
+<td>相 Fabric 加成的范围</td>
+</tr>
+<tr>
+<td>useTime</td>
+<td>float</td>
+<td>400f</td>
+<td>消耗一次相 Fabric 的周期</td>
+</tr>
+<tr>
+<td>baseColor</td>
+<td>Color</td>
+<td>Color.valueOf("84f491")</td>
+<td>基础颜色</td>
+</tr>
+<tr>
+<td>size</td>
+<td>int</td>
+<td>1</td>
+<td>占地格数</td>
+</tr>
+<tr>
+<td>hasPower</td>
+<td>boolean</td>
+<td>true</td>
+<td>是否需要电力</td>
+</tr>
+</tbody>
+</table>
+<p><strong>最小实现</strong>：</p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">import mindustry.world.blocks.defense.MendProjector;
+import mindustry.world.meta.Category;
+import static mindustry.type.ItemStack.with;
+import mindustry.content.Items;
+
+myMend = new MendProjector(&quot;my-mend&quot;) {{
+    requirements(Category.effect, with(Items.lead, 100, Items.titanium, 25, Items.silicon, 40, Items.copper, 50));
+    size = 2;
+    reload = 250f;
+    range = 85f;
+    healPercent = 11f;
+    consumePower(1.5f);
+    consumeItem(Items.phaseFabric).boost();
+}};
+</code></pre>
+</div>
+<hr />
+<h3 id="15-overdriveprojector">1.5 OverdriveProjector —— 加速投影仪</h3>
+<p><strong>一句话描述</strong>：加速范围内友方建筑的工作速度，消耗电力和相 Fabric 可加成。</p>
+<ul>
+<li><strong>类全名</strong>：<code>mindustry.world.blocks.defense.OverdriveProjector</code></li>
+<li><strong>源码路径</strong>：<code>core/src/mindustry/world/blocks/defense/OverdriveProjector.java</code></li>
+<li><strong>继承</strong>：<code>OverdriveProjector extends Block</code></li>
+</ul>
+<p><strong>关键构造参数表</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>默认值</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>reload</td>
+<td>float</td>
+<td>60f</td>
+<td>刷新间隔（帧）</td>
+</tr>
+<tr>
+<td>range</td>
+<td>float</td>
+<td>80f</td>
+<td>加速范围</td>
+</tr>
+<tr>
+<td>speedBoost</td>
+<td>float</td>
+<td>1.5f</td>
+<td>加速倍率（1.5 = 加速 50%）</td>
+</tr>
+<tr>
+<td>speedBoostPhase</td>
+<td>float</td>
+<td>0.75f</td>
+<td>相 Fabric 额外加速倍率</td>
+</tr>
+<tr>
+<td>useTime</td>
+<td>float</td>
+<td>400f</td>
+<td>消耗一次相 Fabric 的周期</td>
+</tr>
+<tr>
+<td>phaseRangeBoost</td>
+<td>float</td>
+<td>20f</td>
+<td>相 Fabric 范围加成</td>
+</tr>
+<tr>
+<td>hasBoost</td>
+<td>boolean</td>
+<td>true</td>
+<td>是否支持相 Fabric 加成</td>
+</tr>
+<tr>
+<td>size</td>
+<td>int</td>
+<td>1</td>
+<td>占地格数</td>
+</tr>
+<tr>
+<td>hasPower</td>
+<td>boolean</td>
+<td>true</td>
+<td>是否需要电力</td>
+</tr>
+</tbody>
+</table>
+<p><strong>最小实现</strong>：</p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">import mindustry.world.blocks.defense.OverdriveProjector;
+import mindustry.world.meta.Category;
+import static mindustry.type.ItemStack.with;
+import mindustry.content.Items;
+
+myOverdrive = new OverdriveProjector(&quot;my-overdrive&quot;) {{
+    requirements(Category.effect, with(Items.lead, 100, Items.titanium, 75, Items.silicon, 75, Items.plastanium, 30));
+    size = 2;
+    consumePower(3.50f);
+    consumeItem(Items.phaseFabric).boost();
+}};
+</code></pre>
+</div>
+<p><strong>有趣实现：彩虹加速塔</strong></p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">import mindustry.world.blocks.defense.OverdriveProjector;
+import arc.graphics.Color;
+import arc.math.Mathf;
+
+// 加速塔颜色随时间彩虹渐变
+public class RainbowOverdrive extends OverdriveProjector {
+    public RainbowOverdrive(String name) {
+        super(name);
+        baseColor = Color.white.cpy();
+    }
+
+    @Override
+    public void drawPlace(int x, int y, int rotation, boolean valid) {
+        // 每帧颜色 hue 偏移
+        baseColor.fromHsv((Time.time * 0.5f) % 360f, 0.8f, 1f);
+        super.drawPlace(x, y, rotation, valid);
+    }
+}
+</code></pre>
+</div>
+<p><strong>实现原理</strong>：覆写 <code>drawPlace</code>（<code>OverdriveProjector.java:54</code>），在绘制放置预览时用 <code>Time.time</code> 驱动 <code>Color.fromHsv</code> 循环变色。<code>baseColor</code> 字段（<code>OverdriveProjector.java:30</code>）控制范围圈颜色。</p>
+<hr />
+<h2 id="distribution">二、distribution（物流）</h2>
+<h3 id="21-conveyor">2.1 Conveyor —— 传送带</h3>
+<p><strong>一句话描述</strong>：最基础的物品传送带，自动朝朝向方向运送物品。</p>
+<ul>
+<li><strong>类全名</strong>：<code>mindustry.world.blocks.distribution.Conveyor</code></li>
+<li><strong>源码路径</strong>：<code>core/src/mindustry/world/blocks/distribution/Conveyor.java</code></li>
+<li><strong>继承</strong>：<code>Conveyor extends Block implements Autotiler</code></li>
+</ul>
+<p><strong>关键构造参数表</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>默认值</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>speed</td>
+<td>float</td>
+<td>0f</td>
+<td>物品移动速度（实际像素/帧）</td>
+</tr>
+<tr>
+<td>displayedSpeed</td>
+<td>float</td>
+<td>0f</td>
+<td>统计面板显示的速度（物品/秒）</td>
+</tr>
+<tr>
+<td>health</td>
+<td>int</td>
+<td>-1</td>
+<td>生命值</td>
+</tr>
+<tr>
+<td>size</td>
+<td>int</td>
+<td>1</td>
+<td>占地格数</td>
+</tr>
+<tr>
+<td>pushUnits</td>
+<td>boolean</td>
+<td>true</td>
+<td>是否推动单位</td>
+</tr>
+<tr>
+<td>requirements</td>
+<td>ItemStack[]</td>
+<td>{}</td>
+<td>建造需求</td>
+</tr>
+</tbody>
+</table>
+<p><strong>最小实现</strong>：</p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">import mindustry.world.blocks.distribution.Conveyor;
+import mindustry.world.meta.Category;
+import static mindustry.type.ItemStack.with;
+import mindustry.content.Items;
+
+myConveyor = new Conveyor(&quot;my-conveyor&quot;) {{
+    requirements(Category.distribution, with(Items.copper, 1));
+    health = 45;
+    speed = 0.035f;
+    displayedSpeed = 5f;
+}};
+</code></pre>
+</div>
+<p><strong>有趣实现：高速传送加速带</strong></p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">import mindustry.world.blocks.distribution.Conveyor;
+import mindustry.world.meta.Category;
+import static mindustry.type.ItemStack.with;
+import mindustry.content.Items;
+
+// 三倍速传送带
+myFastConveyor = new Conveyor(&quot;fast-conveyor&quot;) {{
+    requirements(Category.distribution, with(Items.titanium, 1, Items.copper, 1));
+    health = 65;
+    speed = 0.105f;          // 原版 3 倍
+    displayedSpeed = 15f;    // 显示 15 item/s
+}};
+</code></pre>
+</div>
+<p><strong>实现原理</strong>：<code>speed</code> 字段（<code>Conveyor.java:32</code>）控制物品在传送带上的移动速度，<code>displayedSpeed</code>（<code>Conveyor.java:33</code>）只影响统计面板显示。两者需要手动保持比例一致。</p>
+<hr />
+<h3 id="22-router">2.2 Router —— 路由器</h3>
+<p><strong>一句话描述</strong>：自动将物品按轮询方向分流到四个方向的建筑。</p>
+<ul>
+<li><strong>类全名</strong>：<code>mindustry.world.blocks.distribution.Router</code></li>
+<li><strong>源码路径</strong>：<code>core/src/mindustry/world/blocks/distribution/Router.java</code></li>
+<li><strong>继承</strong>：<code>Router extends Block</code></li>
+</ul>
+<p><strong>关键构造参数表</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>默认值</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>speed</td>
+<td>float</td>
+<td>8f</td>
+<td>传送间隔（帧/次）</td>
+</tr>
+<tr>
+<td>health</td>
+<td>int</td>
+<td>-1</td>
+<td>生命值</td>
+</tr>
+<tr>
+<td>size</td>
+<td>int</td>
+<td>1</td>
+<td>占地格数</td>
+</tr>
+<tr>
+<td>requirements</td>
+<td>ItemStack[]</td>
+<td>{}</td>
+<td>建造需求</td>
+</tr>
+</tbody>
+</table>
+<p><strong>最小实现</strong>：</p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">import mindustry.world.blocks.distribution.Router;
+import mindustry.world.meta.Category;
+import static mindustry.type.ItemStack.with;
+import mindustry.content.Items;
+
+myRouter = new Router(&quot;my-router&quot;) {{
+    requirements(Category.distribution, with(Items.copper, 3));
+}};
+</code></pre>
+</div>
+<hr />
+<h3 id="23-sorter">2.3 Sorter —— 分类器</h3>
+<p><strong>一句话描述</strong>：可配置分类方向，将指定物品从正面输出、其余从侧面输出。</p>
+<ul>
+<li><strong>类全名</strong>：<code>mindustry.world.blocks.distribution.Sorter</code></li>
+<li><strong>源码路径</strong>：<code>core/src/mindustry/world/blocks/distribution/Sorter.java</code></li>
+<li><strong>继承</strong>：<code>Sorter extends Block</code></li>
+</ul>
+<p><strong>关键构造参数表</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>默认值</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>invert</td>
+<td>boolean</td>
+<td>false</td>
+<td>是否反转（指定物品从侧面出）</td>
+</tr>
+<tr>
+<td>health</td>
+<td>int</td>
+<td>-1</td>
+<td>生命值</td>
+</tr>
+<tr>
+<td>size</td>
+<td>int</td>
+<td>1</td>
+<td>占地格数</td>
+</tr>
+<tr>
+<td>requirements</td>
+<td>ItemStack[]</td>
+<td>{}</td>
+<td>建造需求</td>
+</tr>
+</tbody>
+</table>
+<p><strong>最小实现</strong>：</p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">import mindustry.world.blocks.distribution.Sorter;
+import mindustry.world.meta.Category;
+import static mindustry.type.ItemStack.with;
+import mindustry.content.Items;
+
+mySorter = new Sorter(&quot;my-sorter&quot;) {{
+    requirements(Category.distribution, with(Items.lead, 2, Items.copper, 2));
+}};
+</code></pre>
+</div>
+<hr />
+<h3 id="24-junction">2.4 Junction —— 桥接器</h3>
+<p><strong>一句话描述</strong>：四个方向同时输入物品并存储，按顺序输出，解决交叉堵塞。</p>
+<ul>
+<li><strong>类全名</strong>：<code>mindustry.world.blocks.distribution.Junction</code></li>
+<li><strong>源码路径</strong>：<code>core/src/mindustry/world/blocks/distribution/Junction.java</code></li>
+<li><strong>继承</strong>：<code>Junction extends Block</code></li>
+</ul>
+<p><strong>关键构造参数表</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>默认值</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>speed</td>
+<td>float</td>
+<td>26</td>
+<td>通过间隔（帧）</td>
+</tr>
+<tr>
+<td>capacity</td>
+<td>int</td>
+<td>6</td>
+<td>每方向缓冲容量</td>
+</tr>
+<tr>
+<td>displayedSpeed</td>
+<td>float</td>
+<td>13f</td>
+<td>统计面板显示速度</td>
+</tr>
+<tr>
+<td>health</td>
+<td>int</td>
+<td>-1</td>
+<td>生命值</td>
+</tr>
+<tr>
+<td>size</td>
+<td>int</td>
+<td>1</td>
+<td>占地格数</td>
+</tr>
+<tr>
+<td>requirements</td>
+<td>ItemStack[]</td>
+<td>{}</td>
+<td>建造需求</td>
+</tr>
+</tbody>
+</table>
+<p><strong>最小实现</strong>：</p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">import mindustry.world.blocks.distribution.Junction;
+import mindustry.world.meta.Category;
+import static mindustry.type.ItemStack.with;
+import mindustry.content.Items;
+
+myJunction = new Junction(&quot;my-junction&quot;) {{
+    requirements(Category.distribution, with(Items.copper, 3));
+    health = 30;
+}};
+</code></pre>
+</div>
+<hr />
+<h3 id="25-itembridge">2.5 ItemBridge —— 物品桥</h3>
+<p><strong>一句话描述</strong>：跨越障碍远距离传输物品，需两端配对。</p>
+<ul>
+<li><strong>类全名</strong>：<code>mindustry.world.blocks.distribution.ItemBridge</code></li>
+<li><strong>源码路径</strong>：<code>core/src/mindustry/world/blocks/distribution/ItemBridge.java</code></li>
+<li><strong>继承</strong>：<code>ItemBridge extends Block</code></li>
+</ul>
+<p><strong>关键构造参数表</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>默认值</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>range</td>
+<td>int</td>
+<td>0</td>
+<td>最大连接距离（格）</td>
+</tr>
+<tr>
+<td>transportTime</td>
+<td>float</td>
+<td>0</td>
+<td>传输时间（帧）</td>
+</tr>
+<tr>
+<td>fadeIn</td>
+<td>boolean</td>
+<td>true</td>
+<td>淡入动画</td>
+</tr>
+<tr>
+<td>moveArrows</td>
+<td>boolean</td>
+<td>true</td>
+<td>移动箭头动画</td>
+</tr>
+<tr>
+<td>pulse</td>
+<td>boolean</td>
+<td>false</td>
+<td>脉冲效果</td>
+</tr>
+<tr>
+<td>linkSameType</td>
+<td>boolean</td>
+<td>true</td>
+<td>是否只连接同类型桥</td>
+</tr>
+<tr>
+<td>health</td>
+<td>int</td>
+<td>-1</td>
+<td>生命值</td>
+</tr>
+<tr>
+<td>size</td>
+<td>int</td>
+<td>1</td>
+<td>占地格数</td>
+</tr>
+<tr>
+<td>requirements</td>
+<td>ItemStack[]</td>
+<td>{}</td>
+<td>建造需求</td>
+</tr>
+</tbody>
+</table>
+<p><strong>最小实现</strong>：</p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">import mindustry.world.blocks.distribution.ItemBridge;
+import mindustry.world.meta.Category;
+import static mindustry.type.ItemStack.with;
+import mindustry.content.Items;
+
+myBridge = new ItemBridge(&quot;my-bridge&quot;) {{
+    requirements(Category.distribution, with(Items.lead, 6, Items.copper, 6));
+    range = 4;
+    transportTime = 2f;
+}};
+</code></pre>
+</div>
+<p><strong>有趣实现：超长距离相位桥</strong></p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">import mindustry.world.blocks.distribution.ItemBridge;
+import mindustry.world.meta.Category;
+import static mindustry.type.ItemStack.with;
+import mindustry.content.Items;
+
+// 12 格超远距物品桥，脉冲效果
+longBridge = new ItemBridge(&quot;long-bridge&quot;) {{
+    requirements(Category.distribution, with(Items.phaseFabric, 5, Items.silicon, 7, Items.lead, 10));
+    range = 12;
+    transportTime = 2f;
+    pulse = true;
+    arrowPeriod = 0.9f;
+    hasPower = true;
+    consumePower(0.30f);
+}};
+</code></pre>
+</div>
+<p><strong>实现原理</strong>：<code>range</code>（<code>ItemBridge.java:27</code>）控制最大连接格数，<code>pulse</code>（<code>ItemBridge.java:35</code>）开启脉冲视觉效果，<code>transportTime</code> 控制传输延迟。原版 phase-conveyor 就是这个配置（<code>Blocks.java:2117</code>）。</p>
+<hr />
+<h2 id="environment">三、environment（环境）</h2>
+<h3 id="31-floor">3.1 Floor —— 地板</h3>
+<p><strong>一句话描述</strong>：地图基底方块，决定单位移动速度、拖拽、伤害、液体沉积等。</p>
+<ul>
+<li><strong>类全名</strong>：<code>mindustry.world.blocks.environment.Floor</code></li>
+<li><strong>源码路径</strong>：<code>core/src/mindustry/world/blocks/environment/Floor.java</code></li>
+<li><strong>继承</strong>：<code>Floor extends Block</code></li>
+</ul>
+<p><strong>关键构造参数表</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>默认值</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>speedMultiplier</td>
+<td>float</td>
+<td>1f</td>
+<td>单位在其上移动速度倍率</td>
+</tr>
+<tr>
+<td>dragMultiplier</td>
+<td>float</td>
+<td>1f</td>
+<td>单位拖拽倍率</td>
+</tr>
+<tr>
+<td>damageTaken</td>
+<td>float</td>
+<td>0f</td>
+<td>每帧持续伤害</td>
+</tr>
+<tr>
+<td>drownTime</td>
+<td>float</td>
+<td>0f</td>
+<td>沉没时间（帧），0 禁用</td>
+</tr>
+<tr>
+<td>walkEffect</td>
+<td>Effect</td>
+<td>Fx.none</td>
+<td>行走时特效</td>
+</tr>
+<tr>
+<td>walkSound</td>
+<td>Sound</td>
+<td>Sounds.none</td>
+<td>行走音效</td>
+</tr>
+<tr>
+<td>status</td>
+<td>StatusEffect</td>
+<td>StatusEffects.none</td>
+<td>行走时施加的状态效果</td>
+</tr>
+<tr>
+<td>statusDuration</td>
+<td>float</td>
+<td>60f</td>
+<td>状态效果持续时间</td>
+</tr>
+<tr>
+<td>liquidDrop</td>
+<td>Liquid</td>
+<td>null</td>
+<td>泵可抽取的液体</td>
+</tr>
+<tr>
+<td>liquidMultiplier</td>
+<td>float</td>
+<td>1f</td>
+<td>液体抽取倍率</td>
+</tr>
+<tr>
+<td>isLiquid</td>
+<td>boolean</td>
+<td>false</td>
+<td>是否为液体地板</td>
+</tr>
+<tr>
+<td>edge</td>
+<td>String</td>
+<td>"stone"</td>
+<td>边缘贴图名</td>
+</tr>
+<tr>
+<td>wall</td>
+<td>Block</td>
+<td>Blocks.air</td>
+<td>对应墙变体</td>
+</tr>
+<tr>
+<td>oreDefault</td>
+<td>boolean</td>
+<td>false</td>
+<td>是否默认生成矿石</td>
+</tr>
+<tr>
+<td>oreThreshold</td>
+<td>float</td>
+<td>0.828f</td>
+<td>矿石生成阈值</td>
+</tr>
+<tr>
+<td>oreScale</td>
+<td>float</td>
+<td>24f</td>
+<td>矿石生成缩放</td>
+</tr>
+<tr>
+<td>allowCorePlacement</td>
+<td>boolean</td>
+<td>false</td>
+<td>是否允许核心放置</td>
+</tr>
+</tbody>
+</table>
+<p><strong>最小实现</strong>：</p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">import mindustry.world.blocks.environment.Floor;
+import mindustry.content.Fx;
+import mindustry.graphics.Pal;
+
+// 在 ModBlocks.loadContent() 中
+myFloor = new Floor(&quot;my-floor&quot;) {{
+    speedMultiplier = 1.2f;      // 加速地板
+    dragMultiplier = 0.8f;
+    status = StatusEffects.burning;
+    statusDuration = 60f;
+}};
+</code></pre>
+</div>
+<p><strong>有趣实现：加速带地板</strong></p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">import mindustry.world.blocks.environment.Floor;
+import mindustry.content.Fx;
+import mindustry.content.StatusEffects;
+
+// 单位走过就加速 50% 的地板
+speedFloor = new Floor(&quot;speed-floor&quot;) {{
+    speedMultiplier = 1.5f;
+    dragMultiplier = 0.7f;
+    walkEffect = Fx.overdriven;
+    status = StatusEffects.overdrive;
+    statusDuration = 120f;
+}};
+</code></pre>
+</div>
+<p><strong>实现原理</strong>：<code>speedMultiplier</code>（<code>Floor.java:28</code>）直接乘到单位移动速度上；<code>status</code> + <code>statusDuration</code>（<code>Floor.java:44-46</code>）在单位踩上时自动施加 <code>StatusEffects.overdrive</code> 状态（<code>StatusEffects.java:153</code>），该状态自带 1.15x 速度和 1.4x 伤害。</p>
+<hr />
+<h3 id="32-staticwall">3.2 StaticWall —— 静态墙</h3>
+<p><strong>一句话描述</strong>：不可建造的环境墙（地图生成用），实心、不可破坏。</p>
+<ul>
+<li><strong>类全名</strong>：<code>mindustry.world.blocks.environment.StaticWall</code></li>
+<li><strong>源码路径</strong>：<code>core/src/mindustry/world/blocks/environment/StaticWall.java</code></li>
+<li><strong>继承</strong>：<code>StaticWall extends Prop</code></li>
+</ul>
+<p><strong>关键构造参数表</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>默认值</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>autotile</td>
+<td>boolean</td>
+<td>false</td>
+<td>是否使用 autotile 贴图</td>
+</tr>
+<tr>
+<td>autotileMidVariants</td>
+<td>int</td>
+<td>1</td>
+<td>中间贴图变体数</td>
+</tr>
+<tr>
+<td>variants</td>
+<td>int</td>
+<td>2</td>
+<td>贴图变体数（继承自 Prop）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>最小实现</strong>：</p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">import mindustry.world.blocks.environment.StaticWall;
+
+// 在 ModBlocks.loadContent() 中
+myRockWall = new StaticWall(&quot;my-rock-wall&quot;) {{
+    autotile = true;
+}};
+</code></pre>
+</div>
+<hr />
+<h3 id="33-oreblock">3.3 OreBlock —— 矿石</h3>
+<p><strong>一句话描述</strong>：覆盖在地板上的矿石 overlay，被钻头开采后产出对应物品。</p>
+<ul>
+<li><strong>类全名</strong>：<code>mindustry.world.blocks.environment.OreBlock</code></li>
+<li><strong>源码路径</strong>：<code>core/src/mindustry/world/blocks/environment/OreBlock.java</code></li>
+<li><strong>继承</strong>：<code>OreBlock extends OverlayFloor</code></li>
+</ul>
+<p><strong>关键构造参数表</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>默认值</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>oreDefault</td>
+<td>boolean</td>
+<td>false</td>
+<td>是否默认在地图生成</td>
+</tr>
+<tr>
+<td>oreThreshold</td>
+<td>float</td>
+<td>0.828f</td>
+<td>噪声阈值</td>
+</tr>
+<tr>
+<td>oreScale</td>
+<td>float</td>
+<td>24f</td>
+<td>噪声缩放</td>
+</tr>
+<tr>
+<td>wallOre</td>
+<td>boolean</td>
+<td>false</td>
+<td>是否允许在墙上生成</td>
+</tr>
+</tbody>
+</table>
+<p><strong>最小实现</strong>：</p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">import mindustry.world.blocks.environment.OreBlock;
+import mindustry.content.Items;
+
+// 在 ModBlocks.loadContent() 中
+myOre = new OreBlock(Items.copper) {{
+    oreDefault = true;
+    oreThreshold = 0.81f;
+    oreScale = 23.5f;
+}};
+</code></pre>
+</div>
+<hr />
+<h3 id="34-prop">3.4 Prop —— 装饰物</h3>
+<p><strong>一句话描述</strong>：可被单位撞碎的静态装饰物（岩石、树桩等）。</p>
+<ul>
+<li><strong>类全名</strong>：<code>mindustry.world.blocks.environment.Prop</code></li>
+<li><strong>源码路径</strong>：<code>core/src/mindustry/world/blocks/environment/Prop.java</code></li>
+<li><strong>继承</strong>：<code>Prop extends Block</code></li>
+</ul>
+<p><strong>关键构造参数表</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>默认值</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>layer</td>
+<td>float</td>
+<td>Layer.blockProp</td>
+<td>渲染层级</td>
+</tr>
+<tr>
+<td>variants</td>
+<td>int</td>
+<td>0</td>
+<td>贴图变体数</td>
+</tr>
+</tbody>
+</table>
+<p><strong>最小实现</strong>：</p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">import mindustry.world.blocks.environment.Prop;
+
+// 在 ModBlocks.loadContent() 中
+myRock = new Prop(&quot;my-rock&quot;) {{
+    variants = 3;
+}};
+</code></pre>
+</div>
+<hr />
+<h2 id="liquid">四、liquid（液体）</h2>
+<h3 id="41-conduit">4.1 Conduit —— 管道</h3>
+<p><strong>一句话描述</strong>：运输液体的管道，可旋转连接。</p>
+<ul>
+<li><strong>类全名</strong>：<code>mindustry.world.blocks.liquid.Conduit</code></li>
+<li><strong>源码路径</strong>：<code>core/src/mindustry/world/blocks/liquid/Conduit.java</code></li>
+<li><strong>继承</strong>：<code>Conduit extends LiquidBlock implements Autotiler</code></li>
+</ul>
+<p><strong>关键构造参数表</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>默认值</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>liquidCapacity</td>
+<td>float</td>
+<td>20f</td>
+<td>单块管道容量</td>
+</tr>
+<tr>
+<td>liquidPressure</td>
+<td>float</td>
+<td>1f</td>
+<td>液体压力（影响传输速度）</td>
+</tr>
+<tr>
+<td>leaks</td>
+<td>boolean</td>
+<td>true</td>
+<td>是否泄漏</td>
+</tr>
+<tr>
+<td>padCorners</td>
+<td>boolean</td>
+<td>true</td>
+<td>角落是否内缩</td>
+</tr>
+<tr>
+<td>health</td>
+<td>int</td>
+<td>-1</td>
+<td>生命值</td>
+</tr>
+<tr>
+<td>size</td>
+<td>int</td>
+<td>1</td>
+<td>占地格数</td>
+</tr>
+<tr>
+<td>requirements</td>
+<td>ItemStack[]</td>
+<td>{}</td>
+<td>建造需求</td>
+</tr>
+</tbody>
+</table>
+<p><strong>最小实现</strong>：</p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">import mindustry.world.blocks.liquid.Conduit;
+import mindustry.world.meta.Category;
+import static mindustry.type.ItemStack.with;
+import mindustry.content.Items;
+
+myConduit = new Conduit(&quot;my-conduit&quot;) {{
+    requirements(Category.liquid, with(Items.metaglass, 1));
+    liquidCapacity = 20f;
+    health = 45;
+}};
+</code></pre>
+</div>
+<hr />
+<h3 id="42-pump">4.2 Pump —— 泵</h3>
+<p><strong>一句话描述</strong>：从地板液体中抽取液体输出到管道。</p>
+<ul>
+<li><strong>类全名</strong>：<code>mindustry.world.blocks.production.Pump</code></li>
+<li><strong>源码路径</strong>：<code>core/src/mindustry/world/blocks/production/Pump.java</code></li>
+<li><strong>继承</strong>：<code>Pump extends LiquidBlock</code></li>
+</ul>
+<p><strong>关键构造参数表</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>默认值</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>pumpAmount</td>
+<td>float</td>
+<td>0.2f</td>
+<td>每格每 tick 抽取量</td>
+</tr>
+<tr>
+<td>consumeTime</td>
+<td>float</td>
+<td>300f</td>
+<td>物品消耗间隔（帧）</td>
+</tr>
+<tr>
+<td>warmupSpeed</td>
+<td>float</td>
+<td>0.019f</td>
+<td>预热速度</td>
+</tr>
+<tr>
+<td>liquidCapacity</td>
+<td>float</td>
+<td>20f</td>
+<td>液体容量</td>
+</tr>
+<tr>
+<td>size</td>
+<td>int</td>
+<td>1</td>
+<td>占地格数</td>
+</tr>
+<tr>
+<td>requirements</td>
+<td>ItemStack[]</td>
+<td>{}</td>
+<td>建造需求</td>
+</tr>
+</tbody>
+</table>
+<p><strong>最小实现</strong>：</p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">import mindustry.world.blocks.production.Pump;
+import mindustry.world.meta.Category;
+import static mindustry.type.ItemStack.with;
+import mindustry.content.Items;
+
+myPump = new Pump(&quot;my-pump&quot;) {{
+    requirements(Category.liquid, with(Items.copper, 15, Items.metaglass, 10));
+    pumpAmount = 7f / 60f;
+    liquidCapacity = 20f;
+}};
+</code></pre>
+</div>
+<p><strong>有趣实现：巨型电动泵</strong></p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">import mindustry.world.blocks.production.Pump;
+import mindustry.world.meta.Category;
+import static mindustry.type.ItemStack.with;
+import mindustry.content.Items;
+
+// 3x3 超大泵，电力驱动，大流量
+megaPump = new Pump(&quot;mega-pump&quot;) {{
+    requirements(Category.liquid, with(Items.copper, 80, Items.metaglass, 90, Items.silicon, 30, Items.titanium, 40));
+    pumpAmount = 0.22f;
+    consumePower(1.3f);
+    liquidCapacity = 200f;
+    size = 3;
+    hasPower = true;
+}};
+</code></pre>
+</div>
+<p><strong>实现原理</strong>：<code>pumpAmount</code>（<code>Pump.java:20</code>）是每格每 tick 抽取量，<code>size = 3</code> 覆盖 9 格，总流量 = <code>pumpAmount * size * size</code>。原版 impulse-pump 就是这个配置（<code>Blocks.java:2314</code>）。</p>
+<hr />
+<h3 id="43-liquidrouter">4.3 LiquidRouter —— 液体路由器</h3>
+<p><strong>一句话描述</strong>：将输入液体均匀分流到四个方向。</p>
+<ul>
+<li><strong>类全名</strong>：<code>mindustry.world.blocks.liquid.LiquidRouter</code></li>
+<li><strong>源码路径</strong>：<code>core/src/mindustry/world/blocks/liquid/LiquidRouter.java</code></li>
+<li><strong>继承</strong>：<code>LiquidRouter extends LiquidBlock</code></li>
+</ul>
+<p><strong>关键构造参数表</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>默认值</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>liquidPadding</td>
+<td>float</td>
+<td>0f</td>
+<td>液体贴图内边距</td>
+</tr>
+<tr>
+<td>liquidCapacity</td>
+<td>float</td>
+<td>120f</td>
+<td>液体容量</td>
+</tr>
+<tr>
+<td>health</td>
+<td>int</td>
+<td>-1</td>
+<td>生命值</td>
+</tr>
+<tr>
+<td>size</td>
+<td>int</td>
+<td>1</td>
+<td>占地格数</td>
+</tr>
+<tr>
+<td>requirements</td>
+<td>ItemStack[]</td>
+<td>{}</td>
+<td>建造需求</td>
+</tr>
+</tbody>
+</table>
+<p><strong>最小实现</strong>：</p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">import mindustry.world.blocks.liquid.LiquidRouter;
+import mindustry.world.meta.Category;
+import static mindustry.type.ItemStack.with;
+import mindustry.content.Items;
+
+myLiquidRouter = new LiquidRouter(&quot;my-liquid-router&quot;) {{
+    requirements(Category.liquid, with(Items.graphite, 4, Items.metaglass, 2));
+    liquidCapacity = 120f;
+    underBullets = true;
+}};
+</code></pre>
+</div>
+<hr />
+<h2 id="power">五、power（电力）</h2>
+<h3 id="51-powergenerator">5.1 PowerGenerator —— 发电机基类</h3>
+<p><strong>一句话描述</strong>：所有发电机的抽象基类，定义发电量和爆炸行为。</p>
+<ul>
+<li><strong>类全名</strong>：<code>mindustry.world.blocks.power.PowerGenerator</code></li>
+<li><strong>源码路径</strong>：<code>core/src/mindustry/world/blocks/power/PowerGenerator.java</code></li>
+<li><strong>继承</strong>：<code>PowerGenerator extends PowerDistributor</code></li>
+</ul>
+<p><strong>关键构造参数表</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>默认值</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>powerProduction</td>
+<td>float</td>
+<td>0f</td>
+<td>效率 100% 时每 tick 发电量</td>
+</tr>
+<tr>
+<td>explosionRadius</td>
+<td>int</td>
+<td>12</td>
+<td>爆炸半径（格）</td>
+</tr>
+<tr>
+<td>explosionDamage</td>
+<td>int</td>
+<td>0</td>
+<td>爆炸伤害</td>
+</tr>
+<tr>
+<td>explodeEffect</td>
+<td>Effect</td>
+<td>Fx.none</td>
+<td>爆炸特效</td>
+</tr>
+<tr>
+<td>explodeSound</td>
+<td>Sound</td>
+<td>Sounds.none</td>
+<td>爆炸音效</td>
+</tr>
+<tr>
+<td>size</td>
+<td>int</td>
+<td>1</td>
+<td>占地格数</td>
+</tr>
+<tr>
+<td>hasPower</td>
+<td>boolean</td>
+<td>true</td>
+<td>是否输出电力（构造函数自动设）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>最小实现</strong>：</p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">import mindustry.world.blocks.power.PowerGenerator;
+import mindustry.world.meta.Category;
+import static mindustry.type.ItemStack.with;
+import mindustry.content.Items;
+
+// 一般不直接用 PowerGenerator，用 ConsumeGenerator 子类
+myGen = new PowerGenerator(&quot;my-gen&quot;) {{
+    requirements(Category.power, with(Items.copper, 25));
+    powerProduction = 1f;
+    size = 2;
+}};
+</code></pre>
+</div>
+<p><strong>有趣实现：昼夜波动发电机</strong></p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">import mindustry.world.blocks.power.ConsumeGenerator;
+import mindustry.game.Team;
+import mindustry.gen.Building;
+import arc.math.Mathf;
+
+// 发电量随昼夜波动的发电机（白天满发，夜间减半）
+public class SolarLikeGen extends ConsumeGenerator {
+    public SolarLikeGen(String name) {
+        super(name);
+    }
+
+    public class SolarGenBuild extends ConsumeGeneratorBuild {
+        @Override
+        public float getPowerProduction() {
+            // 模拟白天：Time.time 在一局中持续递增
+            float dayFactor = Mathf.clamp((Mathf.sin(Time.time * 0.001f) + 1f) / 2f, 0.3f, 1f);
+            return powerProduction * productionEfficiency * dayFactor;
+        }
+    }
+}
+</code></pre>
+</div>
+<p><strong>实现原理</strong>：覆写 <code>GeneratorBuild.getPowerProduction()</code>（<code>PowerGenerator.java:208</code>），用 <code>Mathf.sin(Time.time ...)</code> 制造昼夜正弦波动，再乘以 <code>productionEfficiency</code>。引擎在每帧电力计算时调用此方法。</p>
+<hr />
+<h3 id="52-consumegenerator">5.2 ConsumeGenerator —— 消耗物品发电机</h3>
+<p><strong>一句话描述</strong>：最常用的发电机，消耗物品/液体周期性产生电力。</p>
+<ul>
+<li><strong>类全名</strong>：<code>mindustry.world.blocks.power.ConsumeGenerator</code></li>
+<li><strong>源码路径</strong>：<code>core/src/mindustry/world/blocks/power/ConsumeGenerator.java</code></li>
+<li><strong>继承</strong>：<code>ConsumeGenerator extends PowerGenerator</code></li>
+</ul>
+<p><strong>关键构造参数表</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>默认值</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>powerProduction</td>
+<td>float</td>
+<td>0f</td>
+<td>发电量（继承自 PowerGenerator）</td>
+</tr>
+<tr>
+<td>itemDuration</td>
+<td>float</td>
+<td>120f</td>
+<td>消耗一个物品的持续时间（帧）</td>
+</tr>
+<tr>
+<td>warmupSpeed</td>
+<td>float</td>
+<td>0.05f</td>
+<td>预热速度</td>
+</tr>
+<tr>
+<td>effectChance</td>
+<td>float</td>
+<td>0.01f</td>
+<td>随机特效概率</td>
+</tr>
+<tr>
+<td>generateEffect</td>
+<td>Effect</td>
+<td>Fx.none</td>
+<td>发电特效</td>
+</tr>
+<tr>
+<td>consumeEffect</td>
+<td>Effect</td>
+<td>Fx.none</td>
+<td>消耗特效</td>
+</tr>
+<tr>
+<td>outputLiquid</td>
+<td>LiquidStack</td>
+<td>null</td>
+<td>输出液体</td>
+</tr>
+<tr>
+<td>explodeOnFull</td>
+<td>boolean</td>
+<td>false</td>
+<td>液体满时是否爆炸</td>
+</tr>
+<tr>
+<td>size</td>
+<td>int</td>
+<td>1</td>
+<td>占地格数</td>
+</tr>
+<tr>
+<td>hasItems</td>
+<td>boolean</td>
+<td>true</td>
+<td>是否消耗物品</td>
+</tr>
+</tbody>
+</table>
+<p><strong>最小实现</strong>：</p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">import mindustry.world.blocks.power.ConsumeGenerator;
+import mindustry.world.meta.Category;
+import static mindustry.type.ItemStack.with;
+import mindustry.content.Items;
+import mindustry.content.Fx;
+
+myCoalGen = new ConsumeGenerator(&quot;my-coal-gen&quot;) {{
+    requirements(Category.power, with(Items.copper, 25, Items.lead, 15));
+    powerProduction = 1f;
+    itemDuration = 120f;
+    generateEffect = Fx.generatespark;
+    consume(new ConsumeItemFlammable());
+}};
+</code></pre>
+</div>
+<hr />
+<h3 id="53-battery">5.3 Battery —— 电池</h3>
+<p><strong>一句话描述</strong>：存储电力，在电力不足时放电。</p>
+<ul>
+<li><strong>类全名</strong>：<code>mindustry.world.blocks.power.Battery</code></li>
+<li><strong>源码路径</strong>：<code>core/src/mindustry/world/blocks/power/Battery.java</code></li>
+<li><strong>继承</strong>：<code>Battery extends PowerDistributor</code></li>
+</ul>
+<p><strong>关键构造参数表</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>默认值</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>emptyLightColor</td>
+<td>Color</td>
+<td>Color.valueOf("f8c266")</td>
+<td>空电时灯光颜色</td>
+</tr>
+<tr>
+<td>fullLightColor</td>
+<td>Color</td>
+<td>Color.valueOf("fb9567")</td>
+<td>满电时灯光颜色</td>
+</tr>
+<tr>
+<td>size</td>
+<td>int</td>
+<td>1</td>
+<td>占地格数</td>
+</tr>
+<tr>
+<td>hasPower</td>
+<td>boolean</td>
+<td>true</td>
+<td>是否连接电力网络</td>
+</tr>
+</tbody>
+</table>
+<p><strong>最小实现</strong>：</p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">import mindustry.world.blocks.power.Battery;
+import mindustry.world.meta.Category;
+import static mindustry.type.ItemStack.with;
+import mindustry.content.Items;
+
+myBattery = new Battery(&quot;my-battery&quot;) {{
+    requirements(Category.power, with(Items.copper, 5, Items.lead, 20));
+    consumePowerBuffered(4000f);
+}};
+</code></pre>
+</div>
+<p><strong>有趣实现：巨型电池矩阵</strong></p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">import mindustry.world.blocks.power.Battery;
+import mindustry.world.meta.Category;
+import static mindustry.type.ItemStack.with;
+import mindustry.content.Items;
+
+// 3x3 超大电池，50000 容量
+bigBattery = new Battery(&quot;big-battery&quot;) {{
+    requirements(Category.power, with(Items.titanium, 20, Items.lead, 50, Items.silicon, 30));
+    size = 3;
+    consumePowerBuffered(50000f);
+}};
+</code></pre>
+</div>
+<p><strong>实现原理</strong>：<code>consumePowerBuffered(capacity)</code> 是 <code>Block</code> 上的方法，创建一个 <code>ConsumePower</code> 消费者并设置 <code>buffered = true</code> 和容量值（<code>Blocks.java:2512</code>）。<code>size = 3</code> 表示 3x3 占地。</p>
+<hr />
+<h3 id="54-powernode">5.4 PowerNode —— 电力节点</h3>
+<p><strong>一句话描述</strong>：连接电力网络的激光塔，自动连接周围发电机/用电建筑。</p>
+<ul>
+<li><strong>类全名</strong>：<code>mindustry.world.blocks.power.PowerNode</code></li>
+<li><strong>源码路径</strong>：<code>core/src/mindustry/world/blocks/power/PowerNode.java</code></li>
+<li><strong>继承</strong>：<code>PowerNode extends PowerBlock</code></li>
+</ul>
+<p><strong>关键构造参数表</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>默认值</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>laserRange</td>
+<td>float</td>
+<td>6</td>
+<td>最大连接距离（格）</td>
+</tr>
+<tr>
+<td>maxNodes</td>
+<td>int</td>
+<td>3</td>
+<td>最大连接数</td>
+</tr>
+<tr>
+<td>autolink</td>
+<td>boolean</td>
+<td>true</td>
+<td>是否自动连接</td>
+</tr>
+<tr>
+<td>drawRange</td>
+<td>boolean</td>
+<td>true</td>
+<td>是否绘制范围圈</td>
+</tr>
+<tr>
+<td>laserScale</td>
+<td>float</td>
+<td>0.25f</td>
+<td>激光粗细</td>
+</tr>
+<tr>
+<td>laserColor1</td>
+<td>Color</td>
+<td>Color.white</td>
+<td>激光颜色1</td>
+</tr>
+<tr>
+<td>laserColor2</td>
+<td>Color</td>
+<td>Pal.powerLight</td>
+<td>激光颜色2</td>
+</tr>
+<tr>
+<td>size</td>
+<td>int</td>
+<td>1</td>
+<td>占地格数</td>
+</tr>
+<tr>
+<td>requirements</td>
+<td>ItemStack[]</td>
+<td>{}</td>
+<td>建造需求</td>
+</tr>
+</tbody>
+</table>
+<p><strong>最小实现</strong>：</p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">import mindustry.world.blocks.power.PowerNode;
+import mindustry.world.meta.Category;
+import static mindustry.type.ItemStack.with;
+import mindustry.content.Items;
+
+myNode = new PowerNode(&quot;my-node&quot;) {{
+    requirements(Category.power, with(Items.copper, 2, Items.lead, 6));
+    maxNodes = 10;
+    laserRange = 6;
+}};
+</code></pre>
+</div>
+<hr />
+<h2 id="production">六、production（生产）</h2>
+<h3 id="61-drill">6.1 Drill —— 钻头基类</h3>
+<p><strong>一句话描述</strong>：自动开采脚下矿石的基类，根据 tier 决定可开采硬度。</p>
+<ul>
+<li><strong>类全名</strong>：<code>mindustry.world.blocks.production.Drill</code></li>
+<li><strong>源码路径</strong>：<code>core/src/mindustry/world/blocks/production/Drill.java</code></li>
+<li><strong>继承</strong>：<code>Drill extends Block</code></li>
+</ul>
+<p><strong>关键构造参数表</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>默认值</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>tier</td>
+<td>int</td>
+<td>0</td>
+<td>可开采矿石的最高硬度</td>
+</tr>
+<tr>
+<td>drillTime</td>
+<td>float</td>
+<td>300</td>
+<td>钻一块矿石所需帧数</td>
+</tr>
+<tr>
+<td>liquidBoostIntensity</td>
+<td>float</td>
+<td>1.6f</td>
+<td>液体加速倍率</td>
+</tr>
+<tr>
+<td>warmupSpeed</td>
+<td>float</td>
+<td>0.015f</td>
+<td>预热速度</td>
+</tr>
+<tr>
+<td>drillEffect</td>
+<td>Effect</td>
+<td>Fx.mine</td>
+<td>产出时特效</td>
+</tr>
+<tr>
+<td>updateEffect</td>
+<td>Effect</td>
+<td>Fx.pulverizeSmall</td>
+<td>旋转时特效</td>
+</tr>
+<tr>
+<td>drawMineItem</td>
+<td>boolean</td>
+<td>true</td>
+<td>是否绘制正在开采的物品图标</td>
+</tr>
+<tr>
+<td>rotateSpeed</td>
+<td>float</td>
+<td>2f</td>
+<td>钻头旋转速度</td>
+</tr>
+<tr>
+<td>size</td>
+<td>int</td>
+<td>1</td>
+<td>占地格数</td>
+</tr>
+<tr>
+<td>hasPower</td>
+<td>boolean</td>
+<td>false</td>
+<td>是否需要电力（激光钻头开启）</td>
+</tr>
+<tr>
+<td>requirements</td>
+<td>ItemStack[]</td>
+<td>{}</td>
+<td>建造需求</td>
+</tr>
+</tbody>
+</table>
+<p><strong>最小实现</strong>：</p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">import mindustry.world.blocks.production.Drill;
+import mindustry.world.meta.Category;
+import static mindustry.type.ItemStack.with;
+import mindustry.content.Items;
+import mindustry.content.Liquids;
+
+myDrill = new Drill(&quot;my-drill&quot;) {{
+    requirements(Category.production, with(Items.copper, 12));
+    tier = 2;
+    drillTime = 600;
+    size = 2;
+    consumeLiquid(Liquids.water, 0.05f).boost();
+}};
+</code></pre>
+</div>
+<p><strong>有趣实现：激光极速钻头</strong></p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">import mindustry.world.blocks.production.Drill;
+import mindustry.world.meta.Category;
+import static mindustry.type.ItemStack.with;
+import mindustry.content.Items;
+import mindustry.content.Liquids;
+import mindustry.content.Fx;
+
+// 3x3 激光钻头，电力驱动，高速开采
+laserDrill = new Drill(&quot;laser-drill&quot;) {{
+    requirements(Category.production, with(Items.copper, 35, Items.graphite, 30, Items.silicon, 30, Items.titanium, 20));
+    drillTime = 280;
+    size = 3;
+    hasPower = true;
+    tier = 4;
+    updateEffect = Fx.pulverizeMedium;
+    drillEffect = Fx.mineBig;
+    consumePower(1.10f);
+    consumeLiquid(Liquids.water, 0.08f).boost();
+}};
+</code></pre>
+</div>
+<p><strong>实现原理</strong>：<code>tier = 4</code>（<code>Drill.java:34</code>）决定可开采最高硬度 4 的矿石，<code>drillTime = 280</code>（<code>Drill.java:36</code>）是钻一块的帧数，<code>consumePower()</code> 开启电力消耗，<code>consumeLiquid().boost()</code> 让水加成 1.6 倍速度。原版 laser-drill 就是这个配置（<code>Blocks.java:2905</code>）。</p>
+<hr />
+<h3 id="62-genericcrafter">6.2 GenericCrafter —— 通用合成厂</h3>
+<p><strong>一句话描述</strong>：最常用的生产方块，按配方周期消耗输入产出输出。</p>
+<ul>
+<li><strong>类全名</strong>：<code>mindustry.world.blocks.production.GenericCrafter</code></li>
+<li><strong>源码路径</strong>：<code>core/src/mindustry/world/blocks/production/GenericCrafter.java</code></li>
+<li><strong>继承</strong>：<code>GenericCrafter extends Block</code></li>
+</ul>
+<p><strong>关键构造参数表</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>默认值</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>outputItem</td>
+<td>ItemStack</td>
+<td>null</td>
+<td>单个输出物品（含数量）</td>
+</tr>
+<tr>
+<td>outputItems</td>
+<td>ItemStack[]</td>
+<td>null</td>
+<td>多个输出物品</td>
+</tr>
+<tr>
+<td>outputLiquid</td>
+<td>LiquidStack</td>
+<td>null</td>
+<td>单个输出液体</td>
+</tr>
+<tr>
+<td>outputLiquids</td>
+<td>LiquidStack[]</td>
+<td>null</td>
+<td>多个输出液体</td>
+</tr>
+<tr>
+<td>craftTime</td>
+<td>float</td>
+<td>80</td>
+<td>合成一次所需帧数</td>
+</tr>
+<tr>
+<td>craftEffect</td>
+<td>Effect</td>
+<td>Fx.none</td>
+<td>合成完成特效</td>
+</tr>
+<tr>
+<td>updateEffect</td>
+<td>Effect</td>
+<td>Fx.none</td>
+<td>工作中特效</td>
+</tr>
+<tr>
+<td>warmupSpeed</td>
+<td>float</td>
+<td>0.019f</td>
+<td>预热速度</td>
+</tr>
+<tr>
+<td>size</td>
+<td>int</td>
+<td>1</td>
+<td>占地格数</td>
+</tr>
+<tr>
+<td>hasPower</td>
+<td>boolean</td>
+<td>false</td>
+<td>是否需要电力</td>
+</tr>
+<tr>
+<td>hasItems</td>
+<td>boolean</td>
+<td>true</td>
+<td>是否处理物品</td>
+</tr>
+<tr>
+<td>requirements</td>
+<td>ItemStack[]</td>
+<td>{}</td>
+<td>建造需求</td>
+</tr>
+</tbody>
+</table>
+<p><strong>最小实现</strong>：</p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">import mindustry.world.blocks.production.GenericCrafter;
+import mindustry.world.meta.Category;
+import mindustry.type.ItemStack;
+import static mindustry.type.ItemStack.with;
+import mindustry.content.Items;
+import mindustry.content.Fx;
+
+myCrafter = new GenericCrafter(&quot;my-crafter&quot;) {{
+    requirements(Category.crafting, with(Items.copper, 75, Items.lead, 30));
+    craftEffect = Fx.pulverizeMedium;
+    outputItem = new ItemStack(Items.graphite, 1);
+    craftTime = 90f;
+    size = 2;
+    consumeItem(Items.coal, 2);
+}};
+</code></pre>
+</div>
+<p><strong>有趣实现：随机产出稀有物工厂</strong></p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">import mindustry.world.blocks.production.GenericCrafter;
+import mindustry.type.ItemStack;
+import mindustry.content.Items;
+import arc.util.Random;
+
+// 每次合成有 10% 概率额外产出 surge-alloy
+public class LuckyCrafter extends GenericCrafter {
+    public LuckyCrafter(String name) {
+        super(name);
+    }
+
+    public class LuckyCrafterBuild extends GenericCrafterBuild {
+        @Override
+        public void craftEffect() {
+            super.craftEffect();
+            // 10% 概率额外产出 surge-alloy
+            if(Mathf.chance(0.1)) {
+                items.add(Items.surgeAlloy, 1);
+            }
+        }
+    }
+}
+</code></pre>
+</div>
+<p><strong>实现原理</strong>：覆写 <code>GenericCrafterBuild.craftEffect()</code>（<code>GenericCrafter.java</code> 中合成完成时调用），在父类特效后用 <code>Mathf.chance(0.1)</code> 按概率往 <code>items</code> 缓冲区塞一个 <code>Items.surgeAlloy</code>。Building 的 <code>items</code> 是 <code>ItemModule</code>，<code>add(item, amount)</code> 直接增加库存。</p>
+<hr />
+
+<div class="newbox">
+<h3>🟢 6.2.0 v160 变更：GenericCrafter 输出改成"小数累积" <span class="newbadge">v160 NEW</span></h3>
+<p>以下为 v160 相对 v159.7 的破坏性变化，老模组写工厂必读。</p>
+<table>
+<tr><th>新成员</th><th>位置</th><th>说明</th></tr>
+<tr><td><code>GenericCrafterBuild.outputAccumulator</code></td><td><code>GenericCrafter.java:191</code></td><td><code>@Nullable float[]</code>，每个产出槽一个浮点累积器</td></tr>
+<tr><td><code>GenericCrafterBuild.scaleOutput(float amount)</code></td><td><code>:304</code></td><td>输出缩放钩子，默认原样返回；模组可覆写动态缩放产出</td></tr>
+<tr><td><code>afterPatch()</code> 顺序</td><td><code>:141</code></td><td><code>hasItems</code> 现先于 <code>outputsLiquid</code> 赋值（逻辑等价）</td></tr>
+</table>
+<p><b>行为变化</b>：v160 的 <code>craft()</code> 不再是"每次固定 offload 整数个"，而是累积小数、只取整 offload：</p>
+<pre><code class="language-java">outputAccumulator[i] += scaleOutput(output.amount);   // 累积小数
+int floored = Mathf.floor(outputAccumulator[i]);      // 只取整
+outputAccumulator[i] -= floored;                      // 余数留下次
+for(int j = 0; j &lt; floored; j++) offload(output.item);</code></pre>
+<p>总产出守恒，但单次 craft 可能出 0/1/多个。想动态增产请<b>覆写 <code>scaleOutput(float)</code></b>。</p>
+</div>
+
+<h3>6.3 HeatCrafter —— 受热合成厂（v160 新增方块） <span class="newbadge">v160 NEW</span></h3>
+<p><strong>一句话描述</strong>：靠接触热力网络（Heater/HeatConduit 等）供能的合成厂，热量不足罢工、热量超额可超效率。</p>
+<ul>
+<li><b>类全名</b>：<code>mindustry.world.blocks.production.HeatCrafter</code></li>
+<li><b>继承</b>：<code>HeatCrafter extends GenericCrafter</code></li>
+<li><b>实现接口</b>：<code>HeatCrafterBuild extends GenericCrafterBuild implements HeatConsumer</code>（<code>HeatCrafter.java:43</code>）</li>
+<li><b>接口</b>：<code>HeatConsumer</code> 提供 <code>float[] sideHeat()</code> / <code>float heatRequirement()</code></li>
+</ul>
+<table>
+<tr><th>参数名</th><th>类型</th><th>默认值</th><th>位置</th><th>含义</th></tr>
+<tr><td>heatRequirement</td><td>float</td><td>10f</td><td><code>:14</code></td><td>达 100% 效率所需热量；0 表示不需要热</td></tr>
+<tr><td>overheatScale</td><td>float</td><td>1f</td><td><code>:16</code></td><td>超温后每多 1 点热折算的额外效率比例</td></tr>
+<tr><td>maxEfficiency</td><td>float</td><td>4f</td><td><code>:18</code></td><td>过热处理后效率上限（4 = 400%）</td></tr>
+</table>
+<pre><code class="language-java">warmupTarget() = clamp(heat / heatRequirement)                 // :78
+efficiencyScale() = min(clamp(heat/req) + max(heat-req,0)/req*overheatScale, maxEfficiency) // :88-91
+shouldConsume() = (heatRequirement &lt;= 0 || heat &gt; 0) && super   // :63</code></pre>
+<pre><code class="language-java">myHeatCrafter = new HeatCrafter("my-heat-smelter") {{
+    requirements(Category.crafting, with(Items.copper, 60, Items.graphite, 30));
+    heatRequirement = 20f;
+    overheatScale = 0.5f;
+    maxEfficiency = 3f;
+    outputItem = new ItemStack(Items.silicon, 1);
+    craftTime = 60f;
+    size = 2;
+}};</code></pre>
+<p>热力学联动示例（接收热力管道 heat、效率计算）见下方 <b>6.3.1</b>。</p>
+
+<h3>6.3.1 接收热力的工厂最小示例（对接 thermal-mod） <span class="newbadge">v160 NEW</span></h3>
+<p><b>背景</b>：<code>calculateHeat(sideHeat)</code>（<code>BuildingComp.java:412</code>）会先 <code>Arrays.fill(sideHeat,0)</code>，再扫描 <code>proximity</code> 里实现了 <code>HeatBlock</code>（即 <code>HeatProducer</code>）的邻居取热。但 thermal-mod 是<b>自建双缓冲热力系统</b>——它的 <code>HeatConduit extends Wall</code>，热量存在 <code>ThermalComponent.storedHeat</code>（焦耳），<b>并不实现 v160 的 <code>HeatBlock</code> 接口</b>，所以 vanilla 的 <code>calculateHeat</code> 看不见它。</p>
+<p><b>桥接思路</b>：写一个 <code>HeatCrafter</code> 子类，在 <code>updateTile()</code> 里<b>先吃官方热力网，再手动把 mod 邻居的温度换算成 v160 热单位叠加</b>，最后再调 <code>super.updateTile()</code> 跑生产。</p>
+<pre><code class="language-java">package com.thermal.mod.blocks;
+
+import com.thermal.mod.core.ThermalBuilding;
+import mindustry.world.blocks.production.HeatCrafter;
+
+/** 接收热力的工厂：把 mod 双缓冲热力网的温度换算成 v160 HeatConsumer 热单位。 */
+public class ThermalFurnace extends HeatCrafter {
+
+    public float kelvinPerHeat = 50f;   // 超温每多少 K 折 1 点 v160 热
+    public float ambientK = 293.15f;    // 室温基准（K）
+
+    public ThermalFurnace(String name) { super(name); }
+
+    public class ThermalFurnaceBuild extends HeatCrafterBuild {
+        @Override
+        public void updateTile() {
+            // 1) 先吃 v160 官方热力网络（Heater / HeatConductor 等 HeatProducer）
+            heat = calculateHeat(sideHeat);
+
+            // 2) 再从本 mod 的 ThermalBuilding 邻居抽热、换算、叠加
+            for(var build : proximity) {
+                if(build != null && build.team == team && build instanceof ThermalBuilding tb) {
+                    float excessK = tb.getThermal().getTemperatureK() - ambientK;
+                    if(excessK &gt; 0f) heat += excessK / kelvinPerHeat;
+                }
+            }
+
+            // 3) 让父类用合并后的 heat 跑 GenericCrafter 生产
+            super.updateTile();
+        }
+    }
+}</code></pre>
+<p><b>数据流</b>：</p>
+<pre><code class="language-none">HeatConduit → ThermalSystem 双缓冲 → storedHeat(J)
+  → getTemperatureK() = storedHeat / heatCapacity (K)
+    → updateTile(): excessK = tempK - ambientK; heat += excessK/kelvinPerHeat
+      → 父类: warmupTarget = clamp(heat/heatRequirement)
+              efficiencyScale = min(clamp(heat/req) + max(heat-req,0)/req*overheatScale, maxEfficiency)
+              shouldConsume   = (heat &gt; 0) && super</code></pre>
+<p><b>要点</b>：①顺序不能反——先 <code>calculateHeat</code>、再叠加 mod 热、最后 <code>super.updateTile()</code>；②温度→热单位是你自己定的映射（<code>kelvinPerHeat</code>）；③不用改 <code>shouldConsume</code>/<code>efficiencyScale</code>，父类已按 <code>heat</code> 算好；④官方 <code>HeatConductor</code> 会被第 1 步自动收，无需改代码。</p>
+<div class="newtip"><b>✓ 编译验证：</b>本示例已用 ~/jdk17/bin/javac（17.0.20）对 v160 core 类 + arc-core-1.0.jar + thermal-mod 的 ThermalBuilding/ThermalComponent 真实编译通过（退出码 0，产出 ThermalFurnace.class 及内部类）。</div>
+
+<h3>6.4 v160 新增的 Block 基类字段 <span class="newbadge">v160 NEW</span></h3>
+<table>
+<tr><th>字段</th><th>类型</th><th>默认值</th><th>位置</th><th>含义</th></tr>
+<tr><td><code>diagonalConfigInventory</code></td><td>boolean</td><td><code>false</code></td><td><code>Block.java:268</code></td><td>对角方向是否纳入配置物品库存</td></tr>
+<tr><td><code>maxConsecutive</code></td><td>int</td><td><code>2</code></td><td><code>Block.java:392</code></td><td><code>instantTransfer</code> 单次连续传输最大数量</td></tr>
+</table>
+<p>另：逻辑编程新增 <code>sensor armor</code>，返回 <code>block.armor</code>（<code>BuildingComp.java:2125</code>）。</p>
+
+<hr />
+<h2 id="storage">七、storage（存储）</h2>
+<h3 id="71-storageblock">7.1 StorageBlock —— 存储方块基类</h3>
+<p><strong>一句话描述</strong>：容器/保险箱的基类，存储物品，可被传送带抽取。</p>
+<ul>
+<li><strong>类全名</strong>：<code>mindustry.world.blocks.storage.StorageBlock</code></li>
+<li><strong>源码路径</strong>：<code>core/src/mindustry/world/blocks/storage/StorageBlock.java</code></li>
+<li><strong>继承</strong>：<code>StorageBlock extends Block</code></li>
+</ul>
+<p><strong>关键构造参数表</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>默认值</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>itemCapacity</td>
+<td>int</td>
+<td>0</td>
+<td>每种物品的存储上限</td>
+</tr>
+<tr>
+<td>coreMerge</td>
+<td>boolean</td>
+<td>true</td>
+<td>是否与核心合并存储</td>
+</tr>
+<tr>
+<td>size</td>
+<td>int</td>
+<td>1</td>
+<td>占地格数</td>
+</tr>
+<tr>
+<td>health</td>
+<td>int</td>
+<td>-1</td>
+<td>生命值</td>
+</tr>
+<tr>
+<td>requirements</td>
+<td>ItemStack[]</td>
+<td>{}</td>
+<td>建造需求</td>
+</tr>
+</tbody>
+</table>
+<p><strong>最小实现</strong>：</p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">import mindustry.world.blocks.storage.StorageBlock;
+import mindustry.world.meta.Category;
+import static mindustry.type.ItemStack.with;
+import mindustry.content.Items;
+
+myVault = new StorageBlock(&quot;my-vault&quot;) {{
+    requirements(Category.effect, with(Items.titanium, 100));
+    size = 2;
+    itemCapacity = 300;
+}};
+</code></pre>
+</div>
+<hr />
+<h3 id="72-unloader">7.2 Unloader —— 卸载器</h3>
+<p><strong>一句话描述</strong>：将指定物品从相邻建筑中抽出并输出到传送带。</p>
+<ul>
+<li><strong>类全名</strong>：<code>mindustry.world.blocks.storage.Unloader</code></li>
+<li><strong>源码路径</strong>：<code>core/src/mindustry/world/blocks/storage/Unloader.java</code></li>
+<li><strong>继承</strong>：<code>Unloader extends Block</code></li>
+</ul>
+<p><strong>关键构造参数表</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>默认值</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>speed</td>
+<td>float</td>
+<td>1f</td>
+<td>每秒卸载次数（60/speed）</td>
+</tr>
+<tr>
+<td>allowCoreUnload</td>
+<td>boolean</td>
+<td>true</td>
+<td>是否允许从核心卸载</td>
+</tr>
+<tr>
+<td>health</td>
+<td>int</td>
+<td>70</td>
+<td>生命值</td>
+</tr>
+<tr>
+<td>size</td>
+<td>int</td>
+<td>1</td>
+<td>占地格数</td>
+</tr>
+<tr>
+<td>requirements</td>
+<td>ItemStack[]</td>
+<td>{}</td>
+<td>建造需求</td>
+</tr>
+</tbody>
+</table>
+<p><strong>最小实现</strong>：</p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">import mindustry.world.blocks.storage.Unloader;
+import mindustry.world.meta.Category;
+import static mindustry.type.ItemStack.with;
+import mindustry.content.Items;
+
+myUnloader = new Unloader(&quot;my-unloader&quot;) {{
+    requirements(Category.distribution, with(Items.titanium, 25, Items.silicon, 30));
+    speed = 60f / 11f;
+}};
+</code></pre>
+</div>
+<hr />
+<h2 id="turrets">八、turrets（炮塔）</h2>
+<h3 id="81-turret">8.1 Turret —— 炮塔基类</h3>
+<p><strong>一句话描述</strong>：所有炮塔的基类，定义瞄准、旋转、射击循环。</p>
+<ul>
+<li><strong>类全名</strong>：<code>mindustry.world.blocks.defense.turrets.Turret</code></li>
+<li><strong>源码路径</strong>：<code>core/src/mindustry/world/blocks/defense/turrets/Turret.java</code></li>
+<li><strong>继承</strong>：<code>Turret extends ReloadTurret extends BaseTurret</code></li>
+</ul>
+<p><strong>关键构造参数表</strong>（跨三级父类）：</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>默认值</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>range</td>
+<td>float</td>
+<td>80f</td>
+<td>最大射程</td>
+</tr>
+<tr>
+<td>rotateSpeed</td>
+<td>float</td>
+<td>5</td>
+<td>旋转速度（度/帧）</td>
+</tr>
+<tr>
+<td>reload</td>
+<td>float</td>
+<td>10f</td>
+<td>装填时间（帧/发）</td>
+</tr>
+<tr>
+<td>shootCone</td>
+<td>float</td>
+<td>8f</td>
+<td>射击角度容差</td>
+</tr>
+<tr>
+<td>inaccuracy</td>
+<td>float</td>
+<td>0f</td>
+<td>子弹散布角度（度）</td>
+</tr>
+<tr>
+<td>targetAir</td>
+<td>boolean</td>
+<td>true</td>
+<td>是否攻击空中单位</td>
+</tr>
+<tr>
+<td>targetGround</td>
+<td>boolean</td>
+<td>true</td>
+<td>是否攻击地面单位</td>
+</tr>
+<tr>
+<td>targetBlocks</td>
+<td>boolean</td>
+<td>true</td>
+<td>是否攻击建筑</td>
+</tr>
+<tr>
+<td>targetPlayers</td>
+<td>boolean</td>
+<td>true</td>
+<td>是否攻击玩家</td>
+</tr>
+<tr>
+<td>targetHealing</td>
+<td>boolean</td>
+<td>false</td>
+<td>是否治疗友方</td>
+</tr>
+<tr>
+<td>maxAmmo</td>
+<td>int</td>
+<td>30</td>
+<td>最大弹药量</td>
+</tr>
+<tr>
+<td>ammoPerShot</td>
+<td>int</td>
+<td>1</td>
+<td>每发消耗弹药量</td>
+</tr>
+<tr>
+<td>shoot</td>
+<td>ShootPattern</td>
+<td>new ShootPattern()</td>
+<td>射击模式</td>
+</tr>
+<tr>
+<td>coolant</td>
+<td>ConsumeLiquidBase</td>
+<td>null</td>
+<td>冷却剂</td>
+</tr>
+<tr>
+<td>size</td>
+<td>int</td>
+<td>1</td>
+<td>占地格数</td>
+</tr>
+<tr>
+<td>health</td>
+<td>int</td>
+<td>-1</td>
+<td>生命值</td>
+</tr>
+<tr>
+<td>requirements</td>
+<td>ItemStack[]</td>
+<td>{}</td>
+<td>建造需求</td>
+</tr>
+</tbody>
+</table>
+<p><strong>最小实现</strong>：</p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">// 一般不直接用 Turret，用其子类 ItemTurret / PowerTurret / LiquidTurret
+</code></pre>
+</div>
+<hr />
+<h3 id="82-itemturret">8.2 ItemTurret —— 物品弹药炮塔</h3>
+<p><strong>一句话描述</strong>：消耗物品作为弹药的炮塔，支持多种物品对应多种子弹。</p>
+<ul>
+<li><strong>类全名</strong>：<code>mindustry.world.blocks.defense.turrets.ItemTurret</code></li>
+<li><strong>源码路径</strong>：<code>core/src/mindustry/world/blocks/defense/turrets/ItemTurret.java</code></li>
+<li><strong>继承</strong>：<code>ItemTurret extends Turret</code></li>
+</ul>
+<p><strong>关键构造参数表</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>默认值</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ammoTypes</td>
+<td>ObjectMap\&lt;Item,BulletType&gt;</td>
+<td>{}</td>
+<td>物品→子弹映射表</td>
+</tr>
+<tr>
+<td>range</td>
+<td>float</td>
+<td>80f</td>
+<td>射程（继承）</td>
+</tr>
+<tr>
+<td>reload</td>
+<td>float</td>
+<td>10f</td>
+<td>装填时间（继承）</td>
+</tr>
+<tr>
+<td>shootCone</td>
+<td>float</td>
+<td>8f</td>
+<td>射击容角（继承）</td>
+</tr>
+<tr>
+<td>size</td>
+<td>int</td>
+<td>1</td>
+<td>占地格数</td>
+</tr>
+<tr>
+<td>requirements</td>
+<td>ItemStack[]</td>
+<td>{}</td>
+<td>建造需求</td>
+</tr>
+</tbody>
+</table>
+<p><strong>最小实现</strong>：</p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">import mindustry.world.blocks.defense.turrets.ItemTurret;
+import mindustry.entities.bullet.BasicBulletType;
+import mindustry.world.meta.Category;
+import static mindustry.type.ItemStack.with;
+import mindustry.content.Items;
+import mindustry.content.Fx;
+import mindustry.graphics.Pal;
+
+myTurret = new ItemTurret(&quot;my-turret&quot;) {{
+    requirements(Category.turret, with(Items.copper, 35));
+    ammo(
+        Items.copper, new BasicBulletType(2.5f, 9) {{
+            width = 7f;
+            height = 9f;
+            lifetime = 60f;
+            hitEffect = Fx.hitBulletColor;
+            backColor = Pal.copperAmmoBack;
+            frontColor = Pal.copperAmmoFront;
+        }}
+    );
+    reload = 30f;
+    range = 90f;
+    shootCone = 10f;
+}};
+</code></pre>
+</div>
+<p><strong>有趣实现：彩虹变色炮塔</strong></p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">import mindustry.world.blocks.defense.turrets.ItemTurret;
+import mindustry.entities.bullet.BasicBulletType;
+import arc.graphics.Color;
+import arc.math.Mathf;
+
+// 子弹颜色随时间彩虹循环
+public class RainbowTurret extends ItemTurret {
+    public RainbowTurret(String name) {
+        super(name);
+    }
+
+    public class RainbowTurretBuild extends ItemTurretBuild {
+        @Override
+        protected void shoot(BulletType ammo) {
+            // 每发子弹 hue 偏移
+            float hue = (Time.time * 2f) % 360f;
+            if(ammo instanceof BasicBulletType b) {
+                b.backColor.fromHsv(hue, 0.8f, 1f);
+                b.frontColor.fromHsv((hue + 60f) % 360f, 0.8f, 1f);
+                b.trailColor = b.backColor;
+            }
+            super.shoot(ammo);
+        }
+    }
+}
+</code></pre>
+</div>
+<p><strong>实现原理</strong>：覆写 <code>TurretBuild.shoot(BulletType)</code>（<code>Turret.java</code> 中射击主逻辑），在调用父类前修改子弹的 <code>backColor/frontColor</code>（<code>BasicBulletType.java:13</code>）。<code>Time.time</code> 是全局帧计数器，驱动 hue 循环。注意这里修改的是共享 BulletType 实例，若需每发独立颜色应 clone 子弹。</p>
+<hr />
+<h3 id="83-powerturret">8.3 PowerTurret —— 电力炮塔</h3>
+<p><strong>一句话描述</strong>：消耗电力而非物品的炮塔，只有一种子弹类型。</p>
+<ul>
+<li><strong>类全名</strong>：<code>mindustry.world.blocks.defense.turrets.PowerTurret</code></li>
+<li><strong>源码路径</strong>：<code>core/src/mindustry/world/blocks/defense/turrets/PowerTurret.java</code></li>
+<li><strong>继承</strong>：<code>PowerTurret extends Turret</code></li>
+</ul>
+<p><strong>关键构造参数表</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>默认值</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>shootType</td>
+<td>BulletType</td>
+<td>null</td>
+<td>唯一的子弹类型</td>
+</tr>
+<tr>
+<td>range</td>
+<td>float</td>
+<td>80f</td>
+<td>射程（继承）</td>
+</tr>
+<tr>
+<td>reload</td>
+<td>float</td>
+<td>10f</td>
+<td>装填时间（继承）</td>
+</tr>
+<tr>
+<td>size</td>
+<td>int</td>
+<td>1</td>
+<td>占地格数</td>
+</tr>
+<tr>
+<td>hasPower</td>
+<td>boolean</td>
+<td>true</td>
+<td>是否需要电力（构造函数自动设）</td>
+</tr>
+<tr>
+<td>requirements</td>
+<td>ItemStack[]</td>
+<td>{}</td>
+<td>建造需求</td>
+</tr>
+</tbody>
+</table>
+<p><strong>最小实现</strong>：</p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">import mindustry.world.blocks.defense.turrets.PowerTurret;
+import mindustry.entities.bullet.BasicBulletType;
+import mindustry.world.meta.Category;
+import static mindustry.type.ItemStack.with;
+import mindustry.content.Items;
+import mindustry.content.Fx;
+
+myLaser = new PowerTurret(&quot;my-laser&quot;) {{
+    requirements(Category.turret, with(Items.copper, 50, Items.lead, 50));
+    shootType = new BasicBulletType(3f, 12) {{
+        width = 6f;
+        height = 8f;
+        lifetime = 60f;
+        hitEffect = Fx.hitLaser;
+    }};
+    reload = 35f;
+    range = 90f;
+    consumePower(3.3f);
+}};
+</code></pre>
+</div>
+<p><strong>有趣实现：超远射程狙击炮塔</strong></p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">import mindustry.world.blocks.defense.turrets.PowerTurret;
+import mindustry.entities.bullet.BasicBulletType;
+import mindustry.world.meta.Category;
+import static mindustry.type.ItemStack.with;
+import mindustry.content.Items;
+import mindustry.content.Fx;
+
+// 超远射程、高伤害、低射速的狙击炮塔
+sniperTurret = new PowerTurret(&quot;sniper-turret&quot;) {{
+    requirements(Category.turret, with(Items.surgeAlloy, 40, Items.silicon, 60, Items.lead, 100));
+    shootType = new BasicBulletType(8f, 80) {{
+        width = 5f;
+        height = 18f;
+        lifetime = 100f;
+        pierce = true;
+        pierceBuilding = true;
+        hitEffect = Fx.hitLaser;
+        shootEffect = Fx.shootBig;
+        trailLength = 10;
+    }};
+    reload = 120f;
+    range = 250f;
+    shootCone = 2f;
+    rotateSpeed = 2f;
+    size = 2;
+    consumePower(5f);
+}};
+</code></pre>
+</div>
+<p><strong>实现原理</strong>：<code>range = 250f</code>（<code>BaseTurret.java:21</code>）是最大射程，<code>reload = 120f</code>（<code>ReloadTurret.java:10</code>）是装填帧，<code>shootCone = 2f</code>（<code>Turret.java:70</code>）是极小容角 = 精准狙击。子弹 <code>pierce = true</code> 穿透建筑和单位。</p>
+<hr />
+<h3 id="84-liquidturret">8.4 LiquidTurret —— 液体炮塔</h3>
+<p><strong>一句话描述</strong>：消耗液体作为弹药的炮塔，支持多种液体对应多种子弹。</p>
+<ul>
+<li><strong>类全名</strong>：<code>mindustry.world.blocks.defense.turrets.LiquidTurret</code></li>
+<li><strong>源码路径</strong>：<code>core/src/mindustry/world/blocks/defense/turrets/LiquidTurret.java</code></li>
+<li><strong>继承</strong>：<code>LiquidTurret extends Turret</code></li>
+</ul>
+<p><strong>关键构造参数表</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>默认值</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ammoTypes</td>
+<td>ObjectMap\&lt;Liquid,BulletType&gt;</td>
+<td>{}</td>
+<td>液体→子弹映射表</td>
+</tr>
+<tr>
+<td>extinguish</td>
+<td>boolean</td>
+<td>true</td>
+<td>是否灭火</td>
+</tr>
+<tr>
+<td>range</td>
+<td>float</td>
+<td>80f</td>
+<td>射程（继承）</td>
+</tr>
+<tr>
+<td>reload</td>
+<td>float</td>
+<td>10f</td>
+<td>装填时间（继承）</td>
+</tr>
+<tr>
+<td>size</td>
+<td>int</td>
+<td>1</td>
+<td>占地格数</td>
+</tr>
+<tr>
+<td>hasLiquids</td>
+<td>boolean</td>
+<td>true</td>
+<td>是否处理液体（构造函数自动设）</td>
+</tr>
+<tr>
+<td>requirements</td>
+<td>ItemStack[]</td>
+<td>{}</td>
+<td>建造需求</td>
+</tr>
+</tbody>
+</table>
+<p><strong>最小实现</strong>：</p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">import mindustry.world.blocks.defense.turrets.LiquidTurret;
+import mindustry.entities.bullet.LiquidBulletType;
+import mindustry.world.meta.Category;
+import static mindustry.type.ItemStack.with;
+import mindustry.content.Items;
+import mindustry.content.Liquids;
+import mindustry.content.Fx;
+
+mySpray = new LiquidTurret(&quot;my-spray&quot;) {{
+    requirements(Category.turret, with(Items.metaglass, 45, Items.lead, 75));
+    ammo(
+        Liquids.water, new LiquidBulletType(Liquids.water) {{
+            knockback = 0.7f;
+        }},
+        Liquids.slag, new LiquidBulletType(Liquids.slag) {{
+            damage = 4;
+        }}
+    );
+    size = 2;
+    reload = 3f;
+    range = 110f;
+    shootEffect = Fx.shootLiquid;
+}};
+</code></pre>
+</div>
+<p><strong>有趣实现：治疗友军炮塔</strong></p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">import mindustry.world.blocks.defense.turrets.LiquidTurret;
+import mindustry.entities.bullet.LiquidBulletType;
+import mindustry.content.Liquids;
+
+// 用水弹治疗友方建筑的炮塔
+public class HealTurret extends LiquidTurret {
+    public HealTurret(String name) {
+        super(name);
+        targetHealing = true;       // 改为治疗友方
+        targetGround = false;       // 不攻击敌方
+        targetBlocks = false;
+    }
+}
+</code></pre>
+</div>
+<p><strong>实现原理</strong>：<code>Turret.java:95-100</code> 定义了 <code>targetHealing/targetGround/targetBlocks/targetAir</code> 四个布尔开关。把 <code>targetHealing</code> 设为 true、其余攻击目标设为 false，炮塔的目标搜索逻辑就会自动选择受伤的友方建筑。子弹类型需为治疗型（如 <code>LiquidBulletType</code> + 水）。</p>
+<hr />
+<h2 id="units">九、units（单位）</h2>
+<h3 id="91-unitfactory">9.1 UnitFactory —— 单位工厂</h3>
+<p><strong>一句话描述</strong>：按计划队列消耗物品和电力生产单位。</p>
+<ul>
+<li><strong>类全名</strong>：<code>mindustry.world.blocks.units.UnitFactory</code></li>
+<li><strong>源码路径</strong>：<code>core/src/mindustry/world/blocks/units/UnitFactory.java</code></li>
+<li><strong>继承</strong>：<code>UnitFactory extends UnitBlock</code></li>
+</ul>
+<p><strong>关键构造参数表</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>默认值</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>plans</td>
+<td>Seq\&lt;UnitPlan&gt;</td>
+<td>{}</td>
+<td>生产计划列表（单位、时间、需求）</td>
+</tr>
+<tr>
+<td>capacities</td>
+<td>int[]</td>
+<td>{}</td>
+<td>各阶段容量</td>
+</tr>
+<tr>
+<td>createSound</td>
+<td>Sound</td>
+<td>Sounds.unitCreate</td>
+<td>完成音效</td>
+</tr>
+<tr>
+<td>size</td>
+<td>int</td>
+<td>1</td>
+<td>占地格数</td>
+</tr>
+<tr>
+<td>hasPower</td>
+<td>boolean</td>
+<td>true</td>
+<td>是否需要电力</td>
+</tr>
+<tr>
+<td>hasItems</td>
+<td>boolean</td>
+<td>true</td>
+<td>是否消耗物品</td>
+</tr>
+<tr>
+<td>requirements</td>
+<td>ItemStack[]</td>
+<td>{}</td>
+<td>建造需求</td>
+</tr>
+</tbody>
+</table>
+<p><strong>最小实现</strong>：</p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">import mindustry.world.blocks.units.UnitFactory;
+import mindustry.type.UnitPlan;
+import mindustry.content.UnitTypes;
+import mindustry.world.meta.Category;
+import static mindustry.type.ItemStack.with;
+import mindustry.content.Items;
+import arc.struct.Seq;
+
+myFactory = new UnitFactory(&quot;my-factory&quot;) {{
+    requirements(Category.units, with(Items.copper, 50, Items.lead, 120, Items.silicon, 80));
+    plans = Seq.with(
+        new UnitPlan(UnitTypes.dagger, 60f * 15, with(Items.silicon, 10, Items.lead, 10))
+    );
+    size = 3;
+    consumePower(1.2f);
+}};
+</code></pre>
+</div>
+<p><strong>有趣实现：批量快速工厂</strong></p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">import mindustry.world.blocks.units.UnitFactory;
+import mindustry.type.UnitPlan;
+import mindustry.content.UnitTypes;
+import mindustry.world.meta.Category;
+import static mindustry.type.ItemStack.with;
+import mindustry.content.Items;
+import arc.struct.Seq;
+
+// 三条产线并行的快速工厂
+fastFactory = new UnitFactory(&quot;fast-factory&quot;) {{
+    requirements(Category.units, with(Items.copper, 80, Items.lead, 150, Items.silicon, 120));
+    plans = Seq.with(
+        new UnitPlan(UnitTypes.dagger, 60f * 8, with(Items.silicon, 8, Items.lead, 8)),
+        new UnitPlan(UnitTypes.flare, 60f * 10, with(Items.silicon, 12)),
+        new UnitPlan(UnitTypes.crawler, 60f * 5, with(Items.silicon, 6, Items.coal, 8))
+    );
+    size = 3;
+    consumePower(2.5f);
+}};
+</code></pre>
+</div>
+<p><strong>实现原理</strong>：<code>plans</code>（<code>UnitFactory.java:39</code>）是 <code>Seq&lt;UnitPlan&gt;</code>，每个 <code>UnitPlan</code> 包含单位类型、生产时间（帧）、需求物品。多条 plan 会在建造菜单中可选切换，<code>size = 3</code> 决定同时可容纳几个单位队列。</p>
+<hr />
+<h3 id="92-reconstructor">9.2 Reconstructor —— 重组器</h3>
+<p><strong>一句话描述</strong>：将低级单位升级为高级单位。</p>
+<ul>
+<li><strong>类全名</strong>：<code>mindustry.world.blocks.units.Reconstructor</code></li>
+<li><strong>源码路径</strong>：<code>core/src/mindustry/world/blocks/units/Reconstructor.java</code></li>
+<li><strong>继承</strong>：<code>Reconstructor extends UnitBlock</code></li>
+</ul>
+<p><strong>关键构造参数表</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>默认值</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>constructTime</td>
+<td>float</td>
+<td>120f</td>
+<td>升级耗时（帧）</td>
+</tr>
+<tr>
+<td>upgrades</td>
+<td>Seq\&lt;UnitType[]&gt;</td>
+<td>{}</td>
+<td>升级映射（每对 [旧,新]）</td>
+</tr>
+<tr>
+<td>capacities</td>
+<td>int[]</td>
+<td>{}</td>
+<td>容量</td>
+</tr>
+<tr>
+<td>size</td>
+<td>int</td>
+<td>1</td>
+<td>占地格数</td>
+</tr>
+<tr>
+<td>hasPower</td>
+<td>boolean</td>
+<td>true</td>
+<td>是否需要电力</td>
+</tr>
+<tr>
+<td>requirements</td>
+<td>ItemStack[]</td>
+<td>{}</td>
+<td>建造需求</td>
+</tr>
+</tbody>
+</table>
+<p><strong>最小实现</strong>：</p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">import mindustry.world.blocks.units.Reconstructor;
+import mindustry.content.UnitTypes;
+import mindustry.world.meta.Category;
+import static mindustry.type.ItemStack.with;
+import mindustry.content.Items;
+
+myReconstructor = new Reconstructor(&quot;my-reconstructor&quot;) {{
+    requirements(Category.units, with(Items.copper, 200, Items.lead, 120, Items.silicon, 90));
+    size = 3;
+    consumePower(3f);
+    consumeItems(with(Items.silicon, 40, Items.graphite, 40));
+    constructTime = 60f * 10f;
+    upgrades.addAll(
+        new UnitType[]{UnitTypes.dagger, UnitTypes.mace}
+    );
+}};
+</code></pre>
+</div>
+<hr />
+<h2 id="payloads">十、payloads（载荷）</h2>
+<h3 id="101-payloadconveyor">10.1 PayloadConveyor —— 载荷传送带</h3>
+<p><strong>一句话描述</strong>：运输大型载荷（建筑/单位）的 3x3 传送带。</p>
+<ul>
+<li><strong>类全名</strong>：<code>mindustry.world.blocks.payloads.PayloadConveyor</code></li>
+<li><strong>源码路径</strong>：<code>core/src/mindustry/world/blocks/payloads/PayloadConveyor.java</code></li>
+<li><strong>继承</strong>：<code>PayloadConveyor extends Block</code></li>
+</ul>
+<p><strong>关键构造参数表</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>默认值</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>moveTime</td>
+<td>float</td>
+<td>45f</td>
+<td>传送时间（帧）</td>
+</tr>
+<tr>
+<td>moveForce</td>
+<td>float</td>
+<td>201f</td>
+<td>推力</td>
+</tr>
+<tr>
+<td>payloadLimit</td>
+<td>float</td>
+<td>3f</td>
+<td>最大载荷尺寸</td>
+</tr>
+<tr>
+<td>interp</td>
+<td>Interp</td>
+<td>Interp.pow5</td>
+<td>移动插值</td>
+</tr>
+<tr>
+<td>pushUnits</td>
+<td>boolean</td>
+<td>true</td>
+<td>是否推动单位</td>
+</tr>
+<tr>
+<td>size</td>
+<td>int</td>
+<td>3</td>
+<td>占地格数（默认 3）</td>
+</tr>
+<tr>
+<td>requirements</td>
+<td>ItemStack[]</td>
+<td>{}</td>
+<td>建造需求</td>
+</tr>
+</tbody>
+</table>
+<p><strong>最小实现</strong>：</p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">import mindustry.world.blocks.payloads.PayloadConveyor;
+import mindustry.world.meta.Category;
+import static mindustry.type.ItemStack.with;
+import mindustry.content.Items;
+
+myPayloadConveyor = new PayloadConveyor(&quot;my-payload-conveyor&quot;) {{
+    requirements(Category.units, with(Items.graphite, 10, Items.copper, 10));
+    canOverdrive = false;
+}};
+</code></pre>
+</div>
+<hr />
+<h3 id="102-payloadmassdriver">10.2 PayloadMassDriver —— 载荷加速器</h3>
+<p><strong>一句话描述</strong>：远距离发射载荷到配对接收器。</p>
+<ul>
+<li><strong>类全名</strong>：<code>mindustry.world.blocks.payloads.PayloadMassDriver</code></li>
+<li><strong>源码路径</strong>：<code>core/src/mindustry/world/blocks/payloads/PayloadMassDriver.java</code></li>
+<li><strong>继承</strong>：<code>PayloadMassDriver extends PayloadBlock</code></li>
+</ul>
+<p><strong>关键构造参数表</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>默认值</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>range</td>
+<td>float</td>
+<td>100f</td>
+<td>最大射程</td>
+</tr>
+<tr>
+<td>reload</td>
+<td>float</td>
+<td>30f</td>
+<td>装填时间</td>
+</tr>
+<tr>
+<td>chargeTime</td>
+<td>float</td>
+<td>100f</td>
+<td>充能时间</td>
+</tr>
+<tr>
+<td>maxPayloadSize</td>
+<td>float</td>
+<td>3</td>
+<td>最大载荷尺寸</td>
+</tr>
+<tr>
+<td>knockback</td>
+<td>float</td>
+<td>5f</td>
+<td>后坐力</td>
+</tr>
+<tr>
+<td>rotateSpeed</td>
+<td>float</td>
+<td>5f</td>
+<td>旋转速度</td>
+</tr>
+<tr>
+<td>size</td>
+<td>int</td>
+<td>1</td>
+<td>占地格数</td>
+</tr>
+<tr>
+<td>hasPower</td>
+<td>boolean</td>
+<td>true</td>
+<td>是否需要电力</td>
+</tr>
+<tr>
+<td>requirements</td>
+<td>ItemStack[]</td>
+<td>{}</td>
+<td>建造需求</td>
+</tr>
+</tbody>
+</table>
+<p><strong>最小实现</strong>：</p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">import mindustry.world.blocks.payloads.PayloadMassDriver;
+import mindustry.world.meta.Category;
+import static mindustry.type.ItemStack.with;
+import mindustry.content.Items;
+
+myDriver = new PayloadMassDriver(&quot;my-driver&quot;) {{
+    requirements(Category.units, with(Items.tungsten, 40, Items.silicon, 50, Items.graphite, 20));
+    size = 3;
+    reload = 45f;
+    chargeTime = 70f;
+    range = 700f;
+    maxPayloadSize = 2.5f;
+    consumePower(0.5f);
+}};
+</code></pre>
+</div>
+<hr />
+<h2 id="sandbox">十一、sandbox（沙盒）</h2>
+<h3 id="111-itemsource">11.1 ItemSource —— 物品源</h3>
+<p><strong>一句话描述</strong>：沙盒模式无限产出指定物品的方块。</p>
+<ul>
+<li><strong>类全名</strong>：<code>mindustry.world.blocks.sandbox.ItemSource</code></li>
+<li><strong>源码路径</strong>：<code>core/src/mindustry/world/blocks/sandbox/ItemSource.java</code></li>
+<li><strong>继承</strong>：<code>ItemSource extends Block</code></li>
+</ul>
+<p><strong>关键构造参数表</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>默认值</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>itemsPerSecond</td>
+<td>int</td>
+<td>100</td>
+<td>每秒产出物品数</td>
+</tr>
+<tr>
+<td>health</td>
+<td>int</td>
+<td>-1</td>
+<td>生命值</td>
+</tr>
+<tr>
+<td>size</td>
+<td>int</td>
+<td>1</td>
+<td>占地格数</td>
+</tr>
+</tbody>
+</table>
+<p><strong>最小实现</strong>：</p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">import mindustry.world.blocks.sandbox.ItemSource;
+import mindustry.world.meta.Category;
+import mindustry.world.meta.BuildVisibility;
+
+mySource = new ItemSource(&quot;my-source&quot;) {{
+    requirements(Category.distribution, BuildVisibility.sandboxOnly, with());
+    alwaysUnlocked = true;
+}};
+</code></pre>
+</div>
+<hr />
+<h3 id="112-powersource">11.2 PowerSource —— 电力源</h3>
+<p><strong>一句话描述</strong>：沙盒模式无限输出电力的节点。</p>
+<ul>
+<li><strong>类全名</strong>：<code>mindustry.world.blocks.sandbox.PowerSource</code></li>
+<li><strong>源码路径</strong>：<code>core/src/mindustry/world/blocks/sandbox/PowerSource.java</code></li>
+<li><strong>继承</strong>：<code>PowerSource extends PowerNode</code></li>
+</ul>
+<p><strong>关键构造参数表</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>默认值</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>powerProduction</td>
+<td>float</td>
+<td>10000f</td>
+<td>发电量（原版为 1000000/60）</td>
+</tr>
+<tr>
+<td>maxNodes</td>
+<td>int</td>
+<td>100</td>
+<td>最大连接数</td>
+</tr>
+<tr>
+<td>laserRange</td>
+<td>float</td>
+<td>6</td>
+<td>连接距离（继承）</td>
+</tr>
+<tr>
+<td>size</td>
+<td>int</td>
+<td>1</td>
+<td>占地格数</td>
+</tr>
+</tbody>
+</table>
+<p><strong>最小实现</strong>：</p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">import mindustry.world.blocks.sandbox.PowerSource;
+import mindustry.world.meta.Category;
+import mindustry.world.meta.BuildVisibility;
+import static mindustry.type.ItemStack.with;
+
+myPowerSource = new PowerSource(&quot;my-power-source&quot;) {{
+    requirements(Category.power, BuildVisibility.sandboxOnly, with());
+    powerProduction = 1000000f / 60f;
+    alwaysUnlocked = true;
+}};
+</code></pre>
+</div>
+<hr />
+<h2 id="fx">十二、Fx 视觉特效</h2>
+<h3 id="121">12.1 常用内置特效速查表</h3>
+<p>以下特效均为 <code>mindustry.content.Fx</code> 的静态字段，类型为 <code>arc.graphics.g2d.Effect</code>。</p>
+<table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>效果描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Fx.none</td>
+<td>空特效（什么都不做）</td>
+</tr>
+<tr>
+<td>Fx.shootSmall</td>
+<td>小型射击特效（枪口火光）</td>
+</tr>
+<tr>
+<td>Fx.shootBig</td>
+<td>大型射击特效</td>
+</tr>
+<tr>
+<td>Fx.shootSmallFlame</td>
+<td>小型火焰射击特效</td>
+</tr>
+<tr>
+<td>Fx.shootLiquid</td>
+<td>液体喷射特效</td>
+</tr>
+<tr>
+<td>Fx.shootPayloadDriver</td>
+<td>载荷加速器射击特效</td>
+</tr>
+<tr>
+<td>Fx.shootHeal</td>
+<td>治疗射击特效（绿色）</td>
+</tr>
+<tr>
+<td>Fx.hitBulletSmall</td>
+<td>子弹命中小特效</td>
+</tr>
+<tr>
+<td>Fx.hitBulletBig</td>
+<td>子弹命中大特效</td>
+</tr>
+<tr>
+<td>Fx.hitFlameSmall</td>
+<td>火焰命中特效</td>
+</tr>
+<tr>
+<td>Fx.hitFlamePlasma</td>
+<td>等离子火焰命中特效</td>
+</tr>
+<tr>
+<td>Fx.hitLiquid</td>
+<td>液体命中特效</td>
+</tr>
+<tr>
+<td>Fx.hitLaser</td>
+<td>激光命中特效</td>
+</tr>
+<tr>
+<td>Fx.hitLaserBlast</td>
+<td>激光爆炸命中特效</td>
+</tr>
+<tr>
+<td>Fx.hitLancer</td>
+<td>长矛（Lancer）命中特效</td>
+</tr>
+<tr>
+<td>Fx.hitEmpSpark</td>
+<td>EMP 电火花特效</td>
+</tr>
+<tr>
+<td>Fx.explosion</td>
+<td>通用爆炸特效</td>
+</tr>
+<tr>
+<td>Fx.coreExplosion</td>
+<td>核心爆炸特效</td>
+</tr>
+<tr>
+<td>Fx.sparkExplosion</td>
+<td>火花爆炸特效</td>
+</tr>
+<tr>
+<td>Fx.shockwave</td>
+<td>冲击波特效</td>
+</tr>
+<tr>
+<td>Fx.spawnShockwave</td>
+<td>出生冲击波特效</td>
+</tr>
+<tr>
+<td>Fx.lightning</td>
+<td>闪电特效</td>
+</tr>
+<tr>
+<td>Fx.placeBlock</td>
+<td>放置方块特效</td>
+</tr>
+<tr>
+<td>Fx.breakBlock</td>
+<td>破坏方块特效</td>
+</tr>
+<tr>
+<td>Fx.breakProp</td>
+<td>破坏装饰物特效</td>
+</tr>
+<tr>
+<td>Fx.healWave</td>
+<td>修复波特效</td>
+</tr>
+<tr>
+<td>Fx.healWaveMend</td>
+<td>修复投影仪波特效</td>
+</tr>
+<tr>
+<td>Fx.overdriveWave</td>
+<td>加速投影仪波特效</td>
+</tr>
+<tr>
+<td>Fx.overdriven</td>
+<td>加速状态特效</td>
+</tr>
+<tr>
+<td>Fx.overclocked</td>
+<td>超频状态特效</td>
+</tr>
+<tr>
+<td>Fx.burning</td>
+<td>燃烧状态特效</td>
+</tr>
+<tr>
+<td>Fx.freezing</td>
+<td>冰冻状态特效</td>
+</tr>
+<tr>
+<td>Fx.wet</td>
+<td>潮湿状态特效</td>
+</tr>
+<tr>
+<td>Fx.melting</td>
+<td>融化状态特效</td>
+</tr>
+<tr>
+<td>Fx.sapped</td>
+<td>sap 状态特效</td>
+</tr>
+<tr>
+<td>Fx.oily</td>
+<td>焦油状态特效</td>
+</tr>
+<tr>
+<td>Fx.corrosionVapor</td>
+<td>腐蚀蒸汽特效</td>
+</tr>
+<tr>
+<td>Fx.shieldBreak</td>
+<td>护盾破碎特效</td>
+</tr>
+<tr>
+<td>Fx.absorb</td>
+<td>护盾吸收特效</td>
+</tr>
+<tr>
+<td>Fx.forceShrink</td>
+<td>力场收缩特效</td>
+</tr>
+<tr>
+<td>Fx.dooropen</td>
+<td>开门特效</td>
+</tr>
+<tr>
+<td>Fx.doorclose</td>
+<td>关门特效</td>
+</tr>
+<tr>
+<td>Fx.mine</td>
+<td>钻头采矿特效</td>
+</tr>
+<tr>
+<td>Fx.mineBig</td>
+<td>大钻头采矿特效</td>
+</tr>
+<tr>
+<td>Fx.pulverize</td>
+<td>粉碎特效</td>
+</tr>
+<tr>
+<td>Fx.pulverizeSmall</td>
+<td>小型粉碎特效</td>
+</tr>
+<tr>
+<td>Fx.pulverizeMedium</td>
+<td>中型粉碎特效</td>
+</tr>
+<tr>
+<td>Fx.reactorsmoke</td>
+<td>反应堆烟雾特效</td>
+</tr>
+<tr>
+<td>Fx.smoke</td>
+<td>通用烟雾特效</td>
+</tr>
+<tr>
+<td>Fx.smokePuff</td>
+<td>烟雾团特效</td>
+</tr>
+<tr>
+<td>Fx.itemTransfer</td>
+<td>物品传输特效</td>
+</tr>
+<tr>
+<td>Fx.unitSpawn</td>
+<td>单位生成特效</td>
+</tr>
+<tr>
+<td>Fx.regenParticle</td>
+<td>修复粒子特效</td>
+</tr>
+</tbody>
+</table>
+<h3 id="122-effect">12.2 自定义 Effect 最小实现</h3>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">import arc.graphics.g2d.*;
+import arc.math.*;
+import arc.util.*;
+import mindustry.content.Fx;
+
+// 创建一个自定义视觉特效：旋转的彩色圆环
+public class MyEffects {
+    public static Effect ringBurst = new Effect(20f, e -&gt; {
+        Draw.color(e.color);
+        Lines.stroke(2f * e.fout());
+        for(int i = 0; i &lt; 6; i++) {
+            Tmp.v1.trns(i * 60f + e.fin() * 180f, e.fin() * 20f);
+            Lines.poly(e.x + Tmp.v1.x, e.y + Tmp.v1.y, 6, 4f * e.fout());
+        }
+        Draw.reset();
+    });
+}
+
+// 在任意位置触发：
+// MyEffects.ringBurst.at(x, y, 0, Color.red);
+</code></pre>
+</div>
+<p><strong>实现原理</strong>：<code>new Effect(lifetime, renderer)</code> 构造函数接收一个 <code>EffectRenderer</code> lambda，参数 <code>e</code> 是 <code>EffectState</code>。<code>e.x/e.y</code> 是位置，<code>e.fin()</code> 是 0~1 进度，<code>e.fout()</code> 是反向进度。用 <code>Draw.color()</code> / <code>Lines.stroke()</code> / <code>Lines.poly()</code> 绘制图形，<code>Draw.reset()</code> 恢复状态。触发时调用 <code>effect.at(x, y, rotation, color)</code>。</p>
+<hr />
+<h2 id="statuseffect">十三、StatusEffect 状态效果</h2>
+<h3 id="131">13.1 关键构造参数表</h3>
+<ul>
+<li><strong>类全名</strong>：<code>mindustry.type.StatusEffect</code></li>
+<li><strong>源码路径</strong>：<code>core/src/mindustry/type/StatusEffect.java</code></li>
+<li><strong>继承</strong>：<code>StatusEffect extends UnlockableContent</code></li>
+<li><strong>构造函数</strong>：<code>StatusEffect(String name)</code>（<code>StatusEffect.java:75</code>）</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>默认值</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>damageMultiplier</td>
+<td>float</td>
+<td>1f</td>
+<td>单位造成伤害的倍率</td>
+</tr>
+<tr>
+<td>healthMultiplier</td>
+<td>float</td>
+<td>1f</td>
+<td>单位生命值倍率</td>
+</tr>
+<tr>
+<td>speedMultiplier</td>
+<td>float</td>
+<td>1f</td>
+<td>单位移动速度倍率</td>
+</tr>
+<tr>
+<td>reloadMultiplier</td>
+<td>float</td>
+<td>1f</td>
+<td>单位武器装填倍率</td>
+</tr>
+<tr>
+<td>buildSpeedMultiplier</td>
+<td>float</td>
+<td>1f</td>
+<td>单位建造速度倍率</td>
+</tr>
+<tr>
+<td>dragMultiplier</td>
+<td>float</td>
+<td>1f</td>
+<td>单位拖拽倍率</td>
+</tr>
+<tr>
+<td>damage</td>
+<td>float</td>
+<td>0</td>
+<td>每帧持续伤害（负值为治疗）</td>
+</tr>
+<tr>
+<td>intervalDamageTime</td>
+<td>float</td>
+<td>0</td>
+<td>间隔伤害间隔（帧），&lt;=0 禁用</td>
+</tr>
+<tr>
+<td>intervalDamage</td>
+<td>float</td>
+<td>0</td>
+<td>间隔伤害量</td>
+</tr>
+<tr>
+<td>intervalDamagePierce</td>
+<td>boolean</td>
+<td>false</td>
+<td>间隔伤害是否穿甲</td>
+</tr>
+<tr>
+<td>transitionDamage</td>
+<td>float</td>
+<td>0f</td>
+<td>亲和转换时伤害</td>
+</tr>
+<tr>
+<td>disarm</td>
+<td>boolean</td>
+<td>false</td>
+<td>是否禁用武器</td>
+</tr>
+<tr>
+<td>effectChance</td>
+<td>float</td>
+<td>0.15f</td>
+<td>随机特效出现概率</td>
+</tr>
+<tr>
+<td>permanent</td>
+<td>boolean</td>
+<td>false</td>
+<td>是否永久</td>
+</tr>
+<tr>
+<td>reactive</td>
+<td>boolean</td>
+<td>false</td>
+<td>是否仅与其他效果反应</td>
+</tr>
+<tr>
+<td>show</td>
+<td>boolean</td>
+<td>true</td>
+<td>是否在数据库显示</td>
+</tr>
+<tr>
+<td>color</td>
+<td>Color</td>
+<td>Color.white</td>
+<td>效果颜色</td>
+</tr>
+<tr>
+<td>effect</td>
+<td>Effect</td>
+<td>Fx.none</td>
+<td>随机视觉特效</td>
+</tr>
+<tr>
+<td>applyEffect</td>
+<td>Effect</td>
+<td>Fx.none</td>
+<td>施加时特效</td>
+</tr>
+<tr>
+<td>applyColor</td>
+<td>Color</td>
+<td>Color.white</td>
+<td>施加特效颜色</td>
+</tr>
+<tr>
+<td>affinities</td>
+<td>ObjectSet\&lt;StatusEffect&gt;</td>
+<td>{}</td>
+<td>亲和效果集</td>
+</tr>
+<tr>
+<td>opposites</td>
+<td>ObjectSet\&lt;StatusEffect&gt;</td>
+<td>{}</td>
+<td>对立效果集</td>
+</tr>
+</tbody>
+</table>
+<h3 id="132">13.2 常用内置效果速查表</h3>
+<p>以下为 <code>mindustry.content.StatusEffects</code> 的静态字段：</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>颜色</th>
+<th>核心效果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>none</td>
+<td>-</td>
+<td>无效果</td>
+</tr>
+<tr>
+<td>burning</td>
+<td>#ffc455</td>
+<td>0.167 持续伤害，与 wet/freezing 对立</td>
+</tr>
+<tr>
+<td>freezing</td>
+<td>#6ecdec</td>
+<td>0.6x 速度，0.8x 生命，与 melting/burning 对立</td>
+</tr>
+<tr>
+<td>unmoving</td>
+<td>Pal.gray</td>
+<td>速度 0（完全定身）</td>
+</tr>
+<tr>
+<td>slow</td>
+<td>Pal.lightishGray</td>
+<td>0.4x 速度（隐藏）</td>
+</tr>
+<tr>
+<td>fast</td>
+<td>Pal.boostTo</td>
+<td>1.6x 速度</td>
+</tr>
+<tr>
+<td>wet</td>
+<td>Color.royal</td>
+<td>0.94x 速度，与 shocked 亲和</td>
+</tr>
+<tr>
+<td>muddy</td>
+<td>#46382a</td>
+<td>0.94x 速度（隐藏）</td>
+</tr>
+<tr>
+<td>melting</td>
+<td>#ffa166</td>
+<td>0.8x 速度，0.8x 生命，0.3 伤害</td>
+</tr>
+<tr>
+<td>sapped</td>
+<td>Pal.sap</td>
+<td>0.7x 速度，0.8x 生命</td>
+</tr>
+<tr>
+<td>electrified</td>
+<td>Pal.heal</td>
+<td>0.7x 速度，0.6x 装填</td>
+</tr>
+<tr>
+<td>sporeSlowed</td>
+<td>Pal.spore</td>
+<td>0.8x 速度</td>
+</tr>
+<tr>
+<td>tarred</td>
+<td>#313131</td>
+<td>0.6x 速度，与 melting/burning 亲和</td>
+</tr>
+<tr>
+<td>overdrive</td>
+<td>Pal.accent</td>
+<td>1.15x 速度，1.4x 伤害，永久，自修复</td>
+</tr>
+<tr>
+<td>overclock</td>
+<td>Pal.accent</td>
+<td>1.15x 速度/伤害，1.25x 装填</td>
+</tr>
+<tr>
+<td>shielded</td>
+<td>Pal.accent</td>
+<td>3x 生命（隐藏）</td>
+</tr>
+<tr>
+<td>boss</td>
+<td>Team.crux.color</td>
+<td>1.3x 伤害，1.5x 生命，永久</td>
+</tr>
+<tr>
+<td>shocked</td>
+<td>Pal.lancerLaser</td>
+<td>反应型（与 wet 亲和）</td>
+</tr>
+<tr>
+<td>blasted</td>
+<td>#ff795e</td>
+<td>反应型（与 freezing 亲和）</td>
+</tr>
+<tr>
+<td>corroded</td>
+<td>#e4ffd6</td>
+<td>每 20 帧 15 点间隔伤害</td>
+</tr>
+<tr>
+<td>disarmed</td>
+<td>#e9ead3</td>
+<td>禁用武器（隐藏）</td>
+</tr>
+<tr>
+<td>invincible</td>
+<td>-</td>
+<td>生命无限（隐藏）</td>
+</tr>
+<tr>
+<td>dynamic</td>
+<td>-</td>
+<td>动态效果占位（隐藏，永久）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="133-statuseffect">13.3 自定义 StatusEffect 最小实现</h3>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">import mindustry.type.StatusEffect;
+import mindustry.content.Fx;
+import arc.graphics.Color;
+
+// 自定义状态：中毒，持续伤害并减速
+public class MyStatusEffects {
+    public static StatusEffect poison;
+
+    public static void load() {
+        poison = new StatusEffect(&quot;poison&quot;) {{
+            color = Color.valueOf(&quot;7fff55&quot;);
+            damage = 0.1f;               // 每帧 0.1 伤害
+            speedMultiplier = 0.7f;      // 减速 30%
+            effect = Fx.sapped;           // 随机特效
+            effectChance = 0.1f;
+        }};
+    }
+}
+
+// 使用：unit.apply(MyStatusEffects.poison, 120f); // 施加 2 秒
+</code></pre>
+</div>
+<p><strong>有趣实现：失重加速效果</strong></p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">import mindustry.type.StatusEffect;
+import mindustry.content.Fx;
+import arc.graphics.Color;
+
+// 单位移动极快但受伤害增加
+public class OverdriveBoost extends StatusEffect {
+    public OverdriveBoost(String name) {
+        super(name);
+        color = Pal.accent.cpy();
+        speedMultiplier = 2.5f;       // 2.5 倍速度
+        damageMultiplier = 1.5f;      // 1.5 倍伤害
+        reloadMultiplier = 1.5f;      // 1.5 倍装填
+        healthMultiplier = 0.7f;      // 但血量降至 70%
+        effect = Fx.overdriven;
+        effectChance = 0.07f;
+        permanent = true;
+    }
+}
+</code></pre>
+</div>
+<p><strong>实现原理</strong>：<code>speedMultiplier</code>（<code>StatusEffect.java:23</code>）直接乘到单位移动速度，<code>damageMultiplier</code>（<code>StatusEffect.java:19</code>）影响武器伤害，<code>healthMultiplier</code>（<code>StatusEffect.java:21</code>）影响最大血量。原版 <code>overdrive</code>（<code>StatusEffects.java:153</code>）就是类似配置：1.15x 速度、1.4x 伤害、0.95x 生命、永久。</p>
+<p><strong>有趣实现：扩散中毒效果</strong></p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">import mindustry.type.StatusEffect;
+import mindustry.gen.Unit;
+import mindustry.gen.StatusEntry;
+import mindustry.content.Fx;
+import arc.graphics.Color;
+import arc.math.Mathf;
+
+// 中毒会每 60 帧传染给附近敌方单位
+public class SpreadPoison extends StatusEffect {
+    public SpreadPoison(String name) {
+        super(name);
+        color = Color.valueOf(&quot;7fff55&quot;);
+        damage = 0.1f;
+        speedMultiplier = 0.7f;
+        effect = Fx.sapped;
+        effectChance = 0.1f;
+    }
+
+    @Override
+    public void update(Unit unit, StatusEntry entry) {
+        super.update(unit, entry);
+        // 每 60 帧传染一次
+        if(Mathf.chanceDelta(1f / 60f)) {
+            unit.group.intersect(unit.x - 10f, unit.y - 10f, 20f, 20f, other -&gt; {
+                if(other != unit &amp;&amp; other.team != unit.team &amp;&amp; other.isGrounded()) {
+                    other.apply(this, 120f);
+                }
+            });
+        }
+    }
+}
+</code></pre>
+</div>
+<p><strong>实现原理</strong>：覆写 <code>StatusEffect.update(Unit, StatusEntry)</code>（<code>StatusEffect.java:145</code>），先调用 <code>super.update()</code> 执行基础伤害逻辑，再用 <code>Mathf.chanceDelta(1f/60f)</code> 控制传染频率，通过 <code>unit.group.intersect()</code> 查找附近单位并调用 <code>other.apply(this, duration)</code> 施加自身状态。</p>
+<hr />
+<h2 id="block--building-绑定机制深度解析">附录：Block ↔ Building 绑定机制深度解析</h2>
+<blockquote>
+<p>本节是理解所有 Java 模组"自定义方块为什么能自动调用自定义逻辑"的核心。
+所有源码行号基于 v159.7（HEAD <code>b3317f3</code>）。</p>
+</blockquote>
+<h3>一、机制概述</h3>
+<p><strong>Block 是"类型/模版"，Building 是"实例/实体"。</strong> 一个 Block 类定义了这种方块的所有静态属性（大小、血量、贴图），游戏世界中每放置一块该方块，就由 Block 自动创建一个对应的 Building 实例来承载运行时状态与行为。</p>
+<p>两者的绑定<strong>不是靠命名约定，而是靠 Java 反射自动完成的</strong>。只要你把 Building 子类写成 Block 的内部类，游戏构造 Block 对象时就会自动扫描并绑定。</p>
+<hr />
+<h3>二、核心源码解析</h3>
+<h4>2.1 <code>initBuilding()</code> 方法（Block.java:1241-1278）</h4>
+<p>这是整个绑定机制的核心，在 Block 构造函数中被调用（<code>Block.java:446</code>）。逐行讲解：</p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">// Block.java:1241-1278
+public void initBuilding(){
+    // 1. 从当前类开始，若为匿名类则取其父类
+    Class&lt;?&gt; current = getClass();
+    if(current.isAnonymousClass()) current = current.getSuperclass();
+
+    // 2. 记录"主子类"——非匿名的那个类
+    subclass = current;  // Block.java:397-398，注释 "Main subclass. Non-anonymous."
+
+    // 3. 向上遍历父类链，直到找到一个声明了 Building 子类内部类的类
+    while(buildType == null &amp;&amp; Block.class.isAssignableFrom(current)){
+        // 用 Structs.find 找第一个"是 Building 子类且不是接口"的内部类
+        Class&lt;?&gt; type = Structs.find(current.getDeclaredClasses(),
+            t -&gt; Building.class.isAssignableFrom(t) &amp;&amp; !t.isInterface());
+
+        if(type != null){
+            // 4. 拿到该内部类的构造函数（参数必须是外层 Block 类型）
+            try{
+                java.lang.reflect.Constructor&lt;?&gt; cons =
+                    type.getDeclaredConstructor(type.getDeclaringClass());
+                // 5. 绑定为 buildType：一个工厂方法，传入 this 就能 new 出 Building 实例
+                buildType = () -&gt; {
+                    try{
+                        return (Building) cons.newInstance(this);
+                    }catch(Exception e){
+                        throw new RuntimeException(e);
+                    }
+                };
+            }catch(Exception e){
+                throw new RuntimeException(e);
+            }
+        }
+
+        // 6. 继续向上找父类
+        current = current.getSuperclass();
+    }
+
+    // 7. 兜底：如果一路向上都没找到，就用默认的 Building::create
+    if(buildType == null){  // Block.java:1274-1276
+        buildType = Building::create;
+    }
+}
+</code></pre>
+</div>
+<p><strong>关键流程总结：</strong></p>
+<ol>
+<li>从 <code>this.getClass()</code> 开始，匿名类则跳到父类</li>
+<li>沿继承链向上遍历每一层</li>
+<li>每层用 <code>getDeclaredClasses()</code> 找内部类</li>
+<li>筛出"第一个是 Building 子类的内部类"</li>
+<li>拿到它的构造函数，包成 <code>buildType</code> 工厂</li>
+<li>找到就停，找不到就继续往上找</li>
+<li>全链都没有 → 兜底 <code>Building::create</code></li>
+</ol>
+<h4>2.2 <code>buildType</code> 字段（Block.java:401-403）</h4>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">// Block.java:401-403
+public Prov&lt;Building&gt; buildType = null;
+// 注释原文："Set manually if modded"
+</code></pre>
+</div>
+<p><code>buildType</code> 是一个 <code>Prov&lt;Building&gt;</code>（无参 Supplier），调用它就 new 出一个新的 Building 实例。默认 <code>null</code>，由 <code>initBuilding()</code> 自动填充。</p>
+<p><strong>"Set manually if modded" 的含义</strong>：如果你用匿名类写法（<code>new Wall("x"){{...}}</code>），自动绑定会回退到父类的 Building。这时候想自定义 Building，就得手动赋值。</p>
+<h4>2.3 兜底 <code>Building::create</code>（Block.java:1274-1276）</h4>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">// gen/Building.java:1208（由 KAPT 生成）
+public static Building create(){
+    return new Building();
+}
+</code></pre>
+</div>
+<p>当反射一路向上都没找到任何 Building 子类内部类时，就用这个兜底。出来的 Building 是空壳，只有最基础的方法，没有任何自定义行为。</p>
+<h4>2.4 匿名类处理（Block.java:1246-1248）</h4>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">Class&lt;?&gt; current = getClass();
+if(current.isAnonymousClass()) current = current.getSuperclass();
+</code></pre>
+</div>
+<p><strong>为什么要跳过匿名类？</strong> 因为匿名类（<code>new Wall("x"){{ ... }}</code>）本身没有命名内部类，直接在它上面 <code>getDeclaredClasses()</code> 永远找不到东西。所以自动跳到它的父类（也就是 Wall 本身），然后在 Wall 上找 <code>WallBuild</code>。</p>
+<hr />
+<h3>三、官方证据：反射不依赖命名</h3>
+<p>很多新手以为"内部类必须叫 <code>XxxBuild</code> 才能绑定"——<strong>完全不是</strong>。反射只看一件事：<strong>是不是 Building 子类</strong>。命名随意。</p>
+<table>
+<thead>
+<tr>
+<th>官方类</th>
+<th>内部类名</th>
+<th>源码位置</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PowerTurret</code></td>
+<td><code>PowerTurretBuild</code></td>
+<td>PowerTurret.java:26</td>
+</tr>
+<tr>
+<td><code>Turret</code></td>
+<td><code>TurretBuild</code></td>
+<td>Turret.java:283</td>
+</tr>
+<tr>
+<td><code>Door</code></td>
+<td><code>DoorBuild</code></td>
+<td>Door.java</td>
+</tr>
+<tr>
+<td><code>ForceProjector</code></td>
+<td><code>ForceBuild</code></td>
+<td>ForceProjector.java</td>
+</tr>
+</tbody>
+</table>
+<p>命名风格五花八门，有的带前缀有的不带，但全部正常工作——因为反射不看名字，只看类型继承关系。</p>
+<p><strong>Blocks.java 中的匿名类回退绑定：</strong></p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">// Blocks.java 中大量这种写法（605 处双花括号匿名类）
+public static Block copperWall;
+
+static{
+    copperWall = new Wall("copper-wall"){{
+        requirements(Category.defense, with(Items.copper, 6));
+        health = 120;
+    }};
+}
+</code></pre>
+</div>
+<p>这里 <code>new Wall("copper-wall"){{...}}</code> 是个匿名子类。按上面的逻辑，<code>initBuilding()</code> 发现这是匿名类 → 跳到父类 <code>Wall</code> → 在 <code>Wall</code> 上找内部类 → 找到 <code>WallBuild</code> → 绑定成功。所以匿名类写法自动继承了父类的 Building 行为。</p>
+<hr />
+<h3>四、4 个失效场景</h3>
+<h4>场景 1：内部类不是 Building 子类</h4>
+<p><strong>错误写法：</strong></p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">错误</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">public class MyWall extends Wall {
+    public MyWall(String name){ super(name); }
+
+    // ❌ 这个内部类不继承 Building，反射直接跳过
+    public class MyHelper {
+        public void doSomething(){}
+    }
+}
+</code></pre>
+</div>
+<p><strong>结果：</strong> <code>buildType</code> 一路向上找，找不到 Building 子类内部类 → 兜底 <code>Building::create</code> → 你的 <code>MyHelper</code> 永远不会被实例化，自定义行为全部失效。</p>
+<p><strong>正确写法：</strong></p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">正确</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">public class MyWall extends Wall {
+    public MyWall(String name){ super(name); }
+
+    // ✅ 必须 extends 某个 Building 子类（WallBuild / Building）
+    public class MyWallBuild extends WallBuild {
+        @Override
+        public void updateTile(){
+            super.updateTile();
+            // 自定义行为
+        }
+    }
+}
+</code></pre>
+</div>
+<hr />
+<h4>场景 2：一个 Block 声明多个 Building 内部类（只绑第一个）</h4>
+<p><strong>错误写法：</strong></p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">错误</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">public class MyWall extends Wall {
+    public MyWall(String name){ super(name); }
+
+    // ❌ Structs.find 只取第一个，后面这个永远绑不上
+    public class FirstBuild extends WallBuild { }
+    public class SecondBuild extends WallBuild { }  // 永远不会被绑定
+}
+</code></pre>
+</div>
+<p><strong>原因：</strong> <code>Structs.find(...)</code> 返回列表中第一个匹配项。<code>getDeclaredClasses()</code> 的顺序不保证，但通常按源码声明顺序。<strong>第二个及以后的 Building 内部类会被静默忽略。</strong></p>
+<p><strong>正确做法：</strong> 一个 Block 只声明一个 Building 内部类。需要多种行为就拆成多个 Block 类。</p>
+<hr />
+<h4>场景 3：内部类写在 Block 子类体外</h4>
+<p><strong>错误写法：</strong></p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">错误</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">// ❌ 这是顶级类，不是内部类，反射找不到
+public class MyWallBuild extends WallBuild { }
+
+public class MyWall extends Wall {
+    public MyWall(String name){ super(name); }
+    // 没有内部类
+}
+</code></pre>
+</div>
+<p><strong>结果：</strong> <code>MyWall</code> 类上 <code>getDeclaredClasses()</code> 返回空 → 向上找父类 → 找到 <code>Wall</code> 的 <code>WallBuild</code> → 绑定的是 <code>WallBuild</code> 而不是你的 <code>MyWallBuild</code>。</p>
+<p><strong>正确写法：</strong> Building 类必须<strong>写在 Block 类的花括号里面</strong>，成为它的内部类。</p>
+<hr />
+<h4>场景 4：匿名 Block 想自定义 Building → 需手动 <code>buildType = MyBuild::new</code></h4>
+<p><strong>错误写法（以为自动绑定）：</strong></p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">错误</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">// ❌ 匿名类 + 自定义 Build，自动绑定会回退到 WallBuild
+myWall = new Wall("my-wall"){{
+    requirements(Category.defense, with(Items.copper, 6));
+}};
+
+// 你另外写了个 MyWallBuild，但它不会被自动绑定
+public class MyWallBuild extends WallBuild { }
+</code></pre>
+</div>
+<p><strong>结果：</strong> <code>new Wall("my-wall"){{...}}</code> 是匿名类 → 跳父类 Wall → 绑定 WallBuild → 你的 <code>MyWallBuild</code> 被无视。</p>
+<p><strong>正确写法（手动指定）：</strong></p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">正确</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">// 方式 A：单独写一个命名类
+public class MyWall extends Wall {
+    public MyWall(String name){ super(name); }
+    public class MyWallBuild extends WallBuild { }  // 自动绑定
+}
+
+// 方式 B：匿名类里手动赋值 buildType
+myWall = new Wall("my-wall"){{
+    requirements(Category.defense, with(Items.copper, 6));
+    buildType = MyWallBuild::new;  // ← Block.java:403 "Set manually if modded"
+}};
+</code></pre>
+</div>
+<hr />
+<h3>五、验证技巧</h3>
+<p><strong>1. 打印 buildType / subclass：</strong></p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">// 在 loadContent() 之后，打印一下确认绑定结果
+Log.info("Block: " + myWall.name + ", buildType=" + myWall.buildType.get().getClass().getSimpleName());
+Log.info("Block subclass: " + myWall.subclass.getSimpleName());
+</code></pre>
+</div>
+<p>如果 <code>buildType</code> 输出是 <code>Building</code>，说明兜底了，你的内部类没绑上。如果输出是 <code>MyWallBuild</code>，说明绑定成功。</p>
+<p><strong>2. 游戏内放置观察：</strong></p>
+<p>放一块你自定义的方块，如果覆写的 <code>updateTile()</code> 或 <code>draw()</code> 没被调用，十有八九是绑定失败。在 <code>updateTile()</code> 第一行加个 <code>Log.info("updateTile called")</code>，看游戏控制台有没有输出。</p>
+<hr />
+<h3>六、完整正确示例</h3>
+<p>一个继承 Wall 的自定义类，内部类 extends WallBuild，覆写 <code>updateTile()</code>：</p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">package com.example.mod.blocks;
+
+import mindustry.world.blocks.defense.Wall;
+import mindustry.world.blocks.defense.Wall.WallBuild;
+
+public class MyWall extends Wall {
+    public MyWall(String name) {
+        super(name);
+    }
+
+    // ✅ 这个内部类会被 initBuilding() 自动反射绑定
+    // 绑定成功的三个条件：
+    //   1. 它是 MyWall 的内部类（写在花括号里）
+    //   2. 它 extends 某个 Building 子类（这里是 WallBuild）
+    //   3. MyWall 不是匿名类（或者匿名类里你手动赋了 buildType）
+    public class MyWallBuild extends WallBuild {
+        private int tickCount = 0;
+
+        @Override
+        public void updateTile() {
+            super.updateTile();  // 必须调用父类，否则基础行为全丢
+
+            tickCount++;
+            // 每 120 帧（2 秒）输出一次
+            if(tickCount % 120 == 0){
+                // 自定义行为：这里只是演示
+            }
+        }
+
+        @Override
+        public void draw() {
+            super.draw();
+            // 自定义绘制
+        }
+    }
+}
+</code></pre>
+</div>
+<p><strong>注册使用：</strong></p>
+<div class="codeblock">
+  <div class="codebar"><span class="ver">v159.7</span><span class="lang">java</span><button class="copy-btn">复制</button></div>
+  <pre><code class="language-java">// ModBlocks.java
+public static Wall myWall;
+
+public static void load(){
+    myWall = new MyWall("my-wall");
+    // 注意：这里用 new MyWall("my-wall")，不是 new Wall("my-wall"){{...}}
+    // 因为 MyWall 是命名类，内部类 MyWallBuild 会被自动绑定
+}
+</code></pre>
+</div>
+<p><strong>绑定成功说明：</strong></p>
+<ul>
+<li><code>new MyWall("my-wall")</code> 调用 MyWall 构造函数 → 调用 super(name) → 进入 Wall 构造函数 → 调用 <code>initBuilding()</code></li>
+<li><code>getClass()</code> 返回 <code>MyWall.class</code>（不是匿名类）</li>
+<li><code>getDeclaredClasses()</code> 返回 <code>[MyWallBuild.class]</code></li>
+<li>检查 <code>Building.class.isAssignableFrom(MyWallBuild.class)</code> → true（WallBuild extends BuildingComp implements Building）</li>
+<li>绑定 <code>buildType = () -&gt; new MyWallBuild(this)</code></li>
+<li>游戏中放置方块时，调用 <code>block.buildType.get()</code> → new MyWallBuild(this) → 你的自定义逻辑生效</li>
+</ul>
+<hr />
+<h2 id="_3">附录：快速索引</h2>
+<p>按字母序列出所有类名和对应分类：</p>
+<table>
+<thead>
+<tr>
+<th>类名</th>
+<th>分类</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Battery</td>
+<td>power</td>
+</tr>
+<tr>
+<td>ConsumeGenerator</td>
+<td>power</td>
+</tr>
+<tr>
+<td>Conduit</td>
+<td>liquid</td>
+</tr>
+<tr>
+<td>Conveyor</td>
+<td>distribution</td>
+</tr>
+<tr>
+<td>Door</td>
+<td>defense</td>
+</tr>
+<tr>
+<td>Drill</td>
+<td>production</td>
+</tr>
+<tr>
+<td>Floor</td>
+<td>environment</td>
+</tr>
+<tr>
+<td>ForceProjector</td>
+<td>defense</td>
+</tr>
+<tr>
+<td>Fx</td>
+<td>特效</td>
+</tr>
+<tr>
+<td>GenericCrafter</td>
+<td>production</td>
+</tr>
+<tr>
+<td>ItemBridge</td>
+<td>distribution</td>
+</tr>
+<tr>
+<td>ItemSource</td>
+<td>sandbox</td>
+</tr>
+<tr>
+<td>ItemTurret</td>
+<td>turrets</td>
+</tr>
+<tr>
+<td>Junction</td>
+<td>distribution</td>
+</tr>
+<tr>
+<td>LiquidRouter</td>
+<td>liquid</td>
+</tr>
+<tr>
+<td>LiquidTurret</td>
+<td>turrets</td>
+</tr>
+<tr>
+<td>MendProjector</td>
+<td>defense</td>
+</tr>
+<tr>
+<td>OreBlock</td>
+<td>environment</td>
+</tr>
+<tr>
+<td>OverdriveProjector</td>
+<td>defense</td>
+</tr>
+<tr>
+<td>PayloadConveyor</td>
+<td>payloads</td>
+</tr>
+<tr>
+<td>PayloadMassDriver</td>
+<td>payloads</td>
+</tr>
+<tr>
+<td>PowerGenerator</td>
+<td>power</td>
+</tr>
+<tr>
+<td>PowerNode</td>
+<td>power</td>
+</tr>
+<tr>
+<td>PowerSource</td>
+<td>sandbox</td>
+</tr>
+<tr>
+<td>PowerTurret</td>
+<td>turrets</td>
+</tr>
+<tr>
+<td>Prop</td>
+<td>environment</td>
+</tr>
+<tr>
+<td>Pump</td>
+<td>liquid</td>
+</tr>
+<tr>
+<td>Reconstructor</td>
+<td>units</td>
+</tr>
+<tr>
+<td>Router</td>
+<td>distribution</td>
+</tr>
+<tr>
+<td>Sorter</td>
+<td>distribution</td>
+</tr>
+<tr>
+<td>StaticWall</td>
+<td>environment</td>
+</tr>
+<tr>
+<td>StatusEffect</td>
+<td>状态效果</td>
+</tr>
+<tr>
+<td>StorageBlock</td>
+<td>storage</td>
+</tr>
+<tr>
+<td>Turret</td>
+<td>turrets</td>
+</tr>
+<tr>
+<td>Unloader</td>
+<td>storage</td>
+</tr>
+<tr>
+<td>UnitFactory</td>
+<td>units</td>
+</tr>
+<tr>
+<td>Wall</td>
+<td>defense</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<blockquote>
+<p>本参考表基于 Mindustry v159.7（HEAD <code>b3317f3</code>）。所有源码路径相对 <code>Mindustry/core/src/</code>。游戏版本升级后行号可能偏移，但 API 结构不变。</p>
+</blockquote>
+</main>
+
+<button id="toTop" title="回到顶部">&#8679;</button>
+
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-clike.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-java.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-json.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-groovy.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-properties.min.js"></script>
+<script>
+(function(){
+  var sidebar=document.getElementById('sidebar'),
+      overlay=document.getElementById('overlay'),
+      burger=document.getElementById('hamburger');
+  function closeNav(){document.body.classList.remove('nav-open');}
+  burger.addEventListener('click',function(){document.body.classList.toggle('nav-open');});
+  overlay.addEventListener('click',closeNav);
+
+  document.querySelectorAll('.copy-btn').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var pre=btn.closest('.codeblock').querySelector('pre code');
+      var text=pre?pre.textContent:'';
+      function done(){btn.classList.add('ok');btn.textContent='已复制';setTimeout(function(){btn.classList.remove('ok');btn.textContent='复制';},1500);}
+      if(navigator.clipboard&&navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).then(done).catch(function(){fallback();});
+      }else{fallback();}
+      function fallback(){
+        var ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();
+        try{document.execCommand('copy');}catch(e){}
+        document.body.removeChild(ta);done();
+      }
+    });
+  });
+
+  var toTop=document.getElementById('toTop');
+  window.addEventListener('scroll',function(){
+    if(window.scrollY>500){toTop.style.display='flex';}else{toTop.style.display='none';}
+  });
+  toTop.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'});});
+
+  var links=document.querySelectorAll('#toc a');
+  var sections=[];
+  links.forEach(function(a){
+    var id=a.getAttribute('href').slice(1);var el=document.getElementById(id);if(el)sections.push({a:a,el:el});
+  });
+  window.addEventListener('scroll',function(){
+    var pos=window.scrollY+120,current=null;
+    sections.forEach(function(s){if(s.el.offsetTop<=pos)current=s;});
+    links.forEach(function(a){a.classList.remove('active');});
+    if(current)current.a.classList.add('active');
+  });
+})();
+</script>
+</body>
+</html>

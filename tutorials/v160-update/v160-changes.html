@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>v159.7 → v160 变更速查 — Mindustry Java 模组</title>
+<link href="https://cdn.jsdelivr.net/npm/prism-themes@1.9.0/themes/prism-one-dark.css" rel="stylesheet" />
+<style>
+:root{
+  --bg:#0f0f1a;
+  --bg2:#1a1a2e;
+  --code-bg:#1e1e2e;
+  --accent:#f39c12;
+  --new:#2ecc71;
+  --text:#e6e6f0;
+  --muted:#9a9ab0;
+  --border:#2a2a40;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:"Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  line-height:1.7;
+  font-size:15.5px;
+}
+.layout{display:flex;min-height:100vh;}
+nav#toc{
+  width:280px;flex:0 0 280px;
+  background:var(--bg2);
+  border-right:1px solid var(--border);
+  padding:24px 18px;
+  position:sticky;top:0;height:100vh;overflow-y:auto;
+}
+nav#toc h1{font-size:16px;color:var(--accent);margin:0 0 4px;}
+nav#toc .sub{font-size:12px;color:var(--muted);margin-bottom:18px;}
+nav#toc a{
+  display:block;color:#cfcfe0;text-decoration:none;
+  padding:5px 8px;border-radius:6px;font-size:13.5px;
+  border-left:2px solid transparent;
+}
+nav#toc a:hover{background:#23233a;color:#fff;}
+nav#toc a.lvl2{padding-left:22px;font-size:12.5px;color:var(--muted);}
+nav#toc a.active{border-left-color:var(--accent);color:var(--accent);background:#23233a;}
+main{flex:1;padding:40px 56px;max-width:1000px;}
+h2{color:var(--accent);border-bottom:1px solid var(--border);padding-bottom:8px;margin-top:48px;}
+h3{color:#ffd27f;margin-top:30px;}
+h4{color:#b8b8e0;margin-top:22px;}
+a{color:var(--accent);}
+code{
+  background:var(--code-bg);color:#ffd27f;
+  padding:1px 5px;border-radius:4px;font-size:13.5px;
+  font-family:"JetBrains Mono",Consolas,monospace;
+}
+pre{
+  background:var(--code-bg)!important;border:1px solid var(--border);
+  border-radius:8px;padding:14px 16px;overflow:auto;position:relative;
+}
+pre code{background:none;padding:0;color:#e6e6f0;font-size:13px;line-height:1.55;}
+table{border-collapse:collapse;width:100%;margin:16px 0;font-size:13.5px;}
+th,td{border:1px solid var(--border);padding:7px 10px;text-align:left;vertical-align:top;}
+th{background:var(--bg2);color:var(--accent);}
+tr:nth-child(even) td{background:#15152a;}
+blockquote{
+  border-left:3px solid var(--accent);background:#1a1a2e;
+  margin:16px 0;padding:10px 16px;color:#cfcfe0;border-radius:0 6px 6px 0;
+}
+.copy-btn{
+  position:absolute;top:8px;right:8px;
+  background:#2d2d44;color:#cfcfe0;border:1px solid var(--border);
+  border-radius:5px;padding:3px 10px;font-size:11.5px;cursor:pointer;
+}
+.copy-btn:hover{background:var(--accent);color:#000;}
+.badge{display:inline-block;background:var(--accent);color:#000;font-size:11px;
+  padding:1px 7px;border-radius:10px;font-weight:600;}
+/* v160 NEW 角标 */
+.newbadge{
+  display:inline-block;background:var(--new);color:#04220f;font-size:11px;
+  padding:1px 8px;border-radius:10px;font-weight:700;vertical-align:middle;
+}
+.newbox{
+  border:1px solid rgba(46,204,113,.55);
+  background:rgba(46,204,113,.08);
+  border-radius:8px;padding:2px 14px;margin:14px 0;
+}
+.newbox > h3:first-child{color:#58d68d;}
+.tag-new{color:#2ecc71;font-weight:700;}
+.tag-mod{color:#e67e22;font-weight:700;}
+.tag-del{color:#e74c3c;font-weight:700;}
+.tag-keep{color:#3498db;font-weight:700;}
+@media(max-width:860px){
+  .layout{flex-direction:column;}
+  nav#toc{width:100%;height:auto;position:static;flex:none;}
+  main{padding:20px;}
+}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav id="toc">
+  <h1>v159.7 → v160 变更速查</h1>
+  <div class="sub">Mindustry · 考古风格 · HEAD 0ac15152d8</div>
+  <a href="#overview">1. v160 概览</a>
+  <a href="#heatcrafter">2. 新方块 HeatCrafter 全解</a>
+  <a class="lvl2" href="#hc-inherit">类继承与字段</a>
+  <a class="lvl2" href="#hc-interface">HeatConsumer 接口</a>
+  <a class="lvl2" href="#hc-build">Build 效率核心</a>
+  <a class="lvl2" href="#hc-bars">setBars/setStats</a>
+  <a class="lvl2" href="#hc-min">最小实现</a>
+  <a href="#fields">3. 新字段/新枚举清单</a>
+  <a href="#statvalues">4. StatValues 大改</a>
+  <a href="#genericcrafter">5. GenericCrafter 变化</a>
+  <a href="#unchanged">6. 核心机制未变表</a>
+  <a href="#impact">7. 教程影响矩阵</a>
+</nav>
+<main>
+
+<h2 id="overview">1. v160 概览</h2>
+<blockquote>本专章面向模组作者，逐条核验 v160 相对 v159.7 的<b>破坏性 / 新增 API</b>。所有行号来自当前 v160 工作树（HEAD <code>0ac15152d8</code>）；旧版对照用 <code>git diff v159.7..HEAD -- &lt;path&gt;</code>。</blockquote>
+<table>
+<tr><th>项目</th><th>数值 / 说明</th></tr>
+<tr><td>提交数</td><td><b>499</b> 个提交（<code>git rev-list --count v159.7..HEAD</code>）</td></tr>
+<tr><td>文件变更</td><td><b>371</b> 个文件</td></tr>
+<tr><td>增删行数</td><td><b>+33780 / −6695</b></td></tr>
+<tr><td>当前 HEAD</td><td><code>0ac15152d881f77dd4566a13c8d5f1225aee1068</code></td></tr>
+<tr><td>对比基线</td><td>tag <code>v159.7</code>（<code>c9686eb5d0…</code>）</td></tr>
+<tr><td>发布时间</td><td>2026-09-11（今天）</td></tr>
+<tr><td>与 v159.7 关系</td><td>同主线大版本跃迁：核心渲染/ECS 继续演进；对模组作者最有体感的是 <span class="tag-new">新增 HeatCrafter 方块与 HeatConsumer 接口</span>、<span class="tag-mod">StatValues 大改</span>、<span class="tag-mod">GenericCrafter 分批输出</span></td></tr>
+</table>
+<p>一句话总结：<b>写工厂的人要重新看 <code>GenericCrafter</code>；做热力联动的人迎来官方一等公民 <code>HeatConsumer</code>；玩图鉴 UI 的人多了一堆 <code>StatValues</code> 重载。</b></p>
+
+<h2 id="heatcrafter">2. 新方块 HeatCrafter 全解 <span class="newbadge">v160 NEW</span></h2>
+<p>源码：<code>core/src/mindustry/world/blocks/production/HeatCrafter.java</code>（全文件仅 93 行）。</p>
+
+<h3 id="hc-inherit">2.1 类继承与字段</h3>
+<pre><code class="language-java">public class HeatCrafter extends GenericCrafter{          // :12 继承自 GenericCrafter
+    /** Base heat requirement for 100% efficiency. */
+    public float heatRequirement = 10f;                   // :14  达到 100% 效率所需的基础热量
+    /** After heat meets this requirement, excess heat will be scaled by this number. */
+    public float overheatScale = 1f;                      // :16  超出部分的缩放系数
+    /** Maximum possible efficiency after overheat. */
+    public float maxEfficiency = 4f;                      // :18  过热处理后的效率上限</code></pre>
+<table>
+<tr><th>字段</th><th>行号</th><th>默认值</th><th>含义</th></tr>
+<tr><td><code>heatRequirement</code></td><td><code>HeatCrafter.java:14</code></td><td><code>10f</code></td><td>100% 效率所需热量；0 表示不需要热量</td></tr>
+<tr><td><code>overheatScale</code></td><td><code>:16</code></td><td><code>1f</code></td><td>热量超过需求后，每多 1 点热换算成的额外效率比例</td></tr>
+<tr><td><code>maxEfficiency</code></td><td><code>:18</code></td><td><code>4f</code></td><td>过热处理后效率上限（4 = 400%）</td></tr>
+</table>
+
+<h3 id="hc-interface">2.2 HeatConsumer 接口 <span class="newbadge">v160 NEW</span></h3>
+<p>源码：<code>core/src/mindustry/world/blocks/heat/HeatConsumer.java</code>（仅 6 行）。</p>
+<pre><code class="language-java">public interface HeatConsumer{
+    float[] sideHeat();        // 返回 4 个方向（东南西北）各自接收到的热量数组
+    float heatRequirement();   // 返回该消费者需要多少热量
+}</code></pre>
+<ul>
+<li>这是 v160 把"热量消费"抽象成的接口。任何建筑只要 <code>implements HeatConsumer</code>，热力网络（Heater / HeatConduit 等）就会自动把热导进来。</li>
+<li><code>sideHeat()</code> 返回长度为 4 的数组，索引对应方向；<code>HeatCrafterBuild</code> 内部用它接收四个方向传来的热。</li>
+</ul>
+
+<h3 id="hc-build">2.3 HeatCrafterBuild 内部类（效率核心）</h3>
+<pre><code class="language-java">public class HeatCrafterBuild extends GenericCrafterBuild implements HeatConsumer{  // :43
+    public float[] sideHeat = new float[4];   // :45  四个方向的入热
+    public float heat = 0f;                  // :46  当前总热
+
+    @Override
+    public void updateTile(){
+        heat = calculateHeat(sideHeat);      // :50  每帧汇总四个方向的热
+        super.updateTile();
+    }
+
+    @Override
+    public boolean shouldConsume(){
+        return (heatRequirement &lt;= 0f || heat &gt; 0) && super.shouldConsume();  // :63 没热就不消耗原料
+    }
+
+    @Override
+    public float warmupTarget(){
+        return Mathf.clamp(heat / heatRequirement);   // :78 基础效率 = clamp(热/需求)，封顶 1
+    }
+
+    @Override
+    public float efficiencyScale(){                  // :88 过热处理
+        float over = Math.max(heat - heatRequirement, 0f);            // :89 超出部分
+        return Math.min(
+            Mathf.clamp(heat / heatRequirement)                       // 基础 0~1
+            + over / heatRequirement * overheatScale,                 // 超额部分按 overheatScale 加成
+            maxEfficiency                                             // 封顶 maxEfficiency
+        );
+    }
+}</code></pre>
+<p><b>效率计算规则（背下来）：</b></p>
+<ol>
+<li>基础效率 <code>warmupTarget = clamp(heat / heatRequirement)</code>：热不够时按比例给，最多 100%。</li>
+<li>超额效率 <code>efficiencyScale = min(clamp(heat/req) + (heat-req)/req * overheatScale, maxEfficiency)</code>：超过需求的热按 <code>overheatScale</code> 折算成额外效率，最终不超过 <code>maxEfficiency</code>。</li>
+<li><code>shouldConsume()</code>：只要 <code>heat &lt;= 0</code>（且 <code>heatRequirement &gt; 0</code>）就<b>不消耗原料、不生产</b>——即"没热就罢工"。</li>
+<li><code>sense(LAccess.heat)</code> 直接返回当前 <code>heat</code>（:82-85），逻辑编程可读。</li>
+</ol>
+
+<h3 id="hc-bars">2.4 setBars / setStats</h3>
+<pre><code class="language-java">@Override
+public void setBars(){                       // :25
+    super.setBars();
+    addBar("heat", (HeatCrafterBuild entity) -> new Bar(   // :28 加热条
+        () -> Core.bundle.format("bar.heatpercent", (int)(entity.heat + 0.01f),
+                                  (int)(entity.efficiencyScale() * 100 + 0.01f)),
+        () -> Pal.lightOrange,
+        () -> entity.heat / heatRequirement
+    ));
+}
+
+@Override
+public void setStats(){                      // :36
+    super.setStats();
+    stats.add(Stat.input, heatRequirement, StatUnit.heatUnits);   // :39 热需求
+    stats.add(Stat.maxEfficiency, (int)(maxEfficiency * 100f), StatUnit.percent); // :40 最大效率
+}</code></pre>
+
+<h3 id="hc-min">2.5 完整最小实现（可复制）</h3>
+<pre><code class="language-java">package yourmod.blocks;
+
+import mindustry.world.blocks.production.HeatCrafter;
+
+public class HeatSmelter extends HeatCrafter{
+    public HeatSmelter(String name){
+        super(name);
+        // 调参
+        heatRequirement = 20f;     // 需要 20 点热才满效率
+        overheatScale = 0.5f;      // 超 20 后，每多 2 点热多 1 倍效率
+        maxEfficiency = 3f;        // 最多 300% 效率
+        // 其余 outputItem / craftTime 等沿用 GenericCrafter 的字段
+    }
+    // 不需要写 Build！父类 HeatCrafterBuild 已经把热接收、效率、shouldConsume 全包了。
+}</code></pre>
+<blockquote>关键红利：<b>绝大多数情况下你不用碰内部类</b>，父类 <code>HeatCrafterBuild</code> 已经实现了 <code>HeatConsumer</code>、热汇总、效率曲线、热条、热需求图鉴。你只在需要自定义热感时才覆写。</blockquote>
+
+<h2 id="fields">3. 新字段 / 新枚举清单 <span class="newbadge">v160 NEW</span></h2>
+
+<h3>3.1 Block 新字段 <span class="tag-new">【新增】</span></h3>
+<table>
+<tr><th>字段</th><th>位置</th><th>默认值</th><th>含义</th></tr>
+<tr><td><code>Block.diagonalConfigInventory</code></td><td><code>Block.java:268</code></td><td><code>false</code></td><td>对角配置物品库存（与旋转配置库存相关）</td></tr>
+<tr><td><code>Block.maxConsecutive</code></td><td><code>Block.java:392</code></td><td><code>2</code></td><td><code>instantTransfer</code> 方块单次连续传输的最大数量（图鉴在 <code>Block.java:662</code> 用 <code>StatUnit.none</code> 展示）</td></tr>
+</table>
+
+<h3>3.2 Stat 新枚举 <span class="tag-new">【新增】</span></h3>
+<table>
+<tr><th>枚举</th><th>位置</th><th>分类</th><th>用途</th></tr>
+<tr><td><code>Stat.meltdownTime</code></td><td><code>Stat.java:64</code></td><td><code>StatCat.power</code></td><td>熔毁时间（与过热/熔毁机制相关的电力类统计）</td></tr>
+<tr><td><code>Stat.status</code></td><td><code>Stat.java:93</code></td><td><code>StatCat.function</code></td><td>状态类统计入口</td></tr>
+</table>
+<blockquote>注：<code>Stat.maxEfficiency</code>（<code>Stat.java:71</code>）并非 v160 新增，<code>HeatCrafter.setStats</code> 复用了它。</blockquote>
+
+<h3>3.3 StatUnit 新枚举 <span class="tag-new">【新增】</span></h3>
+<table>
+<tr><th>枚举</th><th>位置</th><th>用途</th></tr>
+<tr><td><code>StatUnit.worldUnits</code></td><td><code>StatUnit.java:17</code></td><td>世界单位（距离/范围类展示）</td></tr>
+<tr><td><code>StatUnit.items</code></td><td><code>StatUnit.java:40</code></td><td>物品数量单位</td></tr>
+<tr><td><code>StatUnit.instant</code></td><td><code>StatUnit.java:41</code></td><td>"瞬时"单位（<code>Block.java:661</code> 在 <code>instantTransfer</code> 时用于 <code>Stat.itemsMoved</code>）</td></tr>
+</table>
+
+<h3>3.4 逻辑传感器新 case armor <span class="tag-new">【新增】</span></h3>
+<ul>
+<li>位置：<code>core/src/mindustry/entities/comp/BuildingComp.java:2125</code> —— <code>case armor -&gt; block.armor;</code></li>
+<li>已核验：<code>git show v159.7:.../BuildingComp.java</code> 中<b>不存在</b> <code>case armor</code>，确为 v160 新增。</li>
+<li>配套：<code>LAccess.armor</code>（<code>LAccess.java:26</code>）早已存在且可 settable。</li>
+<li>含义：现在逻辑编程可直接读建筑自身装甲值 <code>sensor armor</code>，返回 <code>block.armor</code>。</li>
+<li>另：单位侧 <code>UnitComp.java:295/385</code>、<code>UnitType.java:1433</code>、<code>Block.java:1675</code> 的 <code>case armor</code> 为旧有逻辑，本次仅 <code>BuildingComp</code> 侧新增。</li>
+</ul>
+
+<h2 id="statvalues">4. StatValues 大改说明（+136 / −29）</h2>
+<p>源码：<code>core/src/mindustry/world/meta/StatValues.java</code>。这是图鉴（数据库）里所有数字/物品图标的绘制工具类。v160 围绕<b>"输出量可以是小数"</b>做了一轮重构。</p>
+
+<h3>4.1 新增方法一览</h3>
+<table>
+<tr><th>新方法</th><th>行号</th><th>一句话说明</th><th>用法示例</th></tr>
+<tr><td><code>statusText(StatusEffect, float duration, float chance)</code></td><td><code>:229</code></td><td>把状态效果（含概率、emoji、持续秒数）拼成一段本地化解说字符串</td><td>子弹图鉴自动用（<code>ammo()</code> 内部 <code>:889</code>）；模组可在 <code>stats.add(...)</code> 自定义行复用</td></tr>
+<tr><td><code>stack(TextureRegion, float amount, ...)</code></td><td><code>:244</code></td><td>私有底层重载，把"数量"从 int 改成 float；原 int 版本改为委托给它</td><td>间接支持小数输出展示</td></tr>
+<tr><td><code>stack(UnlockableContent item, float amount, boolean tooltip)</code></td><td><code>:282</code></td><td><code>stack</code> 公开重载，接受<b>小数</b>数量</td><td>配合新 <code>displayItem(float amount)</code> 展示分批输出</td></tr>
+<tr><td><code>displayItem(Item item, float amount, float timePeriod, boolean showName)</code></td><td><code>:317</code></td><td><code>displayItem</code> 重载，数量为 float，按时间周期算 /秒</td><td>工厂图鉴里显示"每次工艺产出 0.5 个"这种小数</td></tr>
+<tr><td><code>blocks(Attribute, boolean, float s1, float s2, Seq&lt;ItemStack&gt; outputs, float timePeriod, boolean startZero)</code></td><td><code>:350</code></td><td>新 <code>blocks</code> 便捷重载（少一个 <code>checkFloors</code> 参数）</td><td>直接转发到下面的完整版</td></tr>
+<tr><td><code>blocks(Attribute, boolean, float scaleEff, float scaleAmount, Seq&lt;ItemStack&gt; outputs, float timePeriod, boolean startZero, boolean checkFloors)</code></td><td><code>:399</code></td><td><b>重量级新增</b>：按地形属性列出每个方块，并显示"缩放后的产出物品堆叠 + 效率百分比"</td><td>见 4.3 示例</td></tr>
+</table>
+
+<h3>4.2 重构点（非新增方法，但影响写法）</h3>
+<ol>
+<li><b>stack 数量格式化</b>（<code>:255</code>）：由 <code>amount &gt;= 1000 ? formatAmount(amount) : amount+""</code> 改为 <code>amount &gt;= 1000 || Mathf.equal(amount,(int)amount) ? formatAmount((int)amount) : amount+""</code>。整数直接显示，小数才保留——解决"0.5 个物品图标"的显示。</li>
+<li><b>weapons()</b>（<code>:658</code>、<code>:673</code>）：新增 <code>int index = i;</code> 并调用 <code>tableInfo(w, "unit." + name + ".weapon." + index + ".info")</code>，让单位武器可挂 bundle 说明。</li>
+<li><b>ammo() 的 blockName 说明</b>（<code>:755-757</code>）：原本一大段内联 UI 代码，重构为统一调用 <code>tableInfo()</code> 私有助手。</li>
+<li><b>itemEffMultiplier / liquidEffMultiplier</b>：效率数字前加 <code>[stat]</code> 颜色标签（<code>:581</code>、<code>:596</code>）。</li>
+<li><b>闪电子弹图鉴</b>：<code>lightningLengthRand</code> 现在显示成区间 <code>[min]-[max]</code>（<code>:827-829</code>）。</li>
+<li>删了未使用的 <code>import arc.scene.style.*;</code>。</li>
+</ol>
+
+<h3>4.3 新 blocks() 重载用法示例</h3>
+<pre><code class="language-java">// 例：某钻机按"湿润度(water)"属性，每方块显示缩放后的铜矿产出与效率
+stats.add(Stat.tiles, StatValues.blocks(
+    Attribute.water,          // 地形属性
+    false,                    // 是否漂浮
+    0.2f,                     // scaleEff：每点属性给 +20% 效率
+    0.2f,                     // scaleAmount：每点属性给 +20% 产出量
+    Seq.with(new ItemStack(Items.copper, 1)),  // 要显示的产出
+    60f,                      // timePeriod（tick）：60 tick = 1 秒
+    false                     // startZero
+));</code></pre>
+
+<h3>4.4 useCategories 自动分类的影响 <span class="tag-mod">【关键行为变化】</span></h3>
+<ul>
+<li><b>v159.7</b>：<code>stats.useCategories = true;</code> 写在 <code>Block.afterPatch()</code>（旧 <code>Block.java:1467</code>）。</li>
+<li><b>v160</b>：这一行挪进了 <code>Block.setStats()</code>（新 <code>Block.java:644</code>）。</li>
+<li><b>影响</b>：现在<b>所有方块在 <code>setStats()</code> 里自动开启统计分类</b>，模组作者<b>不需要也不应该再在自己的 <code>afterPatch()</code> 里手动设 <code>stats.useCategories = true;</code></b>。你覆写 <code>setStats()</code> 时只要 <code>super.setStats()</code>，分类自动生效。</li>
+</ul>
+
+<h2 id="genericcrafter">5. GenericCrafter 变化（+23 / −6）</h2>
+<p>源码：<code>core/src/mindustry/world/blocks/production/GenericCrafter.java</code>。<b>这是对模组写工厂影响最大的一处。</b></p>
+
+<h3>5.1 分批输出累积器 outputAccumulator <span class="tag-new">【新增】</span></h3>
+<pre><code class="language-java">// GenericCrafterBuild 内部，:191
+public @Nullable float[] outputAccumulator =
+    outputItems != null && outputItems.length > 0 ? new float[outputItems.length] : null;</code></pre>
+<p>每个产出物品槽位一个<b>浮点累积器</b>。</p>
+
+<h3>5.2 scaleOutput(float) 钩子 <span class="tag-new">【新增】</span></h3>
+<pre><code class="language-java">/** Allows scaling the crafter's output dynamically. */
+public float scaleOutput(float amount){   // :304
+    return amount;
+}</code></pre>
+<ul>
+<li>默认原样返回；<b>模组可覆写</b>来动态缩放产出（例如受速度模块、过热、催化液影响）。</li>
+<li>凡是"要不要存得下""每 tick 液体会不会溢出"的判断，v160 都改用 <code>scaleOutput(...)</code>：
+  <ul>
+  <li><code>shouldConsume()</code>：<code>items.get(output.item) + scaleOutput(output.amount) &gt; itemCapacity</code>（:208 附近）</li>
+  <li><code>updateTile()</code> 液体缩放：<code>(liquidCapacity - liquids.get(s.liquid)) / (scaleOutput(s.amount) * edelta())</code>（:279 附近）</li>
+  </ul>
+</li>
+</ul>
+
+<h3>5.3 afterPatch 顺序调整 <span class="tag-mod">【修改】</span></h3>
+<pre><code class="language-java">public void afterPatch(){                 // :141
+    super.afterPatch();
+    if(outputItems != null) hasItems = true;      // :144  先判 hasItems
+    outputsLiquid = outputLiquids != null;         // :145  再判 outputsLiquid
+    if(outputLiquids != null) hasLiquids = true;
+}</code></pre>
+<p>v159.7 里 <code>outputsLiquid</code> 在 <code>hasItems</code> 之前赋值；v160 把 <code>hasItems</code> 提到前面。逻辑等价，仅顺序整理，<b>对你无影响</b>，但如果你覆写了 <code>afterPatch()</code> 要注意调用顺序。</p>
+
+<h3>5.4 craft() 改为"累积后取整输出" <span class="tag-mod">【核心行为修改】</span></h3>
+<pre><code class="language-java">public void craft(){
+    consume();
+    if(outputItems != null){
+        // 在 craft() 里惰性创建，因为 outputItems 可能运行时变化（:313）
+        if(outputAccumulator == null || outputAccumulator.length != outputItems.length){
+            outputAccumulator = new float[outputItems.length];
+        }
+        for(int i = 0; i &lt; outputItems.length; i++){
+            ItemStack output = outputItems[i];
+            outputAccumulator[i] += scaleOutput(output.amount);   // :319 累积小数
+            int floored = Mathf.floor(outputAccumulator[i]);     // :320 取整
+            outputAccumulator[i] -= floored;                     // :321 保留余数
+            for(int j = 0; j &lt; floored; j++){
+                offload(output.item);                            // 按整数个 offload
+            }
+        }
+    }
+    ...
+}</code></pre>
+
+<h3>5.5 对模组写工厂的影响（务必注意）</h3>
+<table>
+<tr><th>旧写法（v159.7）</th><th>新行为（v160）</th></tr>
+<tr><td><code>craft()</code> 里 <code>for(int i=0;i&lt;output.amount;i++) offload(...)</code>，每次工艺固定出整数个</td><td>产出量经 <code>scaleOutput()</code> 后是<b>浮点数</b>，先累加到 <code>outputAccumulator</code>，<b>只把整数部分 offload，余数留到下次工艺</b></td></tr>
+<tr><td>想让工厂动态增产，只能改 <code>outputItem.amount</code></td><td>现在覆写 <code>scaleOutput(float)</code> 即可，累积器自动处理小数</td></tr>
+<tr><td>依赖"每次 craft 恰好出 N 个物品"的逻辑</td><td>连续多次工艺后<b>总产出不变</b>，但单次不再是整数——不要假设单次 craft 必出整数个</td></tr>
+</table>
+<blockquote>结论：<b>输出总量守恒，但输出从"整数/次"变成"小数累积、按次取整 offload"</b>。覆写 <code>craft()</code> 的老模组要检查自己是否硬编码了 <code>output.amount</code>。</blockquote>
+
+<h2 id="unchanged">6. 核心机制未变确认表</h2>
+<p>以下机制经 <code>git diff v159.7..HEAD</code> 核对，<b>v160 未改签名/未改流程</b>，老教程与老模组继续适用。括号内为 v159.7 参考位置（行号会漂移，按方法名检索即可）。</p>
+<table>
+<tr><th>机制</th><th>状态</th><th>v159.7 参考</th></tr>
+<tr><td>Block ↔ Building 绑定（<code>initBuilding</code> / <code>buildType</code> / <code>new Building()</code>）</td><td class="tag-keep">未变</td><td><code>Block.initBuilding</code> / <code>setBars</code> 链路</td></tr>
+<tr><td><code>handleDamage</code> / <code>damage</code> 伤害入口</td><td class="tag-keep">未变</td><td><code>BuildingComp.damage</code> / <code>Block.handleDamage</code></td></tr>
+<tr><td><code>display</code> / <code>displayBars</code> / <code>addBar</code> / <code>setBars</code> 信息 UI 四件套</td><td class="tag-keep">未变</td><td>仅 <code>setStats</code> 内多了 <code>useCategories=true</code></td></tr>
+<tr><td><code>Wall</code> / <code>Turret</code> / <code>Conveyor</code> 等基础方块</td><td class="tag-keep">未变</td><td>各自类无破坏性改动</td></tr>
+<tr><td>建筑生命周期钩子（<code>update</code> / <code>placed</code> / <code>onProximityUpdate</code> / <code>onDestroyed</code> / <code>onRemoved</code>）</td><td class="tag-keep">未变</td><td><code>BuildingComp</code> 各钩子</td></tr>
+<tr><td><code>consume</code> / <code>consumeBurn</code> / 消耗系统</td><td class="tag-keep">未变</td><td>仅工厂输出侧引入 <code>scaleOutput</code></td></tr>
+<tr><td>ECS 注解 / 生成机制</td><td class="tag-keep">未变</td><td><code>entities.comp</code> / 注解处理器</td></tr>
+</table>
+<blockquote>唯一需要"补课"的信息层变化是第 4 节的 <code>useCategories</code> 自动开启与第 3 节的新 <code>Stat</code>/<code>StatUnit</code> 枚举；渲染与生命周期骨架零改动。</blockquote>
+
+<h2 id="impact">7. 对教程体系的影响矩阵</h2>
+<table>
+<tr><th>教程</th><th>受影响部分</th><th>需补的 v160 内容</th></tr>
+<tr><td>主线教程（Mindustry-Java-Mod-Tutorial）</td><td>无</td><td><b>不受影响</b>——讲的是 Block/Building 骨架，第 6 节已确认未变</td></tr>
+<tr><td>UI 教程（custom-ui-tutorial）</td><td><b>第三块：数据库统计（setStats）</b></td><td><code>useCategories</code> 现已自动；<code>Stat.meltdownTime</code> / <code>Stat.status</code> 用法；<code>StatValues.statusText</code> / <code>displayItem(float)</code> / 新 <code>blocks()</code> 重载示例</td></tr>
+<tr><td>API 参考表（API-Reference）</td><td><b>GenericCrafter 条目 + 新增 HeatCrafter 条目</b></td><td><code>outputAccumulator</code> / <code>scaleOutput</code> / <code>afterPatch</code> 顺序；新方块 <code>HeatCrafter</code> 全参数表 + 最小实现；<code>Block.diagonalConfigInventory</code> / <code>maxConsecutive</code> 标注</td></tr>
+<tr><td>画廊 v2（Template-Gallery-v2）</td><td><b>工厂类模板卡片</b></td><td>GenericCrafter 输出行为变更加注；新增一张 HeatCrafter 热力工厂模板卡片（或在现有工厂卡补注）</td></tr>
+<tr><td>热力学 mod / 其他实战</td><td>正向利好</td><td>现有自建双缓冲热力系统可对接官方 <code>HeatConsumer</code> 接口，详见 API 参考表 HeatCrafter 条目</td></tr>
+</table>
+
+<h3>附：本次核验用到的命令</h3>
+<pre><code class="language-bash">cd Mindustry
+git rev-list --count v159.7..HEAD                 # 499
+git diff v159.7..HEAD --stat | tail -1           # 371 files, +33780 -6695
+git diff v159.7..HEAD -- core/src/mindustry/world/meta/StatValues.java
+git diff v159.7..HEAD -- core/src/mindustry/world/blocks/production/GenericCrafter.java
+git show v159.7:core/src/mindustry/entities/comp/BuildingComp.java | grep "case armor"  # 空 → 新增</code></pre>
+
+<p style="margin-top:40px;color:var(--muted);font-size:12.5px;">v159.7 → v160 变更速查 · 基于 v160 HEAD <code>0ac15152d8</code> 本地源码逐条核验 · 行号漂移时按方法名检索。</p>
+</main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-java.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js"></script>
+<script>
+document.querySelectorAll('pre').forEach(function(pre){
+  var btn = document.createElement('button');
+  btn.className = 'copy-btn';
+  btn.textContent = '复制';
+  btn.addEventListener('click', function(){
+    var code = pre.querySelector('code');
+    navigator.clipboard.writeText(code.innerText).then(function(){
+      btn.textContent = '已复制 ✓';
+      setTimeout(function(){ btn.textContent = '复制'; }, 1500);
+    });
+  });
+  pre.appendChild(btn);
+});
+var links = document.querySelectorAll('#toc a');
+var sections = [];
+links.forEach(function(a){
+  var id = a.getAttribute('href').slice(1);
+  var el = document.getElementById(id);
+  if(el) sections.push({a:a, el:el});
+});
+window.addEventListener('scroll', function(){
+  var pos = window.scrollY + 120;
+  var current = null;
+  sections.forEach(function(s){ if(s.el.offsetTop <= pos) current = s; });
+  links.forEach(function(a){ a.classList.remove('active'); });
+  if(current) current.a.classList.add('active');
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,5971 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mindustry 官方 Modding 中文教程 v2</title>
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+<style>
+:root{
+  --bg:#0f0f1a; --bg2:#1a1a2e; --code-bg:#1e1e2e; --accent:#f39c12;
+  --text:#e0e0e0; --muted:#8888aa; --border:#2a2a4a;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  line-height:1.7;font-size:15px}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.layout{display:flex;min-height:100vh}
+nav.sidebar{
+  width:290px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border);
+  position:fixed;top:0;left:0;bottom:0;overflow-y:auto;padding:20px 14px;
+}
+nav.sidebar .brand{font-size:18px;font-weight:700;color:var(--accent);margin-bottom:6px;display:block}
+nav.sidebar .brand-sub{font-size:12px;color:var(--muted);margin-bottom:18px;display:block}
+nav.sidebar a{display:block;color:#c0c0d8;padding:3px 8px;border-radius:4px;font-size:13px;line-height:1.4}
+nav.sidebar a:hover{background:var(--bg);text-decoration:none;color:var(--accent)}
+main{margin-left:290px;flex:1;padding:30px 48px;max-width:960px}
+h1{color:var(--accent);border-bottom:2px solid var(--accent);padding-bottom:10px;font-size:26px}
+h2{color:var(--accent);margin-top:42px;border-left:4px solid var(--accent);padding-left:12px;font-size:21px}
+h3{color:#ffd59e;margin-top:28px;font-size:17px}
+h4{color:#ffb380;margin-top:20px;font-size:15px}
+blockquote{border-left:3px solid var(--accent);background:var(--bg2);
+  margin:16px 0;padding:10px 16px;color:#c8c8e0;border-radius:0 6px 6px 0}
+table{border-collapse:collapse;width:100%;margin:16px 0;font-size:13px;display:block;overflow-x:auto}
+th,td{border:1px solid var(--border);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--bg2);color:var(--accent);font-weight:600}
+tr:nth-child(even) td{background:rgba(255,255,255,0.025)}
+tr:hover td{background:rgba(243,156,18,0.07)}
+code{background:var(--code-bg);padding:2px 6px;border-radius:3px;font-size:13px;
+  font-family:"JetBrains Mono",Consolas,Monaco,monospace;color:#ffd59e}
+.codeblock{position:relative;margin:16px 0}
+.codeblock pre{margin:0;border-radius:6px;border:1px solid var(--border)}
+.codeblock pre code{display:block;padding:14px 16px;overflow-x:auto;background:var(--code-bg)}
+.copy-btn{position:absolute;top:6px;right:6px;background:var(--accent);color:#1a1a2e;
+  border:none;padding:4px 12px;border-radius:4px;cursor:pointer;font-size:12px;font-weight:600;z-index:2}
+.copy-btn:hover{background:#ffb347}
+.copy-btn.done{background:#2ecc71}
+hr{border:none;border-top:1px solid var(--border);margin:32px 0}
+.route-cards{display:flex;gap:16px;margin:24px 0;flex-wrap:wrap}
+.card{flex:1;min-width:200px;background:var(--bg2);border:1px solid var(--border);
+  border-radius:10px;padding:18px;transition:transform .15s,border-color .15s}
+.card:hover{transform:translateY(-3px);border-color:var(--accent);text-decoration:none}
+.card-icon{font-size:30px}
+.card-title{color:var(--accent);font-weight:700;font-size:16px;margin:8px 0 4px}
+.card-desc{color:var(--muted);font-size:12.5px;line-height:1.5}
+#menu-toggle{display:none}
+@media(max-width:900px){
+  nav.sidebar{transform:translateX(-100%);transition:transform .25s;z-index:100}
+  nav.sidebar.open{transform:translateX(0)}
+  main{margin-left:0;padding:18px}
+  #menu-toggle{display:block;position:fixed;top:12px;left:12px;z-index:200;
+    background:var(--accent);color:#1a1a2e;border:none;border-radius:6px;
+    padding:8px 12px;font-size:16px;cursor:pointer}
+}
+</style>
+</head>
+<body>
+<button id="menu-toggle" onclick="toggleMenu()">☰ 目录</button>
+<div class="layout">
+<nav class="sidebar">
+  <span class="brand">Mindustry Modding v2</span>
+  <span class="brand-sub">官方 Wiki 中文教程 · HJSON / JS / Java 三路线</span>
+  <a href="#_1">目录</a>
+<a href="#1">1. 开始</a>
+  <a href="#11">1.1 编辑器推荐</a>
+  <a href="#12">1.2 目录结构</a>
+  <a href="#13-mod">1.3 各平台 mod 放置路径</a>
+  <a href="#14">1.4 文件命名规范</a>
+<a href="#2-hjson">2. HJSON 语法速成</a>
+<a href="#3-modhjson">3. mod.hjson 元数据</a>
+<a href="#4-content">4. Content 内容体系</a>
+  <a href="#41">4.1 文件名即引用名</a>
+  <a href="#42">4.2 内容文件基本结构</a>
+<a href="#5-types">5. Types 类型与字段类型</a>
+  <a href="#51">5.1 类型继承</a>
+  <a href="#52-5-types">5.2 字段类型参考（来自 5-types 页面）</a>
+    <a href="#buildvisibility">BuildVisibility</a>
+    <a href="#blockgroup">BlockGroup</a>
+    <a href="#itemstack">ItemStack</a>
+    <a href="#liquidstack">LiquidStack</a>
+    <a href="#category">Category</a>
+    <a href="#color">Color</a>
+    <a href="#cachelayer">CacheLayer</a>
+    <a href="#targetpriority">TargetPriority</a>
+<a href="#6-tech-tree">6. 科技树 Tech Tree</a>
+  <a href="#v2">研究成本公式（v2 更新）</a>
+  <a href="#_2">自定义研究需求对象</a>
+<a href="#7-spriting">7. Spriting 贴图</a>
+  <a href="#71">7.1 贴图软件推荐</a>
+  <a href="#72">7.2 尺寸规范</a>
+  <a href="#73">7.3 放置与命名</a>
+  <a href="#74">7.4 贴图后缀</a>
+  <a href="#75">7.5 调色板</a>
+  <a href="#76">7.6 风格与阴影</a>
+<a href="#8-sound">8. Sound 音效</a>
+  <a href="#v2_1">内置音效列表（v2 更新）</a>
+<a href="#9-dependencies">9. Dependencies 依赖</a>
+<a href="#10-bundles">10. Bundles 翻译</a>
+  <a href="#101">10.1 命名规则</a>
+  <a href="#102">10.2 内容类型列表</a>
+  <a href="#103">10.3 各语言文件名对照</a>
+<a href="#11-markup">11. Markup 文本格式</a>
+  <a href="#_3">内置颜色（含十六进制值）</a>
+<a href="#12-schematic">12. Schematic 蓝图</a>
+<a href="#13-scripting">13. Scripting 脚本</a>
+  <a href="#131">13.1 监听事件</a>
+  <a href="#132">13.2 显示对话框</a>
+  <a href="#133">13.3 播放自定义音效</a>
+  <a href="#134-v1-extendcontent">13.4 v1 旧示例（extendContent 风格，供参考）</a>
+<a href="#14-plugins-jvm-modsjava">14. Plugins &amp; JVM Mods（Java 插件）</a>
+  <a href="#141-modhjson">14.1 mod.hjson 配置</a>
+  <a href="#142-plugins">14.2 Plugins（服务器插件）</a>
+  <a href="#143">14.3 导入与分发</a>
+  <a href="#144">14.4 多线程</a>
+  <a href="#145">14.5 能力与安全</a>
+<a href="#15-faq">15. 分享与 FAQ</a>
+  <a href="#151-mod">15.1 分享 mod</a>
+  <a href="#152-faq">15.2 FAQ</a>
+<a href="#16-v6v7v8">16. 迁移指南（v6/v7/v8）</a>
+  <a href="#161-60">16.1 6.0 迁移指南</a>
+  <a href="#162-70">16.2 7.0 迁移指南</a>
+  <a href="#163-80">16.3 8.0 迁移指南</a>
+<a href="#17-modding-classes">17. 字段速查大区：Modding Classes</a>
+  <a href="#171-block-extends-unlockablecontent">17.1 Block 基类（extends UnlockableContent）</a>
+  <a href="#172-defense">17.2 Defense 防御方块</a>
+    <a href="#wallextends-block">Wall（extends Block）</a>
+    <a href="#doorextends-wall">Door（extends Wall）</a>
+    <a href="#shieldwallextends-wall">ShieldWall（extends Wall）</a>
+    <a href="#staticwallextends-prop">StaticWall（extends Prop）</a>
+    <a href="#shockmineextends-block">ShockMine（extends Block）</a>
+    <a href="#forceprojectorextends-block">ForceProjector（extends Block）</a>
+    <a href="#mendprojectorextends-block">MendProjector（extends Block）</a>
+    <a href="#overdriveprojectorextends-block">OverdriveProjector（extends Block）</a>
+  <a href="#173-turrets">17.3 Turrets 炮塔</a>
+    <a href="#itemturretextends-turret">ItemTurret（extends Turret）</a>
+    <a href="#powerturretextends-turret">PowerTurret（extends Turret）</a>
+    <a href="#liquidturretextends-turret">LiquidTurret（extends Turret）</a>
+  <a href="#174-crafting">17.4 Crafting 合成方块</a>
+    <a href="#genericcrafterextends-block">GenericCrafter（extends Block）</a>
+    <a href="#drillextends-block">Drill（extends Block）</a>
+  <a href="#175-power">17.5 Power 电力方块</a>
+    <a href="#powergeneratorextends-powerdistributor">PowerGenerator（extends PowerDistributor）</a>
+    <a href="#consumegeneratorextends-powergenerator">ConsumeGenerator（extends PowerGenerator）</a>
+    <a href="#solargeneratorextends-powergenerator">SolarGenerator（extends PowerGenerator）</a>
+    <a href="#nuclearreactorextends-powergenerator">NuclearReactor（extends PowerGenerator）</a>
+    <a href="#powernodeextends-powerblock">PowerNode（extends PowerBlock）</a>
+    <a href="#batteryextends-powerdistributor">Battery（extends PowerDistributor）</a>
+  <a href="#176-distribution">17.6 Distribution 物流方块</a>
+    <a href="#conveyorextends-block">Conveyor（extends Block）</a>
+    <a href="#routerextends-block">Router（extends Block）</a>
+    <a href="#junctionextends-block">Junction（extends Block）</a>
+    <a href="#sorterextends-block">Sorter（extends Block）</a>
+    <a href="#itembridgeextends-block">ItemBridge（extends Block）</a>
+    <a href="#massdriverextends-block">MassDriver（extends Block）</a>
+    <a href="#payloadconveyorextends-block">PayloadConveyor（extends Block）</a>
+    <a href="#unloaderextends-block">Unloader（extends Block）</a>
+    <a href="#storageblockextends-block">StorageBlock（extends Block）</a>
+  <a href="#177-liquid">17.7 Liquid 液体方块</a>
+    <a href="#conduitextends-liquidblock">Conduit（extends LiquidBlock）</a>
+    <a href="#pumpextends-liquidblock">Pump（extends LiquidBlock）</a>
+    <a href="#liquidrouterextends-liquidblock">LiquidRouter（extends LiquidBlock）</a>
+  <a href="#178-environment">17.8 Environment 环境方块</a>
+    <a href="#floorextends-block">Floor（extends Block）</a>
+    <a href="#oreblockextends-overlayfloor">OreBlock（extends OverlayFloor）</a>
+    <a href="#propextends-block">Prop（extends Block）</a>
+  <a href="#179-units">17.9 Units 单位</a>
+    <a href="#unitfactoryextends-unitblock">UnitFactory（extends UnitBlock）</a>
+    <a href="#reconstructorextends-unitblock">Reconstructor（extends UnitBlock）</a>
+    <a href="#unittypeextends-unlockablecontent">UnitType（extends UnlockableContent）</a>
+  <a href="#1710-content">17.10 Content 内容类型</a>
+    <a href="#itemextends-unlockablecontent">Item（extends UnlockableContent）</a>
+    <a href="#liquidextends-unlockablecontent">Liquid（extends UnlockableContent）</a>
+    <a href="#statuseffectextends-unlockablecontent">StatusEffect（extends UnlockableContent）</a>
+  <a href="#1711-bullettype">17.11 BulletType 子弹类型</a>
+    <a href="#basicbullettypeextends-bullettype">BasicBulletType（extends BulletType）</a>
+    <a href="#missilebullettypeextends-basicbullettype">MissileBulletType（extends BasicBulletType）</a>
+  <a href="#1712-weather">17.12 Weather 天气</a>
+    <a href="#weatherextends-unlockablecontent">Weather（extends UnlockableContent）</a>
+    <a href="#particleweatherextends-weather">ParticleWeather（extends Weather）</a>
+  <a href="#1713-logic">17.13 Logic 逻辑方块</a>
+    <a href="#logicblockextends-block">LogicBlock（extends Block）</a>
+  <a href="#1714-targetdummy">17.14 TargetDummy</a>
+    <a href="#targetdummyextends-block">TargetDummy（extends Block）</a>
+<a href="#18">18. 三条路线对照表</a>
+  <a href="#181">18.1 路线概述</a>
+  <a href="#182">18.2 各自能力边界</a>
+  <a href="#183">18.3 何时用哪个</a>
+  <a href="#184">18.4 核心结论</a>
+</nav>
+<main>
+<h1 id="mindustry-modding-v2">Mindustry 官方 Modding 中文教程 v2</h1>
+<blockquote>
+<p>本文档基于 Mindustry 官方 Wiki（https://mindustrygame.github.io/wiki/modding/）整理。
+v2 完整抓取了 9 个 Wiki 页面 + 47 个 Modding Classes 字段文档，在 v1 基础上补全了被截断的字段表，并新增 Plugins、Scripting 现代 API、Spriting 完整指南、迁移指南等章节。
+所有代码块与字段表忠实官方原文（英文），中文讲解围绕组织。官方 Wiki 未覆盖的内容在对应处注明缺口。</p>
+</blockquote>
+<hr />
+<h2 id="_1">目录</h2>
+<ol>
+<li><a href="#1-开始">开始</a></li>
+<li><a href="#2-hjson-语法速成">HJSON 语法速成</a></li>
+<li><a href="#3-modhjson-元数据">mod.hjson 元数据</a></li>
+<li><a href="#4-content-内容体系">Content 内容体系</a></li>
+<li><a href="#5-types-类型与字段类型">Types 类型与字段类型</a></li>
+<li><a href="#6-科技树-tech-tree">科技树 Tech Tree</a></li>
+<li><a href="#7-spriting-贴图">Spriting 贴图</a></li>
+<li><a href="#8-sound-音效">Sound 音效</a></li>
+<li><a href="#9-dependencies-依赖">Dependencies 依赖</a></li>
+<li><a href="#10-bundles-翻译">Bundles 翻译</a></li>
+<li><a href="#11-markup-文本格式">Markup 文本格式</a></li>
+<li><a href="#12-schematic-蓝图">Schematic 蓝图</a></li>
+<li><a href="#13-scripting-脚本">Scripting 脚本</a></li>
+<li><a href="#14-plugins--jvm-modsjava-插件">Plugins &amp; JVM Mods（Java 插件）</a></li>
+<li><a href="#15-分享与-faq">分享与 FAQ</a></li>
+<li><a href="#16-迁移指南v6v7v8">迁移指南（v6/v7/v8）</a></li>
+<li><a href="#17-字段速查大区modding-classes">字段速查大区：Modding Classes</a></li>
+<li><a href="#18-三条路线对照表">三条路线对照表</a></li>
+</ol>
+<hr />
+<h2 id="1">1. 开始</h2>
+<p>Mindustry 的 mod 本质上就是一堆资源文件组成的目录。根据你想做的事情不同，modding API 有多种使用方式：</p>
+<ul>
+<li><strong>纯换皮</strong>：只替换现有游戏内容的贴图；</li>
+<li><strong>HJSON/JSON 内容 mod</strong>（本教程主线之一）：用简单的 HJSON 数据创建新游戏内容；</li>
+<li><strong>JS 脚本 mod</strong>：用 Rhino JavaScript 编写特殊行为；</li>
+<li><strong>Java/JVM 插件 mod</strong>：用 Java/Kotlin 等 JVM 语言编写完整 mod（详见第 14 章）；</li>
+<li><strong>自定义音效</strong>：添加新音效或复用内置音效；</li>
+<li><strong>战役地图</strong>：向战役模式添加地图。</li>
+</ul>
+<p>分享你的 mod 只需把项目目录发给别人；mod 是跨平台的，支持该平台的任何系统都能运行。官方推荐使用 GitHub，并建议参考 Example Mod 仓库。制作 mod 只需要一台装有文本编辑器的电脑。</p>
+<h3 id="11">1.1 编辑器推荐</h3>
+<p>如果你使用 HJSON，推荐使用 <strong>Visual Studio Code</strong> + <a href="https://marketplace.visualstudio.com/items?itemName=Anuken.mindustry-hjson">Mindustry HJSON</a> 扩展。该扩展提供自动补全、语法高亮和未知/无效字段警告。安装方式：从 release 页下载 <code>.vsix</code>，在 VSCode 扩展面板点右上角 <code>...</code> → "Install from VSIX..."。</p>
+<h3 id="12">1.2 目录结构</h3>
+<p>你的项目目录应当长这样：</p>
+<div class="codeblock"><button class="copy-btn" onclick="copyCode(this)">复制</button><pre><code>project
+├── mod.hjson
+├── content
+│   ├── items
+│   ├── blocks
+│   ├── liquids
+│   ├── weather
+│   └── units
+├── maps
+├── bundles
+├── sounds
+├── schematics
+├── scripts
+├── sprites-override
+└── sprites
+</code></pre></div>
+<p>各目录含义：</p>
+<table>
+<thead>
+<tr>
+<th>路径</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>mod.hjson</code>（必需）</td>
+<td>mod 元数据文件</td>
+</tr>
+<tr>
+<td><code>content/*</code></td>
+<td>游戏内容数据</td>
+</tr>
+<tr>
+<td><code>maps/</code></td>
+<td>游戏内地图</td>
+</tr>
+<tr>
+<td><code>bundles/</code></td>
+<td>多语言翻译</td>
+</tr>
+<tr>
+<td><code>sounds/</code></td>
+<td>音效文件</td>
+</tr>
+<tr>
+<td><code>schematics/</code></td>
+<td>蓝图文件</td>
+</tr>
+<tr>
+<td><code>scripts/</code></td>
+<td>Rhino JS 脚本</td>
+</tr>
+<tr>
+<td><code>sprites-override/</code></td>
+<td>覆盖游戏内原有贴图</td>
+</tr>
+<tr>
+<td><code>sprites/</code></td>
+<td>你自己内容的贴图</td>
+</tr>
+</tbody>
+</table>
+<h3 id="13-mod">1.3 各平台 mod 放置路径</h3>
+<table>
+<thead>
+<tr>
+<th>平台</th>
+<th>路径</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Linux</td>
+<td><code>~/.local/share/Mindustry/mods/</code></td>
+</tr>
+<tr>
+<td>Steam</td>
+<td><code>steam/steamapps/common/Mindustry/saves/mods/</code></td>
+</tr>
+<tr>
+<td>Windows</td>
+<td><code>%appdata%/Mindustry/mods/</code></td>
+</tr>
+<tr>
+<td>macOS</td>
+<td><code>~/Library/Application Support/Mindustry/mods/</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="14">1.4 文件命名规范</h3>
+<p>文件名必须<strong>全小写、用连字符分隔</strong>（kebab-case）：</p>
+<div class="codeblock"><button class="copy-btn" onclick="copyCode(this)">复制</button><pre><code>正确：my-custom-block.json
+错误：My Custom Block.json
+</code></pre></div>
+<hr />
+<h2 id="2-hjson">2. HJSON 语法速成</h2>
+<p>Mindustry 使用 <a href="https://hjson.github.io/">Hjson</a>。对熟悉 JSON 的人来说，Hjson 就是 JSON 的超集——任何合法的 JSON 都能工作，但你得到了一些额外的便利特性：</p>
+<div class="codeblock"><button class="copy-btn" onclick="copyCode(this)">复制</button><pre><code class="language-hjson"># single line comment
+// single line comment
+/* multiline comment */
+
+key1: &quot;single line string&quot;
+key2: '''
+  multiline string
+'''
+key3: [
+  // quotes and commas are optional for strings
+  value1
+  value2
+  value3
+]
+key4: {
+  key1: astring
+  key2: 0
+}
+// 与官方 HJSON 规范不同，Mindustry 允许同一行放多个无引号字符串
+arrayExample: [several, words, that, will, work]
+</code></pre></div>
+<p><strong>要点说明：</strong></p>
+<ul>
+<li>Hjson 允许 <code>#</code>、<code>//</code>、<code>/* */</code> 三种注释；</li>
+<li>字符串可以不加引号；</li>
+<li>数组/对象元素之间不需要逗号；</li>
+<li><code>''' ... '''</code> 用于多行字符串；</li>
+<li>因为 Hjson 是 JSON 超集，你也可以直接写标准 JSON；</li>
+<li>注意：官方 HJSON 标准已停止维护，Mindustry 用的是修改版，允许无引号多行数组。</li>
+</ul>
+<blockquote>
+<p>序列化语言（serialization language）就是把文本编码成程序数据结构的语言——在 Mindustry 中，就是把 HJSON 文本翻译成 Java 数据结构。</p>
+</blockquote>
+<hr />
+<h2 id="3-modhjson">3. mod.hjson 元数据</h2>
+<p>在项目根目录必须有一个 <code>mod.hjson</code>（或 <code>mod.json</code>），定义 mod 的基本元数据：</p>
+<div class="codeblock"><button class="copy-btn" onclick="copyCode(this)">复制</button><pre><code class="language-hjson">name: &quot;mod-name&quot;
+displayName: &quot;This isn't a mod.&quot;
+author: Yourself
+description: &quot;A short description of your mod.&quot;
+version: &quot;1.0&quot;
+minGameVersion: &quot;159.7&quot;
+dependencies: [ ]
+hidden: false
+</code></pre></div>
+<p>各字段说明：</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code></td>
+<td>用于引用你的 mod，命名要谨慎；应为 kebab-case（全小写，空格用 <code>-</code> 代替），不要加颜色格式</td>
+</tr>
+<tr>
+<td><code>displayName</code></td>
+<td>UI 中显示的名称，可以带 Markup 格式标签（如 <code>[red]...[]</code>）</td>
+</tr>
+<tr>
+<td><code>author</code></td>
+<td>作者名</td>
+</tr>
+<tr>
+<td><code>description</code></td>
+<td>在游戏内 mod 管理器中显示的描述，保持简短扼要</td>
+</tr>
+<tr>
+<td><code>version</code></td>
+<td>mod 版本号</td>
+</tr>
+<tr>
+<td><code>minGameVersion</code></td>
+<td>最低游戏构建版本号，<strong>必须大于 136</strong></td>
+</tr>
+<tr>
+<td><code>dependencies</code></td>
+<td>可选，依赖列表，详见 <a href="#9-dependencies-依赖">Dependencies</a></td>
+</tr>
+<tr>
+<td><code>hidden</code></td>
+<td>是否为多人游戏必需的 mod，默认 false。材质包、JS 插件等应设为 true，避免服务器/客户端版本不匹配冲突。如果你的 mod 创建了内容，不应设为 hidden</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>Java mod 额外字段：<code>main: "mypackage.MyMod"</code> 指定全限定主类（须继承 <code>mindustry.mod.Mod</code>）。详见第 14 章。</p>
+</blockquote>
+<hr />
+<h2 id="4-content">4. Content 内容体系</h2>
+<p>项目根目录下可以有一个 <code>content/</code> 目录，所有 HJSON 数据都放这里。<code>content/</code> 内按内容类型分子目录：</p>
+<table>
+<thead>
+<tr>
+<th>子目录</th>
+<th>内容类型</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>content/items/</code></td>
+<td>物品</td>
+<td><code>copper</code>、<code>surge-alloy</code></td>
+</tr>
+<tr>
+<td><code>content/blocks/</code></td>
+<td>方块</td>
+<td>炮塔、地板</td>
+</tr>
+<tr>
+<td><code>content/liquids/</code></td>
+<td>液体</td>
+<td><code>water</code>、<code>slag</code></td>
+</tr>
+<tr>
+<td><code>content/units/</code></td>
+<td>单位</td>
+<td><code>eclipse</code>、<code>dagger</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="41">4.1 文件名即引用名</h3>
+<p>文件路径的<strong>主干名</strong>（去掉扩展名的文件名）就是该内容的引用名。文件可以任意嵌套子目录来组织，例如：</p>
+<div class="codeblock"><button class="copy-btn" onclick="copyCode(this)">复制</button><pre><code>content/items/metals/iron.hjson   →  创建名为 iron 的物品
+</code></pre></div>
+<h3 id="42">4.2 内容文件基本结构</h3>
+<p>每个内容文件大致长这样：</p>
+<div class="codeblock"><button class="copy-btn" onclick="copyCode(this)">复制</button><pre><code class="language-hjson">type: TypeOfThing
+name: Name Of Thing
+description: Description of thing.
+# ... more fields here ...
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>type</code></td>
+<td>String</td>
+<td>该对象的内容类型</td>
+</tr>
+<tr>
+<td><code>name</code></td>
+<td>String</td>
+<td>内容显示名</td>
+</tr>
+<tr>
+<td><code>description</code></td>
+<td>String</td>
+<td>内容描述</td>
+</tr>
+</tbody>
+</table>
+<p>其余字段由 <code>type</code> 所指定的类型自身决定。</p>
+<blockquote>
+<p>注意：<code>name</code> 和 <code>description</code> 不一定要写在 HJSON 里，你可以通过 <a href="#10-bundles-翻译">Bundles</a> 为任意语言定义它们。如果两者都没有，名称默认为 <code>&lt;type&gt;.&lt;modname&gt;-&lt;stemname&gt;.name</code>，描述为空。</p>
+</blockquote>
+<hr />
+<h2 id="5-types">5. Types 类型与字段类型</h2>
+<h3 id="51">5.1 类型继承</h3>
+<p>类型有大量字段，最重要的是 <code>type</code> 字段——它是内容解析器使用的特殊字段，决定你的对象是什么类型。<code>Router</code> 类型不能当 <code>Turret</code> 用，它们完全不同。</p>
+<p><strong>类型之间会继承</strong>：如果 <code>MissileBulletType extends BasicBulletType</code>，那么在 <code>MissileBulletType</code> 中你就能使用 <code>BasicBulletType</code> 的所有字段，如 <code>damage</code>、<code>lifetime</code>、<code>speed</code>。</p>
+<p><strong>字段大小写敏感</strong>：<code>hitSize</code> ≠ <code>hitsize</code>。</p>
+<p>有些类型本身不做任何事，仅作为其他类型继承的基类——<code>Block</code> 就是这样一个类型。</p>
+<p>示例——顶层对象类型是 <code>flying</code>（飞行单位），子弹的类型是 <code>BulletType</code>，因此可以使用 <code>MissileBulletType</code>（因为它继承自 <code>BulletType</code>）：</p>
+<div class="codeblock"><button class="copy-btn" onclick="copyCode(this)">复制</button><pre><code class="language-hjson">type: flying
+weapons: [
+  {
+    bullet: {
+      type: MissileBulletType
+      damage: 9000
+    }
+  }
+]
+</code></pre></div>
+<p>其他单位类型包括：<code>mech</code>、<code>legs</code>、<code>naval</code>、<code>payload</code>、<code>tank</code>、<code>hover</code>、<code>crawl</code>、<code>missile</code>、<code>tether</code>。</p>
+<h3 id="52-5-types">5.2 字段类型参考（来自 5-types 页面）</h3>
+<blockquote>
+<p>注意：已弃用的内容类不在此列出，强烈不建议使用。迁移到非弃用替代。所有 JSON 示例来自 Exotic Mod（BlueWolf3682），仅作字段参考，不要直接复制粘贴到你的 mod。</p>
+</blockquote>
+<h4 id="buildvisibility">BuildVisibility</h4>
+<p>控制方块可见性的标志，可选字符串：</p>
+<div class="codeblock"><button class="copy-btn" onclick="copyCode(this)">复制</button><pre><code>hidden  shown  debugOnly  editorOnly  coreZoneOnly
+worldProcessorOnly  sandboxOnly  campaignOnly
+legacyLaunchPadOnly  notLegacyLaunchPadOnly  lightingOnly  fogOnly
+</code></pre></div>
+<h4 id="blockgroup">BlockGroup</h4>
+<p>方块分组（同组可互相替换）：</p>
+<div class="codeblock"><button class="copy-btn" onclick="copyCode(this)">复制</button><pre><code>none  walls  projectors  turrets  transportation
+power  liquids  drills  units  logic  payloads  heat
+</code></pre></div>
+<h4 id="itemstack">ItemStack</h4>
+<p>物品堆，可以是字符串或对象：</p>
+<p>字符串形式：<code>copper/5</code></p>
+<p>对象形式：</p>
+<div class="codeblock"><button class="copy-btn" onclick="copyCode(this)">复制</button><pre><code class="language-hjson">item: copper
+amount: 5
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>item</code></td>
+<td>string</td>
+<td>物品名</td>
+</tr>
+<tr>
+<td><code>amount</code></td>
+<td>int</td>
+<td>数量</td>
+</tr>
+</tbody>
+</table>
+<h4 id="liquidstack">LiquidStack</h4>
+<p>液体堆，可以是字符串或对象：</p>
+<p>字符串形式：<code>water/0.5</code></p>
+<p>对象形式：</p>
+<div class="codeblock"><button class="copy-btn" onclick="copyCode(this)">复制</button><pre><code class="language-hjson">liquid: water
+amount: 0.5
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>liquid</code></td>
+<td>string</td>
+<td>液体名</td>
+</tr>
+<tr>
+<td><code>amount</code></td>
+<td>float</td>
+<td>量</td>
+</tr>
+</tbody>
+</table>
+<h4 id="category">Category</h4>
+<p>建造菜单分类：</p>
+<table>
+<thead>
+<tr>
+<th>分类</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>turret</code></td>
+<td>进攻性炮塔</td>
+</tr>
+<tr>
+<td><code>production</code></td>
+<td>生产资源的方块（如钻机）</td>
+</tr>
+<tr>
+<td><code>distribution</code></td>
+<td>搬运物品的方块</td>
+</tr>
+<tr>
+<td><code>liquid</code></td>
+<td>搬运液体的方块</td>
+</tr>
+<tr>
+<td><code>power</code></td>
+<td>发电或输电</td>
+</tr>
+<tr>
+<td><code>defense</code></td>
+<td>墙和防御结构</td>
+</tr>
+<tr>
+<td><code>crafting</code></td>
+<td>合成方块</td>
+</tr>
+<tr>
+<td><code>units</code></td>
+<td>创建单位的方块</td>
+</tr>
+<tr>
+<td><code>logic</code></td>
+<td>逻辑操作相关</td>
+</tr>
+<tr>
+<td><code>effect</code></td>
+<td>存储或被动效果</td>
+</tr>
+</tbody>
+</table>
+<h4 id="color">Color</h4>
+<p>颜色是十六进制字符串 <code>&lt;rr&gt;&lt;gg&gt;&lt;bb&gt;</code>，例如：</p>
+<ul>
+<li><code>ff0000</code> 红，<code>00ff00</code> 绿，<code>0000ff</code> 蓝，<code>ffff00</code> 黄，<code>00ffff</code> 青</li>
+</ul>
+<h4 id="cachelayer">CacheLayer</h4>
+<p>缓存渲染层：</p>
+<ul>
+<li><code>normal</code> 普通层；</li>
+<li><code>walls</code> 墙层；</li>
+<li><code>water</code> 水层，加水着色器和波纹反射；</li>
+<li><code>tar</code> 焦油层，加焦油着色器，变暗并有气泡反射。</li>
+</ul>
+<h4 id="targetpriority">TargetPriority</h4>
+<p>数值越大优先级越高，高优先级方块总会被优先瞄准（无视距离）：</p>
+<ol>
+<li><code>base</code></li>
+<li><code>turret</code></li>
+</ol>
+<hr />
+<h2 id="6-tech-tree">6. 科技树 Tech Tree</h2>
+<p>和 <code>type</code> 类似，还有一个"魔法字段"叫 <code>research</code>，可以放在任意内容对象的根部，把它放入科技树：</p>
+<div class="codeblock"><button class="copy-btn" onclick="copyCode(this)">复制</button><pre><code class="language-hjson">research: duo
+</code></pre></div>
+<p>这会把你的方块放在 <code>duo</code> 之后。要放在你自己 mod 的方块后面，直接写你自己的方块名即可。<strong>只有在引用其他 mod 的内容时才需要加 mod 名前缀。</strong></p>
+<h3 id="v2">研究成本公式（v2 更新）</h3>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>成本公式</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>方块</td>
+<td><code>60 * researchCostMultiplier + requirements ^ 1.11 * 20 * researchCostMultiplier</code></td>
+<td><code>researchCostMultiplier</code> 可在方块上设置，默认 <code>1</code></td>
+</tr>
+<tr>
+<td>单位</td>
+<td><code>requirements * researchCostMultiplier</code></td>
+<td>UnitType 上默认 <code>researchCostMultiplier = 50</code></td>
+</tr>
+</tbody>
+</table>
+<p>然后根据成本大小四舍五入到最近的 10、100、1k 或 100k（不总是向下取整）。其中 <code>requirements</code> 是你方块/单位的建造成本。</p>
+<blockquote>
+<p>注意：v1 旧公式 <code>40 + round(requirements^1.25)*6</code> 已过时，以新版为准。</p>
+</blockquote>
+<h3 id="_2">自定义研究需求对象</h3>
+<p>如果你想设置自定义研究需求，用这个对象代替纯名字：</p>
+<div class="codeblock"><button class="copy-btn" onclick="copyCode(this)">复制</button><pre><code class="language-hjson">research: {
+  parent: duo
+  requirements: [
+    copper/100
+  ]
+}
+</code></pre></div>
+<p>这可以覆盖方块/单位成本，或让资源需要被研究而不是直接生产。</p>
+<hr />
+<h2 id="7-spriting">7. Spriting 贴图</h2>
+<blockquote>
+<p>本章基于官方 4-spriting 页面完整整理。</p>
+</blockquote>
+<p>贴图是 Mindustry modding 的重要部分——没有它，你做的所有东西都会显示为缩放过的"oh no"图片。Mindustry 的贴图风格简单但严格。</p>
+<blockquote>
+<p><strong>注意</strong>：未经允许使用其他 modder 的贴图是不允许的，虽然可以用来参考或灵感。"mod 是开源的所以我可以随便用"这种理由不会被接受，你的 mod 会被 mod 浏览器拉黑。</p>
+</blockquote>
+<h3 id="71">7.1 贴图软件推荐</h3>
+<p><strong>桌面端：</strong></p>
+<ol>
+<li><strong>Aseprite</strong> — 黄金标准。有学习曲线但上手后很简单。付费软件（可自行编译源码，但建议购买支持开发者）。有镜像、调色板控制、动画、分层等功能。</li>
+<li><strong>LibreSprite</strong> — Aseprite 的 fork，不如原版新或强大，但够用。</li>
+<li><strong>Piskel</strong> — 简单像素艺术软件，有在线版和离线版，不能导出单独图层。</li>
+<li><strong>Pixilart</strong> — 在线工具，功能比 Piskel 多但缺镜像工具。</li>
+<li><strong>Paint.NET</strong> — 基础绘画软件，不推荐（缺像素画基本功能）。</li>
+</ol>
+<p><strong>移动端：</strong></p>
+<ol>
+<li><strong>Novix Pixel Editor</strong> — Anuke 制作（已停止维护），简单无广告，支持镜像工具。</li>
+<li><strong>Pixel Studio</strong> — 流行像素艺术 app，可与 PC 版联动，有广告。</li>
+<li><strong>Ibispaint X</strong> — 非专门画像素画，需改设置，支持多种工具，有广告。</li>
+</ol>
+<h3 id="72">7.2 尺寸规范</h3>
+<p><strong>方块：</strong> 最小 1×1 方块贴图为 <code>32×32</code>，每大一档增加 32px：</p>
+<ul>
+<li><code>1×1</code>：<code>32×32</code></li>
+<li><code>2×2</code>：<code>64×64</code></li>
+<li><code>3×3</code>：<code>96×96</code></li>
+<li><code>4×4</code>：<code>128×128</code></li>
+<li><code>5×5</code>：<code>160×160</code></li>
+</ul>
+<p>游戏也能加载更大或更小的贴图，但可能导致独特外观或灾难。</p>
+<p><strong>物品/液体/状态：</strong> 最小 <code>32px</code>，更大的会被压缩到 32px，更小的不会被放大。</p>
+<p><strong>单位：</strong> 单位贴图尺寸更宽松，但尽量不低于 <code>48px</code>。单位越大，越需要调整 <code>hitSize</code>（碰撞箱大小）。</p>
+<blockquote>
+<p>图片必须是 PNG、32 位 RGBA 格式。其他格式（如 16 位 RGBA）可能导致 "Pixmap decode error" 崩溃。可用 <code>file sprites/**.png</code> 检查。</p>
+</blockquote>
+<h3 id="73">7.3 放置与命名</h3>
+<p>贴图放进 <code>sprites/</code> 子目录（HJSON mod）或 <code>src/assets/sprites/</code>（Java mod）。内容解析器递归扫描。图片被打包进 "atlas" 以高效渲染。<code>sprites/</code> 下的第一级目录（如 <code>sprites/blocks</code>）决定贴图放在 atlas 的哪一页——把方块贴图放进 units 页会导致大量卡顿。</p>
+<ul>
+<li>方块贴图放 <code>sprites/blocks</code></li>
+<li>单位贴图放 <code>sprites/units</code></li>
+<li>物品贴图放 <code>sprites/items</code></li>
+</ul>
+<p>游戏根据内容名字寻找贴图：<code>content/blocks/test-turret.json</code> 名为 <code>test-turret</code>，<code>sprites/test-turret.png</code> 就会被使用。</p>
+<p>游戏会修改部分贴图：<strong>炮塔和单位会被自动加上 3-4px 灰色边框</strong>。制作时必须留出空间。默认描边半径和颜色可通过 <code>Block</code>/<code>UnitType</code> 的 <code>outlineRadius</code>/<code>outlineColor</code> 字段自定义。</p>
+<p><strong>覆盖原版贴图：</strong> 放 <code>sprites-override/</code> 即可，这会去掉 <code>&lt;modname&gt;-</code> 前缀，覆盖原版甚至其他 mod 的贴图。</p>
+<h3 id="74">7.4 贴图后缀</h3>
+<p>游戏可能为单个方块寻找多个贴图：</p>
+<ul>
+<li>炮塔：<code>&lt;name&gt;-heat</code>（如 <code>test-turret-heat.png</code>）</li>
+<li>方块/合成器/冶炼厂：<code>&lt;name&gt;-top</code>、<code>&lt;name&gt;-liquid</code></li>
+</ul>
+<p>具体可加载哪些贴图，查看对应方块类源码中 <code>@Load</code> 注解和 <code>load()</code> 方法。</p>
+<h3 id="75">7.5 调色板</h3>
+<p>Mindustry 有自己的调色板。新手强烈建议只用这些颜色，否则会显得格格不入甚至"异端"。方块调色板和环境调色板详见官方 Wiki（含色板图）。</p>
+<h3 id="76">7.6 风格与阴影</h3>
+<p>Mindustry 是 2D 游戏，通过"阴影"技巧营造立体感。光源来自<strong>右上角</strong>，阴影在<strong>左下角</strong>。</p>
+<ul>
+<li><strong>凸起</strong>用<strong>较亮色调</strong></li>
+<li><strong>平面</strong>用<strong>中间色调</strong></li>
+<li><strong>凹陷</strong>用<strong>较深色调</strong></li>
+</ul>
+<p>方块通常有 3 种颜色类型，每种 3 个色调（亮/中/暗）：底色（Base Color）和贴花色（Decal Color）。炮塔还可选炮管口颜色。</p>
+<p><strong>资源（物品）阴影：</strong> 光源可来自顶角、从上到下或从右到左。资源贴图只用 2-3 个同色系色调，确保看起来立体。</p>
+<p><strong>单位绘制 5 阶段</strong>（Zhenьkotron 编写）：</p>
+<ol>
+<li>勾勒大致形状。用粗笔刷画深色轮廓，慢慢叠加线条形成基本形状，稍微变形或弯曲，确保形状好看——形状不好看后面怎么画都不行。</li>
+<li>细化形状，用 45 度角线条。调整边缘，不要太拘泥于草稿。</li>
+<li>添加贴花（decals）。贴花难画，但现在加好后面可以围绕它构建阴影。</li>
+<li>粗略标记明暗部分。光来自上方，标记最暗和最亮的区域。约 30-40% 应为深色，贴花周围留暗以增加对比。</li>
+<li>"添加细节"——最复杂的部分。不确定加什么时，加单元格（cells）。不要加太多细节。</li>
+</ol>
+<p><strong>轮廓：</strong> 炮塔和单位贴图边缘留 4px 空间，游戏会自动加轮廓。</p>
+<p><strong>环境贴图：</strong> 与其他贴图不同，<strong>45 度增量规则不适用</strong>。环境贴图占游戏大多数画面，必须足够低调，平铺多次后仍好看。</p>
+<ul>
+<li><strong>地板</strong>：只有 2 个色调，变体数量自定。</li>
+<li><strong>树</strong>：画在大多数方块上方，单位可穿过，仅作地图装饰。树有阴影贴图，需手动制作。</li>
+</ul>
+<hr />
+<h2 id="8-sound">8. Sound 音效</h2>
+<p>自定义音效通过把文件放进 <code>sounds/</code> 子目录来添加。支持两种格式：<code>.ogg</code> 和 <code>.mp3</code>。注意 <code>.mp3</code> 不能无缝循环，尽量用 <code>.ogg</code>。</p>
+<p>和其他资源一样，通过文件名主干来引用。<code>pewpew.ogg</code> 和 <code>pewpew.mp3</code> 在 <code>Sound</code> 类型字段中用 <code>pewpew</code> 引用。</p>
+<h3 id="v2_1">内置音效列表（v2 更新）</h3>
+<blockquote>
+<p>v2 音效列表与 v1 差异巨大，以下为官方最新列表。</p>
+</blockquote>
+<div class="codeblock"><button class="copy-btn" onclick="copyCode(this)">复制</button><pre><code>acceleratorCharge  acceleratorConstruct  acceleratorLaunch  acceleratorLightning1
+acceleratorLightning2  beamHeal  beamLustre  beamMeltdown  beamParallax
+beamPlasma  beamPlasmaSmall  blockBreak1  blockBreak2  blockBreak3
+blockExplode1  blockExplode1Alt  blockExplode2  blockExplode2Alt  blockExplode3
+blockExplodeElectric  blockExplodeElectricBig  blockExplodeExplosive
+blockExplodeExplosiveAlt  blockExplodeFlammable  blockExplodeWall
+blockHeal  blockPlace1  blockPlace2  blockPlace3  blockRepair  blockRotate
+chargeCorvus  chargeLancer  chargeVela  click  coreLand  coreLaunch  door
+drillCharge  drillImpact  explosion  explosionAfflict  explosionArtillery
+explosionArtilleryShock  explosionArtilleryShockBig  explosionCleroi
+explosionCore  explosionCrawler  explosionDull  explosionMissile  explosionNavanax
+explosionObviate  explosionPlasmaSmall  explosionQuad  explosionReactor
+explosionReactor2  explosionReactorNeoplasm  explosionTitan  healWave  loopBio
+loopBuild  loopCircuit  loopCombustion  loopConveyor  loopCultivator  loopCutter
+loopDifferential  loopDrill  loopElectricHum  loopExtract  loopFire  loopFlux
+loopGlow  loopGrind  loopHover  loopHover2  loopHum  loopMachine  loopMachine2
+loopMachineSpin  loopMalign  loopMineBeam  loopMissileTrail  loopPulse  loopRegen
+loopShield  loopSmelter  loopSpray  loopSteam  loopTech  loopThoriumReactor
+loopThruster  loopUnitBuilding  massdriver  massdriverReceive  mechStep
+mechStepHeavy  mechStepSmall  padLand  padLaunch  payloadDrop1  payloadDrop2
+payloadDrop3  payloadPickup  plantBreak  rain  rockBreak  shieldBreak
+shieldBreakSmall  shieldHit  shieldWave  shipMove  shipMoveBig  shockBullet
+shockwaveTower  shoot  shootAfflict  shootAlpha  shootArc  shootArtillery
+shootArtillerySap  shootArtillerySapBig  shootArtillerySmall  shootAtrax
+shootAvert  shootBeamPlasma  shootBeamPlasmaSmall  shootBreach
+shootBreachCarbide  shootCleroi  shootCollaris  shootConquer  shootCorvus
+shootCyclone  shootDiffuse  shootDisperse  shootDuo  shootEclipse  shootElude
+shootEnergyField  shootFlame  shootFlamePlasma  shootForeshadow  shootFuse
+shootHorizon  shootLancer  shootLaser  shootLocus  shootMalign  shootMeltdown
+shootMerui  shootMissile  shootMissileLarge  shootMissileLong  shootMissilePlasma
+shootMissilePlasmaShort  shootMissileShort  shootMissileSmall  shootNavanax
+shootOmura  shootPayload  shootPulsar  shootQuad  shootReign  shootRetusa
+shootRipple  shootSalvo  shootSap  shootScathe  shootScatter  shootScepter
+shootScepterSecondary  shootSegment  shootSmite  shootSpectre  shootStell
+shootSublimate  shootTank  shootToxopidShotgun  stepMud  stepWater  tankMove
+tankMoveHeavy  tankMoveSmall  uiBack  uiButton  uiChat  uiFavorite  uiNotify
+uiUnlock  unitCreate  unitCreateBig  unitExplode1  unitExplode2  unitExplode3
+walkerStep  walkerStepSmall  walkerStepTiny  waveSpawn  wind  wind2  wind3
+windHowl  wreckFall  wreckFallBig  none  unset
+</code></pre></div>
+<hr />
+<h2 id="9-dependencies">9. Dependencies 依赖</h2>
+<p>在 <code>mod.hjson</code> 中添加其他 mod 的名字即可声明依赖：</p>
+<div class="codeblock"><button class="copy-btn" onclick="copyCode(this)">复制</button><pre><code class="language-hjson">dependencies: [
+  other-mod-name
+  not-a-mod
+]
+</code></pre></div>
+<p><strong>依赖名规范化</strong>：全部小写，空格替换为连字符。例如 <code>Other MOD NamE</code> 变成 <code>other-mod-name</code>。</p>
+<p><strong>引用其他 mod 的资源</strong>：必须在资源名前加上其他 mod 的名字作为前缀：</p>
+<div class="codeblock"><button class="copy-btn" onclick="copyCode(this)">复制</button><pre><code>other-mod-name-not-copper     →  other-mod-name 中的 not-copper
+other-mod-name-angry-dagger   →  other-mod-name 中的 angry-dagger
+not-a-mod-angry-dagger        →  not-a-mod 中的 angry-dagger
+</code></pre></div>
+<hr />
+<h2 id="10-bundles">10. Bundles 翻译</h2>
+<p>Bundles 是 mod 的可选组成部分，主要用途是给你的内容提供翻译。这些是纯文本文件，放在 <code>bundles/</code> 子目录，命名如 <code>bundle_ru.properties</code>（俄语）。内容格式非常简单：</p>
+<div class="codeblock"><button class="copy-btn" onclick="copyCode(this)">复制</button><pre><code class="language-properties">block.example-mod-silver-wall.name = Серебряная Стена
+block.example-mod-silver-wall.description = Стена из серебра.
+</code></pre></div>
+<h3 id="101">10.1 命名规则</h3>
+<div class="codeblock"><button class="copy-btn" onclick="copyCode(this)">复制</button><pre><code>&lt;content type&gt;.&lt;mod name&gt;-&lt;content name&gt;.name
+&lt;content type&gt;.&lt;mod name&gt;-&lt;content name&gt;.description
+</code></pre></div>
+<p>注意：mod/content 名全部小写、连字符分隔。自定义 bundle 键名（脚本用）可随意命名，如 <code>message.egg = Eat your eggs</code>、<code>randomline = Random Line</code>。</p>
+<h3 id="102">10.2 内容类型列表</h3>
+<div class="codeblock"><button class="copy-btn" onclick="copyCode(this)">复制</button><pre><code>item  block  bullet  liquid  status  unit  weather  sector
+error  planet  team  unitCommand  unitStance
+</code></pre></div>
+<h3 id="103">10.3 各语言文件名对照</h3>
+<table>
+<thead>
+<tr>
+<th>语言</th>
+<th>后缀</th>
+<th>语言</th>
+<th>后缀</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>English</td>
+<td><code>en</code></td>
+<td>Korean</td>
+<td><code>ko</code></td>
+</tr>
+<tr>
+<td>Czech</td>
+<td><code>cs</code></td>
+<td>Lithuanian</td>
+<td><code>lt</code></td>
+</tr>
+<tr>
+<td>German</td>
+<td><code>de</code></td>
+<td>Dutch BE</td>
+<td><code>nl_BE</code></td>
+</tr>
+<tr>
+<td>Spanish</td>
+<td><code>es</code></td>
+<td>Dutch</td>
+<td><code>nl</code></td>
+</tr>
+<tr>
+<td>Estonian</td>
+<td><code>et</code></td>
+<td>Polish</td>
+<td><code>pl</code></td>
+</tr>
+<tr>
+<td>Basque</td>
+<td><code>eu</code></td>
+<td>Portuguese BR</td>
+<td><code>pt_BR</code></td>
+</tr>
+<tr>
+<td>Finnish</td>
+<td><code>fi</code></td>
+<td>Portuguese</td>
+<td><code>pt_PT</code></td>
+</tr>
+<tr>
+<td>Filipino</td>
+<td><code>fil</code></td>
+<td>Romanian</td>
+<td><code>ro</code></td>
+</tr>
+<tr>
+<td>French</td>
+<td><code>fr</code></td>
+<td>Russian</td>
+<td><code>ru</code></td>
+</tr>
+<tr>
+<td>Hungarian</td>
+<td><code>hu</code></td>
+<td>Serbian</td>
+<td><code>sr</code></td>
+</tr>
+<tr>
+<td>Indonesian</td>
+<td><code>id_ID</code></td>
+<td>Swedish</td>
+<td><code>sv</code></td>
+</tr>
+<tr>
+<td>Italian</td>
+<td><code>it</code></td>
+<td>Thai</td>
+<td><code>th</code></td>
+</tr>
+<tr>
+<td>Japanese</td>
+<td><code>ja</code></td>
+<td>Turkman</td>
+<td><code>tk</code></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>Turkish</td>
+<td><code>tr</code></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>Ukrainian</td>
+<td><code>uk_UA</code></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>Vietnamese</td>
+<td><code>vi</code></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>Chinese CN</td>
+<td><code>zh_CN</code></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>Chinese TW</td>
+<td><code>zh_TW</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="11-markup">11. Markup 文本格式</h2>
+<p>文本渲染器使用简单的标记语言来着色文本。</p>
+<table>
+<thead>
+<tr>
+<th>语法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>[name]</code></td>
+<td>按名称设置颜色（有内置颜色名）</td>
+</tr>
+<tr>
+<td><code>[#rrggbb]</code> / <code>[#rrggbbaa]</code></td>
+<td>按十六进制设置颜色，每位值 00–ff；rr=红，gg=绿，bb=蓝，aa=透明度</td>
+</tr>
+<tr>
+<td><code>[]</code></td>
+<td>恢复到上一个颜色</td>
+</tr>
+<tr>
+<td><code>[[</code></td>
+<td>转义左方括号，渲染为 <code>[</code>（写 <code>[[red]</code> 会显示为 <code>[red]</code>）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>注意：错误/未知颜色会被静默忽略。</p>
+</blockquote>
+<p>示例：</p>
+<div class="codeblock"><button class="copy-btn" onclick="copyCode(this)">复制</button><pre><code>[red]red
+[#ff0000]full-red
+[#ff000066]half-red
+[#ff000033]half-half-red
+[#00ff00]green
+[]half-half-red
+</code></pre></div>
+<h3 id="_3">内置颜色（含十六进制值）</h3>
+<div class="codeblock"><button class="copy-btn" onclick="copyCode(this)">复制</button><pre><code>[clear]clear (#00000000)
+[black]black (#000000FF)
+[white]white (#FFFFFFFF)
+[lightgray]lightgray (#BFBFBFFF)
+[gray]gray (#7F7F7FFF)
+[darkgray]darkgray (#3F3F3FFF)
+[blue]blue (#0000FFFF)
+[navy]navy (#00007FFF)
+[royal]royal (#4169E1FF)
+[slate]slate (#700090FF)
+[sky]sky (#87CEEBFF)
+[cyan]cyan (#00FFFFFF)
+[teal]teal (#007F7FFF)
+[green]green (#00FF00FF)
+[acid]acid (#7FFF00FF)
+[lime]lime (#32CD32FF)
+[forest]forest (#228B22FF)
+[olive]olive (#6B8E23FF)
+[yellow]yellow (#FFFF00FF)
+[gold]gold (#FFD700FF)
+[goldenrod]goldenrod (#DAA520FF)
+[orange]orange (#FFA500FF)
+[brown]brown (#8B4513FF)
+[tan]tan (#D2B48CFF)
+[brick]brick (#B22222FF)
+[red]red (#FF0000FF)
+[scarlet]scarlet (#FF341CFF)
+[coral]coral (#FF7F50FF)
+[salmon]salmon (#FA8072FF)
+[pink]pink (#FF69B4FF)
+[magenta]magenta (#FF00FFFF)
+[purple]purple (#8000FFFF)
+[violet]violet (#EE82EEFF)
+[maroon]maroon (#B03060FF)
+</code></pre></div>
+<hr />
+<h2 id="12-schematic">12. Schematic 蓝图</h2>
+<p>需要 <code>Schematic</code> 类型的字段可以接受：</p>
+<ol>
+<li>内置 loadout；</li>
+<li>一个 base64 字符串；</li>
+<li><code>schematics/</code> 子目录中 <code>.msch</code> 文件的主干名。</li>
+</ol>
+<p>目前蓝图的主要用途包括给 Zone 指定初始 loadout 等。</p>
+<hr />
+<h2 id="13-scripting">13. Scripting 脚本</h2>
+<blockquote>
+<p>本章基于官方 3-scripting 页面整理，为<strong>现代 JS API</strong>（与 v1 的旧 <code>extendContent</code> 风格不同）。</p>
+</blockquote>
+<p>Mindustry 使用 <strong>JavaScript</strong> 进行 mod 脚本编写。脚本使用 <code>.js</code> 扩展名，放在 <code>scripts/</code> 子目录。</p>
+<p>执行从 <code>main.js</code> 文件开始。其他脚本文件可以通过 <code>require("script_name")</code> 被主文件引入。典型结构：</p>
+<p><em>scripts/main.js</em>:</p>
+<div class="codeblock"><button class="copy-btn" onclick="copyCode(this)">复制</button><pre><code class="language-javascript">require(&quot;blocks&quot;);
+require(&quot;items&quot;);
+</code></pre></div>
+<p><em>scripts/blocks.js</em>:</p>
+<div class="codeblock"><button class="copy-btn" onclick="copyCode(this)">复制</button><pre><code class="language-javascript">const myBlock = extend(Conveyor, &quot;terrible-conveyor&quot;, {
+  // various overrides...
+  size: 3,
+  health: 200
+  //...
+});
+</code></pre></div>
+<p><em>scripts/items.js</em>:</p>
+<div class="codeblock"><button class="copy-btn" onclick="copyCode(this)">复制</button><pre><code class="language-javascript">const terribleium = Item(&quot;terribleium&quot;);
+terribleium.color = Color.valueOf(&quot;ff0000&quot;);
+//...
+</code></pre></div>
+<blockquote>
+<p><strong>API 对照</strong>：旧版用 <code>extendContent(Block, "name", {...})</code>，现代版用 <code>extend(Conveyor, "name", {...})</code> 直接引用类。物品用 <code>Item("name")</code> 构造函数。</p>
+</blockquote>
+<h3 id="131">13.1 监听事件</h3>
+<div class="codeblock"><button class="copy-btn" onclick="copyCode(this)">复制</button><pre><code class="language-javascript">// listen for the event where a unit is destroyed
+Events.on(UnitDestroyEvent, event =&gt; {
+  // display toast on top of screen when the unit was a player
+  if(event.unit.isPlayer()){
+    Vars.ui.hudfrag.showToast(&quot;Pathetic.&quot;);
+  }
+})
+</code></pre></div>
+<blockquote>
+<p>查找可监听事件最简单的方法是查看源码文件 <code>Mindustry/blob/master/core/src/mindustry/game/EventType.java</code>。</p>
+</blockquote>
+<h3 id="132">13.2 显示对话框</h3>
+<div class="codeblock"><button class="copy-btn" onclick="copyCode(this)">复制</button><pre><code class="language-javascript">const myDialog = new BaseDialog(&quot;Dialog Title&quot;);
+// Add &quot;go back&quot; button
+myDialog.addCloseButton();
+// Add text to the main content
+myDialog.cont.add(&quot;Goodbye.&quot;);
+// Show dialog
+myDialog.show();
+</code></pre></div>
+<h3 id="133">13.3 播放自定义音效</h3>
+<p>把音效文件存为 <code>.mp3</code> 或 <code>.ogg</code> 放在 <code>/sounds</code> 目录。示例中我们把 <code>example.mp3</code> 存在 <code>/sounds/example.mp3</code>。</p>
+<p><em>scripts/alib.js</em>（加载音效的库，带缓存）:</p>
+<div class="codeblock"><button class="copy-btn" onclick="copyCode(this)">复制</button><pre><code class="language-javascript">exports.loadSound = (() =&gt; {
+    const cache = {};
+    return (path) =&gt; {
+        const c = cache[path];
+        if (c === undefined) {
+            return cache[path] = loadSound(path);
+        }
+        return c;
+    }
+})();
+</code></pre></div>
+<p><em>scripts/main.js</em>:</p>
+<div class="codeblock"><button class="copy-btn" onclick="copyCode(this)">复制</button><pre><code class="language-javascript">const lib = require(&quot;alib&quot;);
+
+Events.on(WaveEvent, event =&gt; {
+    // loads example.mp3
+    const mySound = lib.loadSound(&quot;example&quot;);
+    // engine will spawn this sound at this location (X,Y)
+    mySound.at(1, 1);
+})
+</code></pre></div>
+<h3 id="134-v1-extendcontent">13.4 v1 旧示例（extendContent 风格，供参考）</h3>
+<blockquote>
+<p>以下为 v1 文档中的旧版 <code>extendContent</code> 示例，展示 JS 如何扩展已有 Java 类型实现自定义行为。现代 API 用 <code>extend()</code> 代替。</p>
+</blockquote>
+<div class="codeblock"><button class="copy-btn" onclick="copyCode(this)">复制</button><pre><code class="language-javascript">// create a simple shockwave effect
+const siloLaunchEffect = newEffect(20, e =&gt; {
+    Draw.color(Color.white, Color.lightGray, e.fin());
+    Lines.stroke(e.fout() * 3);
+    Lines.circle(e.x, e.y, e.fin() * 100);
+});
+
+const silo = extendContent(Block, &quot;scatter-silo&quot;, {
+    buildConfiguration(tile, table) {
+        table.addImageButton(Icon.arrowUpSmall, Styles.clearTransi,
+            run(() =&gt; tile.configure(0))
+        ).size(50);
+    },
+    configured(tile, value) {
+        if (tile.entity.cons.valid()) {
+            Effects.effect(siloLaunchEffect, tile);
+            for (var i = 0; i &lt; 10; i++) {
+                Calls.createBullet(
+                    Bullets.flakExplosive,
+                    tile.getTeam(),
+                    tile.drawx(), tile.drawy(),
+                    Mathf.random(360),
+                    Mathf.random(0.5, 1.0),
+                    Mathf.random(0.2, 1.0)
+                );
+            }
+            tile.entity.cons.trigger();
+        }
+    }
+});
+</code></pre></div>
+<hr />
+<h2 id="14-plugins-jvm-modsjava">14. Plugins &amp; JVM Mods（Java 插件）</h2>
+<blockquote>
+<p>本章基于官方 2-plugins 页面整理，为官方对 Java mod 的说明。</p>
+</blockquote>
+<p>Mindustry 支持在桌面端和 Android 上加载带 Java 字节码的 <code>jar</code> 文件。它们的功能与 JS mod 类似，但必须提供一个主类在 mod 创建时实例化。理论上所有 JVM 语言都支持。</p>
+<h3 id="141-modhjson">14.1 mod.hjson 配置</h3>
+<p>Jar/JVM mod 使用与标准 mod 相同的 <code>mod.hjson</code> 元文件，额外增加：用 <code>main: "mypackage.MyMod"</code> 指定全限定主类。该类应继承 <code>mindustry.mod.Mod</code>。</p>
+<p>如果不指定主类，默认为 <code>modnameinlowercase.ModName + "Mod"</code>。</p>
+<p>一个 Java mod 的简单 <code>mod.hjson</code>：</p>
+<div class="codeblock"><button class="copy-btn" onclick="copyCode(this)">复制</button><pre><code class="language-hjson">name: &quot;Nothing&quot;
+author: &quot;Yourself&quot;
+main: &quot;nothing.NothingMod&quot;
+description: &quot;...&quot;
+version: &quot;99.99&quot;
+</code></pre></div>
+<p>更多说明见 example Java mod 仓库和 example Kotlin mod 仓库。</p>
+<h3 id="142-plugins">14.2 Plugins（服务器插件）</h3>
+<p>Plugins 是<strong>仅服务器端运行</strong>的 Java mod，通常添加新命令或新游戏模式。所有插件主类应继承 <code>mindustry.mod.Plugin</code>。这使它们<strong>隐式 hidden</strong>——客户端不需要下载插件就能加入服务器。安装插件：把 JAR 放入 <code>&lt;server directory&gt;/config/mods/</code>。</p>
+<p>Plugins 的元文件命名为 <code>plugin.[h]json</code>，文件结构与其他 Java mod 相同。</p>
+<h3 id="143">14.3 导入与分发</h3>
+<p>与 JS 或 JSON mod 不同，JAR mod 需要编译。这意味着它们不能直接从 GitHub 导入——而是用 <strong>GitHub Releases</strong>。</p>
+<p>当用户尝试安装 JAR mod 时，Mindustry 会检查最新（且<strong>只检查最新</strong>）的 GitHub release 中的 <code>.jar</code> 产物。找到第一个产物就下载。注意 pre-release 会被忽略。</p>
+<blockquote>
+<p>推荐用 GitHub Actions（或其他 CI）自动构建并上传 jar 产物到新 release。</p>
+</blockquote>
+<h3 id="144">14.4 多线程</h3>
+<p>除非特别说明，<strong>Mindustry 代码都不是线程安全的</strong>。从主线程以外的线程执行任何操作（发包、改 tile 等）会导致随机崩溃或网络错误。要在主线程运行，用 <code>Core.app.post(() =&gt; { /* code */ })</code>。</p>
+<h3 id="145">14.5 能力与安全</h3>
+<p>由于 jar mod 直接通过 <code>URLClassLoader</code> 加载，<strong>没有沙箱</strong>，因此没有任何安全限制：</p>
+<ul>
+<li>所有 Java API 都可访问；</li>
+<li>可用反射访问私有/隐藏属性；</li>
+<li>mod 有客户端电脑的完全访问权，可能被恶意利用；</li>
+<li>mod 可以修改游戏文件或重写核心字节码。</li>
+</ul>
+<blockquote>
+<p><strong>永远不要从不信任的来源导入 jar mod。</strong> 这确实是安全风险，但没有好的替代方案——即使实现了 <code>SecurityManager</code> 也没用，Java 本质上不安全。作为对比，Minecraft 的 Forge 也不沙箱 mod。</p>
+</blockquote>
+<hr />
+<h2 id="15-faq">15. 分享与 FAQ</h2>
+<h3 id="151-mod">15.1 分享 mod</h3>
+<p>做好 mod 后，用 <strong>GitHub</strong> 分享。项目放到 GitHub 后，有三种分享方式：</p>
+<ol>
+<li><strong>endpoint 方式</strong>：例如 <code>Anuken/MindustryJavaModTemplate</code>，在游戏内的 GitHub 界面输入即可下载；</li>
+<li><strong>zip 方式</strong>：例如 <code>https://github.com/Anuken/MindustryJavaModTemplate/archive/master.zip</code>，下载为 zip 后放进 mod 目录（无需解压）；</li>
+<li><strong>添加标签</strong>：给仓库打上 <code>mindustry-mod</code> 标签，会被 Mod scraper 收录。</li>
+</ol>
+<h3 id="152-faq">15.2 FAQ</h3>
+<ul>
+<li><strong>时间单位</strong>：游戏内时间通过 tick 计算；tick 有时叫帧，假定为每秒 60 次（1/60 秒）。</li>
+<li><strong>瓦片尺寸</strong>：内部 tilesize 为 8 世界单位；hitbox 等大多数值都以此为单位。</li>
+<li><strong>射程换算</strong>：<code>lifetime * speed = range</code>。</li>
+<li><strong>NullPointerException</strong>：表示某个不该为 null 的字段是 null——通常意味着某个必填字段缺失。</li>
+<li><strong>bleeding-edge（前沿版）</strong>：Mindustry 最新开发版，特指 GitHub master 分支最新提交。前沿版上的更改通常会在下一个正式版本中进入游戏。</li>
+</ul>
+<hr />
+<h2 id="16-v6v7v8">16. 迁移指南（v6/v7/v8）</h2>
+<blockquote>
+<p>本章合自官方 6/7/8-migrationv 页面，供从旧版本 mod 迁移时参考。</p>
+</blockquote>
+<h3 id="161-60">16.1 6.0 迁移指南</h3>
+<p><strong>通用变更：</strong>
+- 所有 mod 必须在 <code>mod.hjson</code> 中指定 <code>minGameVersion</code> 为 "105" 以上才会被加载。</p>
+<p><strong>命名变更：</strong>
+- <code>ItemTurret</code>：<code>ammo</code> → <code>ammoTypes</code>；<code>reload</code> → <code>reloadTime</code>
+- <code>ArtilleryTurret</code>、<code>BurstTurret</code>、<code>ChargeTurret</code>：已移除，用 <code>ItemTurret</code> 或 <code>PowerTurret</code> 代替，功能已合并到基类
+- <code>BasicBulletType</code>：<code>bulletWidth</code> → <code>width</code>；<code>bulletHeight</code> → <code>height</code>；<code>bulletSprite</code> → <code>sprite</code></p>
+<p><strong>TileEntity → Building：</strong>
+- <code>TileEntity</code> 现在叫 <code>Building</code>。<code>Tile.entity</code> 改名 <code>Tile.build</code>，所有 <code>XxxEntity</code> 改名 <code>XxxBuild</code>。
+- 许多函数（如 <code>draw()</code>、<code>placed()</code>）从 <code>Block</code> 移到 <code>Building</code>。<code>update(Tile tile)</code> 移到 <code>Building</code> 并改名 <code>updateTile()</code>。</p>
+<p><strong>Array → Seq：</strong>
+- <code>arc.struct.Array</code> 改名 <code>arc.struct.Seq</code>（Sequence 缩写）。</p>
+<p><strong>Plugin 包移动：</strong>
+- <code>mindustry.plugin.Plugin</code> → <code>mindustry.mod.Plugin</code></p>
+<p><strong>Call 方法去掉 "on" 前缀：</strong>
+- <code>onSnapshot</code> → <code>snapshot</code>；<code>onSetRules</code> → <code>setRules</code>；<code>onLabel</code> → <code>label</code></p>
+<p><strong>新玩家系统：</strong>
+- 玩家控制单位，不再以肉体存在（无生命值/武器）。所有动作由 <code>Unit</code> 执行。没有 <code>Mech</code> 类了，只有 <code>UnitType</code>。
+- 每个单位有 <code>UnitController</code>（AI/逻辑/玩家）。检查玩家控制：<code>unit.isPlayer()</code>；获取玩家：<code>unit.getPlayer()</code>。设置玩家位置无效，要设单位位置。</p>
+<h3 id="162-70">16.2 7.0 迁移指南</h3>
+<p><strong>方块：</strong>
+- <code>Block#expanded</code> 已弃用为空操作，用 <code>Block#clipSize</code> 代替。
+- <code>mindustry.world.meta.values.*</code> 类全部替换为 lambda，见 <code>StatValues</code>。
+- <code>BlockForge</code> 移出实验包。
+- <code>CacheLayer</code> 现在是可重写方法的类（不是枚举），<code>CacheLayer#add</code> 可注册新层。
+- <code>variants</code>、<code>attributes</code> 等字段从 <code>Floor</code> 移到 <code>Block</code>。
+- <code>Iconc</code> 及相关方法已移除，用 <code>UnlockableContent.uiIcon/fullIcon</code>。
+- <code>Smelter</code>、<code>AttributeSmelter</code>、<code>Cultivator</code> 已弃用，用 <code>GenericCrafter</code> + <code>DrawSmelter</code>，属性支持用 <code>AttributeCrafter</code>。
+- <code>ExtendingItemBridge</code>、<code>LiquidExtendingBridge</code> 合并到 <code>ItemBridge</code>/<code>LiquidBridge</code>。
+- <code>PayloadAcceptor</code> 改名 <code>PayloadBlock</code>。
+- 生成图标<strong>必须</strong>在 <code>createIcons</code> 中创建。
+- <code>LiquidModule#total()</code> 弃用，用 <code>currentAmount()</code>。</p>
+<p><strong>弹药：</strong>
+- 单位弹药相关代码全部失效。<code>ResupplyPoint</code> 移除。<code>AmmoType</code> 现在是接口。<code>AmmoTypes</code> 移除。弹药类移到 <code>mindustry.type.ammo</code> 包。<code>ContentType.ammo</code> 移除。</p>
+<p><strong>Arc：</strong>
+- <code>Pixmap</code> API 完全改变。<code>SettingsDialog</code> 移到 Mindustry 代码库。TextureAtlas 用更小更快的 <code>aatls</code> 二进制格式。<code>Core.net</code> 移除，用 <code>arc.util.Http</code> 静态方法。<code>RidgedPerlin</code> 改名 <code>Ridged</code>。<code>Simplex</code>/<code>Ridged</code> 现在无状态，用静态方法。</p>
+<p><strong>网络：</strong>
+- <code>Registrator</code> 移到 <code>Net</code>，注册方法公开。<code>InvokePacket</code> 移除，用生成的 packet 类。<code>RemoteRead{Server,Client}</code> 移除。<code>Packet</code> 现在是抽象类（不是接口）。</p>
+<p><strong>杂项：</strong>
+- <code>BulletType#despawned</code> 不再被调用，用 <code>#removed</code> 监听所有移除事件。
+- <code>Attribute</code> 现在是标准类（不是枚举），用 <code>Attribute.add</code> 注册。
+- <code>Vars.miningRange</code> 移到 <code>UnitType</code>。
+- <code>Tex</code> 中所有字段现在是 <code>Drawable</code>。</p>
+<p><strong>贴图：</strong>
+- 单位/武器贴图自动生成轮廓（腿区域除外）。所有 mod 贴图在开启线性过滤时自动 alpha-bleed，无需手动处理。</p>
+<h3 id="163-80">16.3 8.0 迁移指南</h3>
+<p><strong>JSON mod：</strong> 大概率不需要改。现有 JSON mod 仍能工作，但某些星球上内容显示方式有变化。见下面 Planets 部分。</p>
+<p><strong>Java/JS mod 杂项：</strong>
+- <code>Binding</code> 键位值现在用 camelCase。
+- 旧键位系统完全重做，支持自定义 mod 键位，见 <code>arc.input.KeyBind#add</code>。<code>Core.keybinds</code> 移除，用 <code>Keybind</code> 类。
+- <code>createIcons</code> 之外不能调用 <code>Core.atlas.getPixmap</code>。需要生成图标就重写 <code>createIcons</code>。</p>
+<p><strong>方块：</strong>
+- <code>Building</code> 大部分不必要的 getter 方法（<code>tile(Tile)</code>、<code>tile()</code>、<code>block()</code>）已移除，直接访问字段。
+- 方块现在有单独的 <code>lightClipSize</code> 字段用于 <code>drawLight()</code> 裁剪。<code>emitLight</code> 必须为 true 才会调用此方法。
+- <code>loopSound</code> 移除；循环必须在每个方块的 <code>Building</code> 中手动创建和更新（见 <code>Turret</code> 源码）。</p>
+<p><strong>单位：</strong>
+- <code>Player#unit()</code> <strong>现在可以为 null。</strong> 访问单位前必须检查 <code>!player.dead()</code>。
+- <code>Units.null</code> 移除。
+- 命令现在是内容。<code>UnitCommand.all</code> 移除。单位命令现在是 <code>Seq</code>（不是数组）。</p>
+<p><strong>星球：</strong>
+- 所有物品可见性相关字段（<code>itemWhitelist</code>、<code>hiddenItems</code>、<code>Rules.hiddenBuildItems</code>）已移除。要让内容在特定星球显示，修改它的 <code>shownPlanets</code> 字段包含该星球。如果设置了科技树，这会自动完成。</p>
+<hr />
+<h2 id="17-modding-classes">17. 字段速查大区：Modding Classes</h2>
+<blockquote>
+<p>本章为 v2 核心新增。所有字段表忠实官方 Modding Classes 页面原文（字段/类型/默认值/说明）。按继承层级和功能组织。
+抓取说明：官方类页字段与 Java 源码同源，以官方类页呈现为准。<code>Turret</code> 基类官方页为空（仅目录），其字段需参考 Java 源码 <code>mindustry.world.blocks.defense.turrets.Turret</code>；<code>Planet</code> 官方链接失效。</p>
+</blockquote>
+<h3 id="171-block-extends-unlockablecontent">17.1 Block 基类（extends UnlockableContent）</h3>
+<p><code>Block</code> 是游戏中所有方块的基类。这是 v2 最完整的字段表（官方页 4705 token）。</p>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>type</th>
+<th>default</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>hasItems</td>
+<td>boolean</td>
+<td>false</td>
+<td>If true, buildings have an ItemModule.</td>
+</tr>
+<tr>
+<td>hasLiquids</td>
+<td>boolean</td>
+<td>false</td>
+<td>If true, buildings have a LiquidModule.</td>
+</tr>
+<tr>
+<td>hasPower</td>
+<td>boolean</td>
+<td>false</td>
+<td>If true, buildings have a PowerModule.</td>
+</tr>
+<tr>
+<td>outputsLiquid</td>
+<td>boolean</td>
+<td>false</td>
+<td>Flag for determining whether this block outputs liquid somewhere; used for connections.</td>
+</tr>
+<tr>
+<td>consumesPower</td>
+<td>boolean</td>
+<td>true</td>
+<td>Used by certain power blocks (nodes) to flag as non-consuming of power.</td>
+</tr>
+<tr>
+<td>outputsPower</td>
+<td>boolean</td>
+<td>false</td>
+<td>If true, this block is a generator that can produce power.</td>
+</tr>
+<tr>
+<td>connectedPower</td>
+<td>boolean</td>
+<td>true</td>
+<td>If false, power nodes cannot connect to this block.</td>
+</tr>
+<tr>
+<td>conductivePower</td>
+<td>boolean</td>
+<td>false</td>
+<td>If true, this block can conduct power like a cable.</td>
+</tr>
+<tr>
+<td>outputsPayload</td>
+<td>boolean</td>
+<td>false</td>
+<td>If true, this block can output payloads; affects blending.</td>
+</tr>
+<tr>
+<td>acceptsUnitPayloads</td>
+<td>boolean</td>
+<td>false</td>
+<td>If true, this block can input payloads.</td>
+</tr>
+<tr>
+<td>acceptsPayload</td>
+<td>boolean</td>
+<td>false</td>
+<td>If true, payloads will attempt to move into this block.</td>
+</tr>
+<tr>
+<td>acceptsItems</td>
+<td>boolean</td>
+<td>false</td>
+<td>Visual flag for blending of transportation blocks.</td>
+</tr>
+<tr>
+<td>alwaysAllowDeposit</td>
+<td>boolean</td>
+<td>false</td>
+<td>If true, not affected by the onlyDepositCore rule.</td>
+</tr>
+<tr>
+<td>depositCooldown</td>
+<td>float</td>
+<td>-1.0</td>
+<td>Cooldown in seconds applied to player item depositing.</td>
+</tr>
+<tr>
+<td>separateItemCapacity</td>
+<td>boolean</td>
+<td>false</td>
+<td>If true, all item capacities are separate instead of pooled.</td>
+</tr>
+<tr>
+<td>itemCapacity</td>
+<td>int</td>
+<td>10</td>
+<td>maximum items this block can carry (usually per-type).</td>
+</tr>
+<tr>
+<td>liquidCapacity</td>
+<td>float</td>
+<td>-1.0</td>
+<td>maximum total liquids if hasLiquids=true. Default 10, scales with max liquid consumption.</td>
+</tr>
+<tr>
+<td>liquidPressure</td>
+<td>float</td>
+<td>1.0</td>
+<td>higher numbers increase liquid output speed.</td>
+</tr>
+<tr>
+<td>outputFacing</td>
+<td>boolean</td>
+<td>true</td>
+<td>If true, outputs to facing direction. Used for blending.</td>
+</tr>
+<tr>
+<td>noSideBlend</td>
+<td>boolean</td>
+<td>false</td>
+<td>if true, does not accept input from sides (armored conveyors).</td>
+</tr>
+<tr>
+<td>displayFlow</td>
+<td>boolean</td>
+<td>true</td>
+<td>whether to display flow rate.</td>
+</tr>
+<tr>
+<td>inEditor</td>
+<td>boolean</td>
+<td>true</td>
+<td>whether this block is visible in the editor.</td>
+</tr>
+<tr>
+<td>editorConfigurable</td>
+<td>boolean</td>
+<td>false</td>
+<td>if true, buildEditorConfig called in editor.</td>
+</tr>
+<tr>
+<td>lastConfig</td>
+<td>Object</td>
+<td>null</td>
+<td>the last configuration value applied.</td>
+</tr>
+<tr>
+<td>saveConfig</td>
+<td>boolean</td>
+<td>false</td>
+<td>whether to save last config and apply to newly placed blocks.</td>
+</tr>
+<tr>
+<td>copyConfig</td>
+<td>boolean</td>
+<td>true</td>
+<td>whether to allow copying config through middle click.</td>
+</tr>
+<tr>
+<td>clearOnDoubleTap</td>
+<td>boolean</td>
+<td>false</td>
+<td>if true, double-tap clears configuration.</td>
+</tr>
+<tr>
+<td>update</td>
+<td>boolean</td>
+<td>false</td>
+<td>whether this block has a tile entity that updates.</td>
+</tr>
+<tr>
+<td>destructible</td>
+<td>boolean</td>
+<td>false</td>
+<td>whether this block has health and can be destroyed. note: setting false does nothing if update=true!</td>
+</tr>
+<tr>
+<td>unloadable</td>
+<td>boolean</td>
+<td>true</td>
+<td>whether unloaders work on this block.</td>
+</tr>
+<tr>
+<td>isDuct</td>
+<td>boolean</td>
+<td>false</td>
+<td>if true, acts as a duct, connects to armored ducts from side.</td>
+</tr>
+<tr>
+<td>allowResupply</td>
+<td>boolean</td>
+<td>false</td>
+<td>whether units can resupply by taking items.</td>
+</tr>
+<tr>
+<td>solid</td>
+<td>boolean</td>
+<td>false</td>
+<td>whether this is solid.</td>
+</tr>
+<tr>
+<td>solidifes</td>
+<td>boolean</td>
+<td>false</td>
+<td>whether this block CAN be solid.</td>
+</tr>
+<tr>
+<td>teamPassable</td>
+<td>boolean</td>
+<td>false</td>
+<td>if true, counts as non-solid block to this team.</td>
+</tr>
+<tr>
+<td>underBullets</td>
+<td>boolean</td>
+<td>false</td>
+<td>if true, cannot be hit by bullets unless explicitly targeted.</td>
+</tr>
+<tr>
+<td>rotate</td>
+<td>boolean</td>
+<td>false</td>
+<td>whether this is rotatable.</td>
+</tr>
+<tr>
+<td>rotateDraw</td>
+<td>boolean</td>
+<td>true</td>
+<td>if rotate and false, region won't rotate when drawing.</td>
+</tr>
+<tr>
+<td>rotateDrawEditor</td>
+<td>boolean</td>
+<td>true</td>
+<td>same, in editor.</td>
+</tr>
+<tr>
+<td>visualRotationOffset</td>
+<td>float</td>
+<td>0.0</td>
+<td>visual rotation offset used in broken plan rendering.</td>
+</tr>
+<tr>
+<td>lockRotation</td>
+<td>boolean</td>
+<td>true</td>
+<td>if rotate=false and true, rotation locked at 0 when placing.</td>
+</tr>
+<tr>
+<td>ignoreLineRotation</td>
+<td>boolean</td>
+<td>false</td>
+<td>if true, won't face line drag direction.</td>
+</tr>
+<tr>
+<td>invertFlip</td>
+<td>boolean</td>
+<td>false</td>
+<td>if true, schematic flips are inverted.</td>
+</tr>
+<tr>
+<td>variants</td>
+<td>int</td>
+<td>0</td>
+<td>number of different variant regions to use.</td>
+</tr>
+<tr>
+<td>drawArrow</td>
+<td>boolean</td>
+<td>true</td>
+<td>whether to draw a rotation arrow.</td>
+</tr>
+<tr>
+<td>drawTeamOverlay</td>
+<td>boolean</td>
+<td>true</td>
+<td>whether to draw the team corner by default.</td>
+</tr>
+<tr>
+<td>saveData</td>
+<td>boolean</td>
+<td>false</td>
+<td>for static blocks: if true, tile data() saved in world data.</td>
+</tr>
+<tr>
+<td>breakable</td>
+<td>boolean</td>
+<td>false</td>
+<td>whether you can break this with rightclick.</td>
+</tr>
+<tr>
+<td>unitMoveBreakable</td>
+<td>boolean</td>
+<td>false</td>
+<td>if true, broken by certain units stepping over it.</td>
+</tr>
+<tr>
+<td>rebuildable</td>
+<td>boolean</td>
+<td>true</td>
+<td>whether to add this block to brokenblocks.</td>
+</tr>
+<tr>
+<td>privileged</td>
+<td>boolean</td>
+<td>false</td>
+<td>logic-related block only usable with privileged processors.</td>
+</tr>
+<tr>
+<td>requiresWater</td>
+<td>boolean</td>
+<td>false</td>
+<td>whether only placeable on water.</td>
+</tr>
+<tr>
+<td>placeableLiquid</td>
+<td>boolean</td>
+<td>false</td>
+<td>whether placeable on any liquids.</td>
+</tr>
+<tr>
+<td>placeablePlayer</td>
+<td>boolean</td>
+<td>true</td>
+<td>whether placeable directly by player.</td>
+</tr>
+<tr>
+<td>placeableOn</td>
+<td>boolean</td>
+<td>true</td>
+<td>whether this floor can be placed on.</td>
+</tr>
+<tr>
+<td>insulated</td>
+<td>boolean</td>
+<td>false</td>
+<td>whether this block has insulating properties.</td>
+</tr>
+<tr>
+<td>squareSprite</td>
+<td>boolean</td>
+<td>true</td>
+<td>whether the sprite is a full square.</td>
+</tr>
+<tr>
+<td>absorbLasers</td>
+<td>boolean</td>
+<td>false</td>
+<td>whether this block absorbs laser attacks.</td>
+</tr>
+<tr>
+<td>enableDrawStatus</td>
+<td>boolean</td>
+<td>true</td>
+<td>if false, status is never drawn.</td>
+</tr>
+<tr>
+<td>drawDisabled</td>
+<td>boolean</td>
+<td>true</td>
+<td>whether to draw disabled status.</td>
+</tr>
+<tr>
+<td>autoResetEnabled</td>
+<td>boolean</td>
+<td>true</td>
+<td>whether to auto-reset enabled status after no logic interaction.</td>
+</tr>
+<tr>
+<td>noUpdateDisabled</td>
+<td>boolean</td>
+<td>false</td>
+<td>if true, stops updating when disabled.</td>
+</tr>
+<tr>
+<td>updateInUnits</td>
+<td>boolean</td>
+<td>true</td>
+<td>if true, updates when it's a payload in a unit.</td>
+</tr>
+<tr>
+<td>alwaysUpdateInUnits</td>
+<td>boolean</td>
+<td>false</td>
+<td>if true, updates in payloads regardless of game rule.</td>
+</tr>
+<tr>
+<td>canPickup</td>
+<td>boolean</td>
+<td>true</td>
+<td>if true, can be picked up in payloads.</td>
+</tr>
+<tr>
+<td>deconstructDropAllLiquid</td>
+<td>boolean</td>
+<td>false</td>
+<td>if false, only incinerable liquids dropped when deconstructing.</td>
+</tr>
+<tr>
+<td>useColor</td>
+<td>boolean</td>
+<td>true</td>
+<td>Whether to use this block's color in minimap.</td>
+</tr>
+<tr>
+<td>itemDrop</td>
+<td>Item</td>
+<td>null</td>
+<td>item that drops from this block, used for drills.</td>
+</tr>
+<tr>
+<td>playerUnmineable</td>
+<td>boolean</td>
+<td>false</td>
+<td>if true, cannot be mined by players.</td>
+</tr>
+<tr>
+<td>attributes</td>
+<td>Attributes</td>
+<td>new Attributes()</td>
+<td>Affinities for floors.</td>
+</tr>
+<tr>
+<td>scaledHealth</td>
+<td>float</td>
+<td>-1.0</td>
+<td>Health per square tile; multiplied by size*size. If &lt;0, default 40.</td>
+</tr>
+<tr>
+<td>health</td>
+<td>int</td>
+<td>-1</td>
+<td>building health; -1 to use scaledHealth.</td>
+</tr>
+<tr>
+<td>armor</td>
+<td>float</td>
+<td>0.0</td>
+<td>damage absorption, similar to unit armor.</td>
+</tr>
+<tr>
+<td>baseExplosiveness</td>
+<td>float</td>
+<td>0.0</td>
+<td>base block explosiveness.</td>
+</tr>
+<tr>
+<td>explosivenessScale</td>
+<td>float</td>
+<td>1.0</td>
+<td>scaling of explosiveness based on items/liquids.</td>
+</tr>
+<tr>
+<td>flammabilityScale</td>
+<td>float</td>
+<td>1.0</td>
+<td>scaling of explosion flammability.</td>
+</tr>
+<tr>
+<td>baseShake</td>
+<td>float</td>
+<td>3.0</td>
+<td>base screen shake upon destruction.</td>
+</tr>
+<tr>
+<td>destroyBullet</td>
+<td>BulletType</td>
+<td>null</td>
+<td>bullet spawned when destroyed.</td>
+</tr>
+<tr>
+<td>destroyBulletSameTeam</td>
+<td>boolean</td>
+<td>false</td>
+<td>if true, destroyBullet spawned on block's team.</td>
+</tr>
+<tr>
+<td>lightLiquid</td>
+<td>Liquid</td>
+<td>null</td>
+<td>liquid used for lighting.</td>
+</tr>
+<tr>
+<td>drawCracks</td>
+<td>boolean</td>
+<td>true</td>
+<td>whether cracks are drawn when damaged.</td>
+</tr>
+<tr>
+<td>createRubble</td>
+<td>boolean</td>
+<td>true</td>
+<td>whether rubble is created when destroyed.</td>
+</tr>
+<tr>
+<td>floating</td>
+<td>boolean</td>
+<td>false</td>
+<td>whether placeable on edges of liquids.</td>
+</tr>
+<tr>
+<td>size</td>
+<td>int</td>
+<td>1</td>
+<td>multiblock size.</td>
+</tr>
+<tr>
+<td>offset</td>
+<td>float</td>
+<td>0.0</td>
+<td>multiblock offset.</td>
+</tr>
+<tr>
+<td>sizeOffset</td>
+<td>int</td>
+<td>0</td>
+<td>offset for iteration (internal).</td>
+</tr>
+<tr>
+<td>clipSize</td>
+<td>float</td>
+<td>-1.0</td>
+<td>Clipping size. Should be as large as the block will draw.</td>
+</tr>
+<tr>
+<td>lightClipSize</td>
+<td>float</td>
+<td>0.0</td>
+<td>Clipping size for lights only.</td>
+</tr>
+<tr>
+<td>placeOverlapRange</td>
+<td>float</td>
+<td>50.0</td>
+<td>range checked for enemy blocks when placeRangeCheck enabled.</td>
+</tr>
+<tr>
+<td>crushDamageMultiplier</td>
+<td>float</td>
+<td>1.0</td>
+<td>Multiplier of damage dealt by tanks. Not for crawlers.</td>
+</tr>
+<tr>
+<td>crushFragile</td>
+<td>boolean</td>
+<td>false</td>
+<td>If true, instantly destroyed by tanks with crushFragile.</td>
+</tr>
+<tr>
+<td>timers</td>
+<td>int</td>
+<td>1</td>
+<td>Max of timers used.</td>
+</tr>
+<tr>
+<td>cacheLayer</td>
+<td>CacheLayer</td>
+<td>normal</td>
+<td>Cache layer for 'cached' rendering.</td>
+</tr>
+<tr>
+<td>drawDynamic</td>
+<td>boolean</td>
+<td>true</td>
+<td>If true, draw() called on the building.</td>
+</tr>
+<tr>
+<td>drawCached</td>
+<td>boolean</td>
+<td>false</td>
+<td>If enabled, drawCached() called.</td>
+</tr>
+<tr>
+<td>buildingCacheLayer</td>
+<td>BuildingCacheLayer</td>
+<td>normal</td>
+<td></td>
+</tr>
+<tr>
+<td>fillsTile</td>
+<td>boolean</td>
+<td>true</td>
+<td>if false, floor drawn under this block even if cached.</td>
+</tr>
+<tr>
+<td>forceDark</td>
+<td>boolean</td>
+<td>false</td>
+<td>If true, can be covered by darkness/fog even if synthetic.</td>
+</tr>
+<tr>
+<td>alwaysReplace</td>
+<td>boolean</td>
+<td>false</td>
+<td>whether this block can be replaced in all cases.</td>
+</tr>
+<tr>
+<td>replaceable</td>
+<td>boolean</td>
+<td>true</td>
+<td>if false, never replaceable.</td>
+</tr>
+<tr>
+<td>group</td>
+<td>BlockGroup</td>
+<td>none</td>
+<td>blocks in same group can replace each other.</td>
+</tr>
+<tr>
+<td>flags</td>
+<td>EnumSet of BlockFlag</td>
+<td>of()</td>
+<td>List of block flags. Used for AI indexing.</td>
+</tr>
+<tr>
+<td>priority</td>
+<td>float</td>
+<td>0.0</td>
+<td>Targeting priority as seen by enemies.</td>
+</tr>
+<tr>
+<td>unitCapModifier</td>
+<td>int</td>
+<td>0</td>
+<td>How much this block affects unit cap by. Needs unitModifier flag.</td>
+</tr>
+<tr>
+<td>configurable</td>
+<td>boolean</td>
+<td>false</td>
+<td>Whether the block can be tapped and selected to configure.</td>
+</tr>
+<tr>
+<td>configureSound</td>
+<td>Sound</td>
+<td>click</td>
+<td>Sound when configured.</td>
+</tr>
+<tr>
+<td>ignoreResizeConfig</td>
+<td>boolean</td>
+<td>false</td>
+<td>If true, no pointConfig transform on map resize.</td>
+</tr>
+<tr>
+<td>commandable</td>
+<td>boolean</td>
+<td>false</td>
+<td>If true, selectable like a unit when commanding.</td>
+</tr>
+<tr>
+<td>allowConfigInventory</td>
+<td>boolean</td>
+<td>true</td>
+<td>If true, building inventory shown with config.</td>
+</tr>
+<tr>
+<td>diagonalConfigInventory</td>
+<td>boolean</td>
+<td>false</td>
+<td>If true, inventory placed diagonally top right.</td>
+</tr>
+<tr>
+<td>selectionRows</td>
+<td>int</td>
+<td>5</td>
+<td>how large selection menus (sorters) should be.</td>
+</tr>
+<tr>
+<td>selectionColumns</td>
+<td>int</td>
+<td>4</td>
+<td>how large selection menus should be.</td>
+</tr>
+<tr>
+<td>logicConfigurable</td>
+<td>boolean</td>
+<td>false</td>
+<td>If true, configurable by logic.</td>
+</tr>
+<tr>
+<td>delayLandingConfig</td>
+<td>boolean</td>
+<td>false</td>
+<td>If true, config delayed during landing buildup animation.</td>
+</tr>
+<tr>
+<td>consumesTap</td>
+<td>boolean</td>
+<td>false</td>
+<td>Whether consumes touchDown events when tapped.</td>
+</tr>
+<tr>
+<td>drawLiquidLight</td>
+<td>boolean</td>
+<td>true</td>
+<td>Whether to draw glow of liquid if it has one.</td>
+</tr>
+<tr>
+<td>envRequired</td>
+<td>int</td>
+<td>0</td>
+<td>Environmental flags ALL required. 0 = any.</td>
+</tr>
+<tr>
+<td>envEnabled</td>
+<td>int</td>
+<td>1</td>
+<td>environment flags it can function in.</td>
+</tr>
+<tr>
+<td>envDisabled</td>
+<td>int</td>
+<td>0</td>
+<td>environment flags it CANNOT function in.</td>
+</tr>
+<tr>
+<td>sync</td>
+<td>boolean</td>
+<td>false</td>
+<td>Whether to periodically sync across network.</td>
+</tr>
+<tr>
+<td>conveyorPlacement</td>
+<td>boolean</td>
+<td>false</td>
+<td>Whether uses conveyor-type placement mode.</td>
+</tr>
+<tr>
+<td>allowDiagonal</td>
+<td>boolean</td>
+<td>true</td>
+<td>If false, no diagonal placement (ctrl).</td>
+</tr>
+<tr>
+<td>swapDiagonalPlacement</td>
+<td>boolean</td>
+<td>false</td>
+<td>Whether to swap diagonal placement modes.</td>
+</tr>
+<tr>
+<td>allowRectanglePlacement</td>
+<td>boolean</td>
+<td>false</td>
+<td>Whether to allow rectangular placement.</td>
+</tr>
+<tr>
+<td>schematicPriority</td>
+<td>int</td>
+<td>0</td>
+<td>Build queue priority in schematics.</td>
+</tr>
+<tr>
+<td>mapColor</td>
+<td>Color</td>
+<td>000000ff</td>
+<td>minimap/map preview color. Do not set manually!</td>
+</tr>
+<tr>
+<td>hasColor</td>
+<td>boolean</td>
+<td>false</td>
+<td>Whether this block has a minimap color.</td>
+</tr>
+<tr>
+<td>targetable</td>
+<td>boolean</td>
+<td>true</td>
+<td>Whether units target this block.</td>
+</tr>
+<tr>
+<td>attacks</td>
+<td>boolean</td>
+<td>false</td>
+<td>If true, attacks and is a turret in indexer. Must implement Ranged.</td>
+</tr>
+<tr>
+<td>suppressable</td>
+<td>boolean</td>
+<td>false</td>
+<td>If true, mending-related, suppressable by special units/missiles.</td>
+</tr>
+<tr>
+<td>canOverdrive</td>
+<td>boolean</td>
+<td>true</td>
+<td>Whether overdrive core affects this block.</td>
+</tr>
+<tr>
+<td>outlineColor</td>
+<td>Color</td>
+<td>404049ff</td>
+<td>Outlined icon color.</td>
+</tr>
+<tr>
+<td>outlineIcon</td>
+<td>boolean</td>
+<td>false</td>
+<td>Whether any icon region has an outline added.</td>
+</tr>
+<tr>
+<td>outlineRadius</td>
+<td>int</td>
+<td>4</td>
+<td>Outline icon radius.</td>
+</tr>
+<tr>
+<td>outlinedIcon</td>
+<td>int</td>
+<td>-1</td>
+<td>Which icon region gets outline. Uses last if &lt;=0.</td>
+</tr>
+<tr>
+<td>hasShadow</td>
+<td>boolean</td>
+<td>true</td>
+<td>Whether has a shadow under it.</td>
+</tr>
+<tr>
+<td>customShadow</td>
+<td>boolean</td>
+<td>false</td>
+<td>If true, custom shadow (name-shadow) drawn.</td>
+</tr>
+<tr>
+<td>placePitchChange</td>
+<td>boolean</td>
+<td>true</td>
+<td>Should build sound change in pitch.</td>
+</tr>
+<tr>
+<td>breakPitchChange</td>
+<td>boolean</td>
+<td>true</td>
+<td>Should deconstruct sound change in pitch.</td>
+</tr>
+<tr>
+<td>placeSound</td>
+<td>Sound</td>
+<td>unset</td>
+<td>Sound when built.</td>
+</tr>
+<tr>
+<td>breakSound</td>
+<td>Sound</td>
+<td>unset</td>
+<td>Sound when deconstructed.</td>
+</tr>
+<tr>
+<td>destroySound</td>
+<td>Sound</td>
+<td>unset</td>
+<td>Sound when destroyed.</td>
+</tr>
+<tr>
+<td>destroySoundVolume</td>
+<td>float</td>
+<td>1.0</td>
+<td>Volume of destruction sound.</td>
+</tr>
+<tr>
+<td>destroyPitchMin</td>
+<td>float</td>
+<td>1.0</td>
+<td>Range of destroy sound.</td>
+</tr>
+<tr>
+<td>destroyPitchMax</td>
+<td>float</td>
+<td>1.0</td>
+<td>Range of destroy sound.</td>
+</tr>
+<tr>
+<td>albedo</td>
+<td>float</td>
+<td>0.0</td>
+<td>How reflective this block is.</td>
+</tr>
+<tr>
+<td>lightColor</td>
+<td>Color</td>
+<td>ffffffff</td>
+<td>Environmental passive light color.</td>
+</tr>
+<tr>
+<td>emitLight</td>
+<td>boolean</td>
+<td>false</td>
+<td>If true, drawLight() called.</td>
+</tr>
+<tr>
+<td>obstructsLight</td>
+<td>boolean</td>
+<td>true</td>
+<td>If true, obstructs light from other blocks.</td>
+</tr>
+<tr>
+<td>lightRadius</td>
+<td>float</td>
+<td>60.0</td>
+<td>Radius of emitted light.</td>
+</tr>
+<tr>
+<td>fogRadius</td>
+<td>int</td>
+<td>-1</td>
+<td>How much fog uncovered, in tiles. &lt;=0 to disable.</td>
+</tr>
+<tr>
+<td>ambientSound</td>
+<td>Sound</td>
+<td>none</td>
+<td>Idle sound. Uses one loop for all blocks.</td>
+</tr>
+<tr>
+<td>ambientSoundVolume</td>
+<td>float</td>
+<td>0.05</td>
+<td>Idle sound base volume.</td>
+</tr>
+<tr>
+<td>requirements</td>
+<td>ItemStack[]</td>
+<td>[]</td>
+<td>Cost of constructing this block.</td>
+</tr>
+<tr>
+<td>category</td>
+<td>Category</td>
+<td>distribution</td>
+<td>Category in place menu.</td>
+</tr>
+<tr>
+<td>buildTime</td>
+<td>float</td>
+<td>-1.0</td>
+<td>Time to build in ticks. &lt;0 = calculated dynamically.</td>
+</tr>
+<tr>
+<td>buildVisibility</td>
+<td>BuildVisibility</td>
+<td>hidden</td>
+<td>Whether visible and currently buildable.</td>
+</tr>
+<tr>
+<td>buildCostMultiplier</td>
+<td>float</td>
+<td>1.0</td>
+<td>Multiplier for build speed.</td>
+</tr>
+<tr>
+<td>deconstructThreshold</td>
+<td>float</td>
+<td>0.0</td>
+<td>Build completion at which deconstruction finishes.</td>
+</tr>
+<tr>
+<td>instantDeconstruct</td>
+<td>boolean</td>
+<td>false</td>
+<td>If true, deconstructs immediately (no refund).</td>
+</tr>
+<tr>
+<td>instantBuild</td>
+<td>boolean</td>
+<td>false</td>
+<td>If true, constructs immediately (no resource requirement).</td>
+</tr>
+<tr>
+<td>ignoreBuildDarkness</td>
+<td>boolean</td>
+<td>false</td>
+<td>If true, placeable in "dark" areas. Editor static walls only.</td>
+</tr>
+<tr>
+<td>placeEffect</td>
+<td>Effect</td>
+<td>placeBlock</td>
+<td>Effect for placing. Passes size as rotation.</td>
+</tr>
+<tr>
+<td>breakEffect</td>
+<td>Effect</td>
+<td>breakBlock</td>
+<td>Effect for breaking.</td>
+</tr>
+<tr>
+<td>destroyEffect</td>
+<td>Effect</td>
+<td>dynamicExplosion</td>
+<td>Effect for destroying.</td>
+</tr>
+<tr>
+<td>researchCostMultiplier</td>
+<td>float</td>
+<td>1.0</td>
+<td>Multiplier for research cost.</td>
+</tr>
+<tr>
+<td>researchCostMultipliers</td>
+<td>ObjectFloatMap of Item</td>
+<td>new ObjectFloatMap&lt;&gt;()</td>
+<td>Cost multipliers per-item.</td>
+</tr>
+<tr>
+<td>researchCost</td>
+<td>ItemStack[]</td>
+<td>null</td>
+<td>Override for research cost.</td>
+</tr>
+<tr>
+<td>forceTeam</td>
+<td>Team</td>
+<td>null</td>
+<td>If set, all blocks forced to this team.</td>
+</tr>
+<tr>
+<td>instantTransfer</td>
+<td>boolean</td>
+<td>false</td>
+<td>Whether has instant transfer.</td>
+</tr>
+<tr>
+<td>maxConsecutive</td>
+<td>int</td>
+<td>2</td>
+<td>Maximum consecutive instantTransfer blocks.</td>
+</tr>
+<tr>
+<td>quickRotate</td>
+<td>boolean</td>
+<td>true</td>
+<td>Whether you can rotate after placing.</td>
+</tr>
+<tr>
+<td>allowDerelictRepair</td>
+<td>boolean</td>
+<td>true</td>
+<td>If true, derelict block repairable by clicking.</td>
+</tr>
+<tr>
+<td>selectScroll</td>
+<td>float</td>
+<td>0.0</td>
+<td>Scroll position for certain blocks.</td>
+</tr>
+<tr>
+<td>itemFilter</td>
+<td>boolean[]</td>
+<td>[]</td>
+<td>Consumption filters.</td>
+</tr>
+<tr>
+<td>liquidFilter</td>
+<td>boolean[]</td>
+<td>[]</td>
+<td>Consumption filters.</td>
+</tr>
+<tr>
+<td>consumers</td>
+<td>Consume[]</td>
+<td>[]</td>
+<td>Array of consumers. Populated after init().</td>
+</tr>
+<tr>
+<td>hasConsumers</td>
+<td>boolean</td>
+<td>false</td>
+<td>Set true if has any consumers.</td>
+</tr>
+<tr>
+<td>consPower</td>
+<td>ConsumePower</td>
+<td>null</td>
+<td>The single power consumer, if applicable.</td>
+</tr>
+<tr>
+<td>dumpTime</td>
+<td>int</td>
+<td>5</td>
+<td>How often to try dumping items in ticks (5 = 12/sec).</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Sprites</strong>：<code>&lt;name&gt;</code> 方块主贴图。</p>
+<h3 id="172-defense">17.2 Defense 防御方块</h3>
+<h4 id="wallextends-block">Wall（extends Block）</h4>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>type</th>
+<th>default</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>lightningChance</td>
+<td>float</td>
+<td>-1.0</td>
+<td>Lighting chance. -1 to disable</td>
+</tr>
+<tr>
+<td>lightningDamage</td>
+<td>float</td>
+<td>20.0</td>
+<td></td>
+</tr>
+<tr>
+<td>lightningLength</td>
+<td>int</td>
+<td>17</td>
+<td></td>
+</tr>
+<tr>
+<td>lightningColor</td>
+<td>Color</td>
+<td>f3e979ff</td>
+<td></td>
+</tr>
+<tr>
+<td>lightningSound</td>
+<td>Sound</td>
+<td>shootArc</td>
+<td></td>
+</tr>
+<tr>
+<td>chanceDeflect</td>
+<td>float</td>
+<td>-1.0</td>
+<td>Bullet deflection chance. -1 to disable</td>
+</tr>
+<tr>
+<td>flashHit</td>
+<td>boolean</td>
+<td>false</td>
+<td></td>
+</tr>
+<tr>
+<td>flashColor</td>
+<td>Color</td>
+<td>ffffffff</td>
+<td></td>
+</tr>
+<tr>
+<td>deflectSound</td>
+<td>Sound</td>
+<td>none</td>
+<td></td>
+</tr>
+<tr>
+<td>autotile</td>
+<td>boolean</td>
+<td>false</td>
+<td>If true, uses autotiling; variants not supported.</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>注：v1 中 SurgeWall/DeflectorWall 已合并入 Wall（lightning/deflect 字段直接在 Wall 上）。</p>
+</blockquote>
+<h4 id="doorextends-wall">Door（extends Wall）</h4>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>type</th>
+<th>default</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>timerToggle</td>
+<td>int</td>
+<td>1</td>
+<td></td>
+</tr>
+<tr>
+<td>openfx</td>
+<td>Effect</td>
+<td>dooropen</td>
+<td></td>
+</tr>
+<tr>
+<td>closefx</td>
+<td>Effect</td>
+<td>doorclose</td>
+<td></td>
+</tr>
+<tr>
+<td>doorSound</td>
+<td>Sound</td>
+<td>door</td>
+<td></td>
+</tr>
+<tr>
+<td>chainEffect</td>
+<td>boolean</td>
+<td>false</td>
+<td></td>
+</tr>
+<tr>
+<td>openRegion</td>
+<td>TextureRegion</td>
+<td>null</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h4 id="shieldwallextends-wall">ShieldWall（extends Wall）</h4>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>type</th>
+<th>default</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>shieldHealth</td>
+<td>float</td>
+<td>900.0</td>
+<td></td>
+</tr>
+<tr>
+<td>breakCooldown</td>
+<td>float</td>
+<td>600.0</td>
+<td></td>
+</tr>
+<tr>
+<td>regenSpeed</td>
+<td>float</td>
+<td>2.0</td>
+<td></td>
+</tr>
+<tr>
+<td>glowColor</td>
+<td>Color</td>
+<td>ff75317f</td>
+<td></td>
+</tr>
+<tr>
+<td>glowMag</td>
+<td>float</td>
+<td>0.6</td>
+<td></td>
+</tr>
+<tr>
+<td>glowScl</td>
+<td>float</td>
+<td>8.0</td>
+<td></td>
+</tr>
+<tr>
+<td>glowRegion</td>
+<td>TextureRegion</td>
+<td>null</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h4 id="staticwallextends-prop">StaticWall（extends Prop）</h4>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>type</th>
+<th>default</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>large</td>
+<td>TextureRegion</td>
+<td>null</td>
+<td></td>
+</tr>
+<tr>
+<td>split</td>
+<td>TextureRegion[][]</td>
+<td>null</td>
+<td></td>
+</tr>
+<tr>
+<td>autotile</td>
+<td>boolean</td>
+<td>false</td>
+<td>If true, uses autotiling; variants not supported.</td>
+</tr>
+<tr>
+<td>autotileMidVariants</td>
+<td>int</td>
+<td>1</td>
+<td>If &gt;1, middle region has random variants.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="shockmineextends-block">ShockMine（extends Block）</h4>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>type</th>
+<th>default</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>timerDamage</td>
+<td>int</td>
+<td>1</td>
+<td></td>
+</tr>
+<tr>
+<td>cooldown</td>
+<td>float</td>
+<td>80.0</td>
+<td></td>
+</tr>
+<tr>
+<td>tileDamage</td>
+<td>float</td>
+<td>5.0</td>
+<td></td>
+</tr>
+<tr>
+<td>damage</td>
+<td>float</td>
+<td>13.0</td>
+<td></td>
+</tr>
+<tr>
+<td>length</td>
+<td>int</td>
+<td>10</td>
+<td></td>
+</tr>
+<tr>
+<td>tendrils</td>
+<td>int</td>
+<td>6</td>
+<td></td>
+</tr>
+<tr>
+<td>lightningColor</td>
+<td>Color</td>
+<td>a9d8ffff</td>
+<td></td>
+</tr>
+<tr>
+<td>shots</td>
+<td>int</td>
+<td>6</td>
+<td></td>
+</tr>
+<tr>
+<td>inaccuracy</td>
+<td>float</td>
+<td>0.0</td>
+<td></td>
+</tr>
+<tr>
+<td>bullet</td>
+<td>BulletType</td>
+<td>null</td>
+<td></td>
+</tr>
+<tr>
+<td>teamAlpha</td>
+<td>float</td>
+<td>0.3</td>
+<td></td>
+</tr>
+<tr>
+<td>teamRegion</td>
+<td>TextureRegion</td>
+<td>null</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h4 id="forceprojectorextends-block">ForceProjector（extends Block）</h4>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>type</th>
+<th>default</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>timerUse</td>
+<td>int</td>
+<td>1</td>
+<td></td>
+</tr>
+<tr>
+<td>phaseUseTime</td>
+<td>float</td>
+<td>350.0</td>
+<td></td>
+</tr>
+<tr>
+<td>phaseRadiusBoost</td>
+<td>float</td>
+<td>80.0</td>
+<td></td>
+</tr>
+<tr>
+<td>phaseShieldBoost</td>
+<td>float</td>
+<td>400.0</td>
+<td></td>
+</tr>
+<tr>
+<td>radius</td>
+<td>float</td>
+<td>101.7</td>
+<td></td>
+</tr>
+<tr>
+<td>sides</td>
+<td>int</td>
+<td>6</td>
+<td></td>
+</tr>
+<tr>
+<td>shieldRotation</td>
+<td>float</td>
+<td>0.0</td>
+<td></td>
+</tr>
+<tr>
+<td>shieldHealth</td>
+<td>float</td>
+<td>700.0</td>
+<td></td>
+</tr>
+<tr>
+<td>cooldownNormal</td>
+<td>float</td>
+<td>1.75</td>
+<td></td>
+</tr>
+<tr>
+<td>cooldownLiquid</td>
+<td>float</td>
+<td>1.5</td>
+<td></td>
+</tr>
+<tr>
+<td>cooldownBrokenBase</td>
+<td>float</td>
+<td>0.35</td>
+<td></td>
+</tr>
+<tr>
+<td>coolantConsumption</td>
+<td>float</td>
+<td>0.1</td>
+<td></td>
+</tr>
+<tr>
+<td>consumeCoolant</td>
+<td>boolean</td>
+<td>true</td>
+<td></td>
+</tr>
+<tr>
+<td>crashDamageMultiplier</td>
+<td>float</td>
+<td>2.0</td>
+<td></td>
+</tr>
+<tr>
+<td>breakSound</td>
+<td>Sound</td>
+<td>shieldBreak</td>
+<td></td>
+</tr>
+<tr>
+<td>hitSound</td>
+<td>Sound</td>
+<td>shieldHit</td>
+<td></td>
+</tr>
+<tr>
+<td>hitSoundVolume</td>
+<td>float</td>
+<td>0.12</td>
+<td></td>
+</tr>
+<tr>
+<td>absorbEffect</td>
+<td>Effect</td>
+<td>absorb</td>
+<td></td>
+</tr>
+<tr>
+<td>shieldBreakEffect</td>
+<td>Effect</td>
+<td>shieldBreak</td>
+<td></td>
+</tr>
+<tr>
+<td>forceShrinkEffect</td>
+<td>Effect</td>
+<td>forceShrink</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h4 id="mendprojectorextends-block">MendProjector（extends Block）</h4>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>type</th>
+<th>default</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>timerUse</td>
+<td>int</td>
+<td>1</td>
+<td></td>
+</tr>
+<tr>
+<td>baseColor</td>
+<td>Color</td>
+<td>84f491ff</td>
+<td></td>
+</tr>
+<tr>
+<td>phaseColor</td>
+<td>Color</td>
+<td>84f491ff</td>
+<td></td>
+</tr>
+<tr>
+<td>reload</td>
+<td>float</td>
+<td>250.0</td>
+<td></td>
+</tr>
+<tr>
+<td>range</td>
+<td>float</td>
+<td>60.0</td>
+<td></td>
+</tr>
+<tr>
+<td>healPercent</td>
+<td>float</td>
+<td>12.0</td>
+<td></td>
+</tr>
+<tr>
+<td>phaseBoost</td>
+<td>float</td>
+<td>12.0</td>
+<td></td>
+</tr>
+<tr>
+<td>phaseRangeBoost</td>
+<td>float</td>
+<td>50.0</td>
+<td></td>
+</tr>
+<tr>
+<td>useTime</td>
+<td>float</td>
+<td>400.0</td>
+<td></td>
+</tr>
+<tr>
+<td>mendSound</td>
+<td>Sound</td>
+<td>healWave</td>
+<td></td>
+</tr>
+<tr>
+<td>mendSoundVolume</td>
+<td>float</td>
+<td>0.5</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h4 id="overdriveprojectorextends-block">OverdriveProjector（extends Block）</h4>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>type</th>
+<th>default</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>reload</td>
+<td>float</td>
+<td>60.0</td>
+<td></td>
+</tr>
+<tr>
+<td>range</td>
+<td>float</td>
+<td>80.0</td>
+<td></td>
+</tr>
+<tr>
+<td>speedBoost</td>
+<td>float</td>
+<td>1.5</td>
+<td></td>
+</tr>
+<tr>
+<td>speedBoostPhase</td>
+<td>float</td>
+<td>0.75</td>
+<td></td>
+</tr>
+<tr>
+<td>useTime</td>
+<td>float</td>
+<td>400.0</td>
+<td></td>
+</tr>
+<tr>
+<td>phaseRangeBoost</td>
+<td>float</td>
+<td>20.0</td>
+<td></td>
+</tr>
+<tr>
+<td>hasBoost</td>
+<td>boolean</td>
+<td>true</td>
+<td></td>
+</tr>
+<tr>
+<td>baseColor</td>
+<td>Color</td>
+<td>feb380ff</td>
+<td></td>
+</tr>
+<tr>
+<td>phaseColor</td>
+<td>Color</td>
+<td>ffd59eff</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="173-turrets">17.3 Turrets 炮塔</h3>
+<blockquote>
+<p><strong>抓取缺口</strong>：<code>Turret</code> 基类官方 Modding Classes 页为空（仅 12 token 目录），其字段需参考 Java 源码 <code>mindustry.world.blocks.defense.turrets.Turret</code>。以下子类字段来自官方页。</p>
+</blockquote>
+<h4 id="itemturretextends-turret">ItemTurret（extends Turret）</h4>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>type</th>
+<th>default</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ammoTypes</td>
+<td>ObjectMap</td>
+<td>new ObjectMap&lt;&gt;()</td>
+<td>键为 Item 名，值为要发射的 BulletType（v6 前叫 ammo）</td>
+</tr>
+</tbody>
+</table>
+<h4 id="powerturretextends-turret">PowerTurret（extends Turret）</h4>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>type</th>
+<th>default</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>shootType</td>
+<td>BulletType</td>
+<td>null</td>
+<td>[必需]</td>
+</tr>
+</tbody>
+</table>
+<h4 id="liquidturretextends-turret">LiquidTurret（extends Turret）</h4>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>type</th>
+<th>default</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ammoTypes</td>
+<td>ObjectMap of Liquid, BulletType</td>
+<td>{}</td>
+<td>Liquid 名到子弹类型的映射</td>
+</tr>
+<tr>
+<td>extinguish</td>
+<td>boolean</td>
+<td>true</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="174-crafting">17.4 Crafting 合成方块</h3>
+<h4 id="genericcrafterextends-block">GenericCrafter（extends Block）</h4>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>type</th>
+<th>default</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>outputItem</td>
+<td>ItemStack</td>
+<td>null</td>
+<td>Written to outputItems if outputItems is null.</td>
+</tr>
+<tr>
+<td>outputItems</td>
+<td>ItemStack[]</td>
+<td>null</td>
+<td>Overwrites outputItem if not null.</td>
+</tr>
+<tr>
+<td>outputLiquid</td>
+<td>LiquidStack</td>
+<td>null</td>
+<td>Written to outputLiquids if outputLiquids is null.</td>
+</tr>
+<tr>
+<td>outputLiquids</td>
+<td>LiquidStack[]</td>
+<td>null</td>
+<td>Overwrites outputLiquid if not null.</td>
+</tr>
+<tr>
+<td>liquidOutputDirections</td>
+<td>int[]</td>
+<td>{ -1 }</td>
+<td>directions in same order as outputLiquids. -1 = every direction.</td>
+</tr>
+<tr>
+<td>dumpExtraLiquid</td>
+<td>boolean</td>
+<td>true</td>
+<td>if true, dump excess when space for at least one liquid type.</td>
+</tr>
+<tr>
+<td>ignoreLiquidFullness</td>
+<td>boolean</td>
+<td>false</td>
+<td></td>
+</tr>
+<tr>
+<td>craftTime</td>
+<td>float</td>
+<td>80.0</td>
+<td></td>
+</tr>
+<tr>
+<td>craftEffect</td>
+<td>Effect</td>
+<td>none</td>
+<td></td>
+</tr>
+<tr>
+<td>updateEffect</td>
+<td>Effect</td>
+<td>none</td>
+<td></td>
+</tr>
+<tr>
+<td>updateEffectChance</td>
+<td>float</td>
+<td>0.04</td>
+<td></td>
+</tr>
+<tr>
+<td>updateEffectSpread</td>
+<td>float</td>
+<td>4.0</td>
+<td></td>
+</tr>
+<tr>
+<td>warmupSpeed</td>
+<td>float</td>
+<td>0.019</td>
+<td></td>
+</tr>
+<tr>
+<td>legacyReadWarmup</td>
+<td>boolean</td>
+<td>false</td>
+<td>Only for legacy cultivator blocks.</td>
+</tr>
+<tr>
+<td>drawer</td>
+<td>DrawBlock</td>
+<td>new DrawDefault()</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h4 id="drillextends-block">Drill（extends Block）</h4>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>type</th>
+<th>default</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>hardnessDrillMultiplier</td>
+<td>float</td>
+<td>50.0</td>
+<td></td>
+</tr>
+<tr>
+<td>tier</td>
+<td>int</td>
+<td>0</td>
+<td>Maximum tier of blocks this drill can mine.</td>
+</tr>
+<tr>
+<td>drillTime</td>
+<td>float</td>
+<td>300.0</td>
+<td>Base time to drill one ore, in frames.</td>
+</tr>
+<tr>
+<td>liquidBoostIntensity</td>
+<td>float</td>
+<td>1.6</td>
+<td>How many times faster when boosted by liquid.</td>
+</tr>
+<tr>
+<td>warmupSpeed</td>
+<td>float</td>
+<td>0.015</td>
+<td>Speed at which the drill speeds up.</td>
+</tr>
+<tr>
+<td>blockedItem</td>
+<td>Item</td>
+<td>null</td>
+<td>Special exemption item this drill can't mine.</td>
+</tr>
+<tr>
+<td>blockedItems</td>
+<td>Seq of Item</td>
+<td>null</td>
+<td>Special exemption items this drill can't mine.</td>
+</tr>
+<tr>
+<td>drawMineItem</td>
+<td>boolean</td>
+<td>true</td>
+<td>Whether to draw the item being mined.</td>
+</tr>
+<tr>
+<td>drillEffect</td>
+<td>Effect</td>
+<td>mine</td>
+<td>Effect when item is produced. Colored.</td>
+</tr>
+<tr>
+<td>drillEffectRnd</td>
+<td>float</td>
+<td>-1.0</td>
+<td>Drill effect randomness. Block size by default.</td>
+</tr>
+<tr>
+<td>drillEffectChance</td>
+<td>float</td>
+<td>0.02</td>
+<td>Chance of displaying the effect.</td>
+</tr>
+<tr>
+<td>rotateSpeed</td>
+<td>float</td>
+<td>2.0</td>
+<td>Speed the drill bit rotates at.</td>
+</tr>
+<tr>
+<td>updateEffect</td>
+<td>Effect</td>
+<td>pulverizeSmall</td>
+<td>Effect randomly played while drilling.</td>
+</tr>
+<tr>
+<td>updateEffectChance</td>
+<td>float</td>
+<td>0.02</td>
+<td>Chance the update effect appears.</td>
+</tr>
+<tr>
+<td>drillMultipliers</td>
+<td>ObjectFloatMap of Item</td>
+<td>new ObjectFloatMap&lt;&gt;()</td>
+<td>Multipliers of drill speed per item. Defaults to 1.</td>
+</tr>
+<tr>
+<td>drawRim</td>
+<td>boolean</td>
+<td>false</td>
+<td></td>
+</tr>
+<tr>
+<td>drawSpinSprite</td>
+<td>boolean</td>
+<td>true</td>
+<td></td>
+</tr>
+<tr>
+<td>heatColor</td>
+<td>Color</td>
+<td>ff5512ff</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="175-power">17.5 Power 电力方块</h3>
+<h4 id="powergeneratorextends-powerdistributor">PowerGenerator（extends PowerDistributor）</h4>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>type</th>
+<th>default</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>powerProduction</td>
+<td>float</td>
+<td>0.0</td>
+<td>power per tick at 100% efficiency.</td>
+</tr>
+<tr>
+<td>generationType</td>
+<td>Stat</td>
+<td>basePowerGeneration</td>
+<td></td>
+</tr>
+<tr>
+<td>drawer</td>
+<td>DrawBlock</td>
+<td>new DrawDefault()</td>
+<td></td>
+</tr>
+<tr>
+<td>explosionRadius</td>
+<td>int</td>
+<td>12</td>
+<td></td>
+</tr>
+<tr>
+<td>explosionDamage</td>
+<td>int</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td>explodeEffect</td>
+<td>Effect</td>
+<td>none</td>
+<td></td>
+</tr>
+<tr>
+<td>explodeSound</td>
+<td>Sound</td>
+<td>none</td>
+<td></td>
+</tr>
+<tr>
+<td>explosionPuddles</td>
+<td>int</td>
+<td>10</td>
+<td></td>
+</tr>
+<tr>
+<td>explosionPuddleRange</td>
+<td>float</td>
+<td>16.0</td>
+<td></td>
+</tr>
+<tr>
+<td>explosionPuddleAmount</td>
+<td>float</td>
+<td>100.0</td>
+<td></td>
+</tr>
+<tr>
+<td>explosionPuddleLiquid</td>
+<td>Liquid</td>
+<td>null</td>
+<td></td>
+</tr>
+<tr>
+<td>explosionMinWarmup</td>
+<td>float</td>
+<td>0.0</td>
+<td></td>
+</tr>
+<tr>
+<td>explosionShake</td>
+<td>float</td>
+<td>0.0</td>
+<td></td>
+</tr>
+<tr>
+<td>explosionShakeDuration</td>
+<td>float</td>
+<td>6.0</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h4 id="consumegeneratorextends-powergenerator">ConsumeGenerator（extends PowerGenerator）</h4>
+<p>A generator that takes in certain items or liquids.</p>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>type</th>
+<th>default</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>itemDuration</td>
+<td>float</td>
+<td>120.0</td>
+<td>ticks during which a single item produces power.</td>
+</tr>
+<tr>
+<td>warmupSpeed</td>
+<td>float</td>
+<td>0.05</td>
+<td></td>
+</tr>
+<tr>
+<td>effectChance</td>
+<td>float</td>
+<td>0.01</td>
+<td></td>
+</tr>
+<tr>
+<td>generateEffect</td>
+<td>Effect</td>
+<td>none</td>
+<td></td>
+</tr>
+<tr>
+<td>consumeEffect</td>
+<td>Effect</td>
+<td>none</td>
+<td></td>
+</tr>
+<tr>
+<td>generateEffectRange</td>
+<td>float</td>
+<td>3.0</td>
+<td></td>
+</tr>
+<tr>
+<td>baseLightRadius</td>
+<td>float</td>
+<td>65.0</td>
+<td></td>
+</tr>
+<tr>
+<td>outputLiquid</td>
+<td>LiquidStack</td>
+<td>null</td>
+<td></td>
+</tr>
+<tr>
+<td>explodeOnFull</td>
+<td>boolean</td>
+<td>false</td>
+<td>explodes when outputLiquid exceeds capacity.</td>
+</tr>
+<tr>
+<td>filterItem</td>
+<td>ConsumeItemFilter</td>
+<td>null</td>
+<td></td>
+</tr>
+<tr>
+<td>filterLiquid</td>
+<td>ConsumeLiquidFilter</td>
+<td>null</td>
+<td></td>
+</tr>
+<tr>
+<td>itemDurationMultipliers</td>
+<td>ObjectFloatMap of Item</td>
+<td>new ObjectFloatMap&lt;&gt;()</td>
+<td>Multiplies itemDuration for a given item.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="solargeneratorextends-powergenerator">SolarGenerator（extends PowerGenerator）</h4>
+<blockquote>
+<p>官方页无额外字段（仅继承 PowerGenerator）。</p>
+</blockquote>
+<h4 id="nuclearreactorextends-powergenerator">NuclearReactor（extends PowerGenerator）</h4>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>type</th>
+<th>default</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>timerFuel</td>
+<td>int</td>
+<td>1</td>
+<td></td>
+</tr>
+<tr>
+<td>lightColor</td>
+<td>Color</td>
+<td>7f19eaff</td>
+<td></td>
+</tr>
+<tr>
+<td>coolColor</td>
+<td>Color</td>
+<td>ffffff00</td>
+<td></td>
+</tr>
+<tr>
+<td>hotColor</td>
+<td>Color</td>
+<td>ff9575a3</td>
+<td></td>
+</tr>
+<tr>
+<td>itemDuration</td>
+<td>float</td>
+<td>120.0</td>
+<td>ticks to consume 1 fuel</td>
+</tr>
+<tr>
+<td>heating</td>
+<td>float</td>
+<td>0.01</td>
+<td>heating per frame * fullness</td>
+</tr>
+<tr>
+<td>smokeThreshold</td>
+<td>float</td>
+<td>0.3</td>
+<td>threshold at which block starts smoking</td>
+</tr>
+<tr>
+<td>flashThreshold</td>
+<td>float</td>
+<td>0.46</td>
+<td>heat threshold at which lights start flashing</td>
+</tr>
+<tr>
+<td>coolantPower</td>
+<td>float</td>
+<td>0.5</td>
+<td>heat removed per unit of coolant</td>
+</tr>
+<tr>
+<td>fuelItem</td>
+<td>Item</td>
+<td>thorium</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h4 id="powernodeextends-powerblock">PowerNode（extends PowerBlock）</h4>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>type</th>
+<th>default</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>laserRange</td>
+<td>float</td>
+<td>6.0</td>
+<td></td>
+</tr>
+<tr>
+<td>maxNodes</td>
+<td>int</td>
+<td>3</td>
+<td></td>
+</tr>
+<tr>
+<td>autolink</td>
+<td>boolean</td>
+<td>true</td>
+<td></td>
+</tr>
+<tr>
+<td>drawRange</td>
+<td>boolean</td>
+<td>true</td>
+<td></td>
+</tr>
+<tr>
+<td>sameBlockConnection</td>
+<td>boolean</td>
+<td>false</td>
+<td></td>
+</tr>
+<tr>
+<td>laserScale</td>
+<td>float</td>
+<td>0.25</td>
+<td></td>
+</tr>
+<tr>
+<td>useLod</td>
+<td>boolean</td>
+<td>true</td>
+<td></td>
+</tr>
+<tr>
+<td>powerLayer</td>
+<td>float</td>
+<td>70.0</td>
+<td></td>
+</tr>
+<tr>
+<td>laserColor1</td>
+<td>Color</td>
+<td>ffffffff</td>
+<td></td>
+</tr>
+<tr>
+<td>laserColor2</td>
+<td>Color</td>
+<td>fbd367ff</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h4 id="batteryextends-powerdistributor">Battery（extends PowerDistributor）</h4>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>type</th>
+<th>default</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>drawer</td>
+<td>DrawBlock</td>
+<td>null</td>
+<td></td>
+</tr>
+<tr>
+<td>emptyLightColor</td>
+<td>Color</td>
+<td>f8c266ff</td>
+<td></td>
+</tr>
+<tr>
+<td>fullLightColor</td>
+<td>Color</td>
+<td>fb9567ff</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="176-distribution">17.6 Distribution 物流方块</h3>
+<h4 id="conveyorextends-block">Conveyor（extends Block）</h4>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>type</th>
+<th>default</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>speed</td>
+<td>float</td>
+<td>0.0</td>
+<td></td>
+</tr>
+<tr>
+<td>displayedSpeed</td>
+<td>float</td>
+<td>0.0</td>
+<td></td>
+</tr>
+<tr>
+<td>pushUnits</td>
+<td>boolean</td>
+<td>true</td>
+<td></td>
+</tr>
+<tr>
+<td>junctionReplacement</td>
+<td>Block</td>
+<td>null</td>
+<td></td>
+</tr>
+<tr>
+<td>bridgeReplacement</td>
+<td>Block</td>
+<td>null</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h4 id="routerextends-block">Router（extends Block）</h4>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>type</th>
+<th>default</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>speed</td>
+<td>float</td>
+<td>8.0</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h4 id="junctionextends-block">Junction（extends Block）</h4>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>type</th>
+<th>default</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>speed</td>
+<td>float</td>
+<td>26.0</td>
+<td>frames to pass through</td>
+</tr>
+<tr>
+<td>capacity</td>
+<td>int</td>
+<td>6</td>
+<td></td>
+</tr>
+<tr>
+<td>displayedSpeed</td>
+<td>float</td>
+<td>13.0</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h4 id="sorterextends-block">Sorter（extends Block）</h4>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>type</th>
+<th>default</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>invert</td>
+<td>boolean</td>
+<td>false</td>
+<td>反转</td>
+</tr>
+</tbody>
+</table>
+<h4 id="itembridgeextends-block">ItemBridge（extends Block）</h4>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>type</th>
+<th>default</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>range</td>
+<td>int</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td>transportTime</td>
+<td>float</td>
+<td>0.0</td>
+<td></td>
+</tr>
+<tr>
+<td>fadeIn</td>
+<td>boolean</td>
+<td>true</td>
+<td></td>
+</tr>
+<tr>
+<td>moveArrows</td>
+<td>boolean</td>
+<td>true</td>
+<td></td>
+</tr>
+<tr>
+<td>pulse</td>
+<td>boolean</td>
+<td>false</td>
+<td></td>
+</tr>
+<tr>
+<td>arrowSpacing</td>
+<td>float</td>
+<td>4.0</td>
+<td></td>
+</tr>
+<tr>
+<td>arrowOffset</td>
+<td>float</td>
+<td>2.0</td>
+<td></td>
+</tr>
+<tr>
+<td>arrowPeriod</td>
+<td>float</td>
+<td>0.4</td>
+<td></td>
+</tr>
+<tr>
+<td>arrowTimeScl</td>
+<td>float</td>
+<td>6.2</td>
+<td></td>
+</tr>
+<tr>
+<td>bridgeWidth</td>
+<td>float</td>
+<td>6.5</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Sprites</strong>：<code>&lt;name&gt;-end</code>、<code>&lt;name&gt;-bridge</code>、<code>&lt;name&gt;-arrow</code></p>
+<h4 id="massdriverextends-block">MassDriver（extends Block）</h4>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>type</th>
+<th>default</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>range</td>
+<td>float</td>
+<td>0.0</td>
+<td></td>
+</tr>
+<tr>
+<td>rotateSpeed</td>
+<td>float</td>
+<td>5.0</td>
+<td></td>
+</tr>
+<tr>
+<td>translation</td>
+<td>float</td>
+<td>7.0</td>
+<td></td>
+</tr>
+<tr>
+<td>minDistribute</td>
+<td>int</td>
+<td>10</td>
+<td></td>
+</tr>
+<tr>
+<td>knockback</td>
+<td>float</td>
+<td>4.0</td>
+<td></td>
+</tr>
+<tr>
+<td>reload</td>
+<td>float</td>
+<td>100.0</td>
+<td></td>
+</tr>
+<tr>
+<td>bullet</td>
+<td>MassDriverBolt</td>
+<td>new MassDriverBolt()</td>
+<td></td>
+</tr>
+<tr>
+<td>bulletSpeed</td>
+<td>float</td>
+<td>5.5</td>
+<td></td>
+</tr>
+<tr>
+<td>bulletLifetime</td>
+<td>float</td>
+<td>200.0</td>
+<td></td>
+</tr>
+<tr>
+<td>shootEffect</td>
+<td>Effect</td>
+<td>shootBig2</td>
+<td></td>
+</tr>
+<tr>
+<td>smokeEffect</td>
+<td>Effect</td>
+<td>shootBigSmoke2</td>
+<td></td>
+</tr>
+<tr>
+<td>receiveEffect</td>
+<td>Effect</td>
+<td>mineBig</td>
+<td></td>
+</tr>
+<tr>
+<td>shootSound</td>
+<td>Sound</td>
+<td>massdriver</td>
+<td></td>
+</tr>
+<tr>
+<td>receiveSound</td>
+<td>Sound</td>
+<td>massdriverReceive</td>
+<td></td>
+</tr>
+<tr>
+<td>shootSoundVolume</td>
+<td>float</td>
+<td>0.5</td>
+<td></td>
+</tr>
+<tr>
+<td>shake</td>
+<td>float</td>
+<td>3.0</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Sprites</strong>：<code>&lt;name&gt;-base</code></p>
+<h4 id="payloadconveyorextends-block">PayloadConveyor（extends Block）</h4>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>type</th>
+<th>default</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>moveTime</td>
+<td>float</td>
+<td>45.0</td>
+<td></td>
+</tr>
+<tr>
+<td>moveForce</td>
+<td>float</td>
+<td>201.0</td>
+<td></td>
+</tr>
+<tr>
+<td>interp</td>
+<td>Interp</td>
+<td>pow5</td>
+<td></td>
+</tr>
+<tr>
+<td>payloadLimit</td>
+<td>float</td>
+<td>3.0</td>
+<td></td>
+</tr>
+<tr>
+<td>pushUnits</td>
+<td>boolean</td>
+<td>true</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h4 id="unloaderextends-block">Unloader（extends Block）</h4>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>type</th>
+<th>default</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>speed</td>
+<td>float</td>
+<td>1.0</td>
+<td></td>
+</tr>
+<tr>
+<td>allowCoreUnload</td>
+<td>boolean</td>
+<td>true</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h4 id="storageblockextends-block">StorageBlock（extends Block）</h4>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>type</th>
+<th>default</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>coreMerge</td>
+<td>boolean</td>
+<td>true</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="177-liquid">17.7 Liquid 液体方块</h3>
+<h4 id="conduitextends-liquidblock">Conduit（extends LiquidBlock）</h4>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>type</th>
+<th>default</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>timerFlow</td>
+<td>int</td>
+<td>1</td>
+<td></td>
+</tr>
+<tr>
+<td>botColor</td>
+<td>Color</td>
+<td>565656ff</td>
+<td></td>
+</tr>
+<tr>
+<td>capRegion</td>
+<td>TextureRegion</td>
+<td>null</td>
+<td></td>
+</tr>
+<tr>
+<td>padCorners</td>
+<td>boolean</td>
+<td>true</td>
+<td>liquid region padded at corners.</td>
+</tr>
+<tr>
+<td>leaks</td>
+<td>boolean</td>
+<td>true</td>
+<td></td>
+</tr>
+<tr>
+<td>junctionReplacement</td>
+<td>Block</td>
+<td>null</td>
+<td></td>
+</tr>
+<tr>
+<td>bridgeReplacement</td>
+<td>Block</td>
+<td>null</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h4 id="pumpextends-liquidblock">Pump（extends LiquidBlock）</h4>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>type</th>
+<th>default</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>pumpAmount</td>
+<td>float</td>
+<td>0.2</td>
+<td>Pump amount per tile.</td>
+</tr>
+<tr>
+<td>consumeTime</td>
+<td>float</td>
+<td>300.0</td>
+<td>Interval between item consumptions.</td>
+</tr>
+<tr>
+<td>warmupSpeed</td>
+<td>float</td>
+<td>0.019</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h4 id="liquidrouterextends-liquidblock">LiquidRouter（extends LiquidBlock）</h4>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>type</th>
+<th>default</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>liquidPadding</td>
+<td>float</td>
+<td>0.0</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="178-environment">17.8 Environment 环境方块</h3>
+<h4 id="floorextends-block">Floor（extends Block）</h4>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>type</th>
+<th>default</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>edge</td>
+<td>String</td>
+<td>"stone"</td>
+<td>edge fallback, used mainly for ores.</td>
+</tr>
+<tr>
+<td>speedMultiplier</td>
+<td>float</td>
+<td>1.0</td>
+<td>Multiplies unit velocity when walked on.</td>
+</tr>
+<tr>
+<td>dragMultiplier</td>
+<td>float</td>
+<td>1.0</td>
+<td>Multiplies unit drag when walked on.</td>
+</tr>
+<tr>
+<td>damageTaken</td>
+<td>float</td>
+<td>0.0</td>
+<td>Damage taken per tick on this tile.</td>
+</tr>
+<tr>
+<td>drownTime</td>
+<td>float</td>
+<td>0.0</td>
+<td>How many ticks to drown. 0 to disable.</td>
+</tr>
+<tr>
+<td>walkEffect</td>
+<td>Effect</td>
+<td>none</td>
+<td>Effect when walking on this floor.</td>
+</tr>
+<tr>
+<td>walkSound</td>
+<td>Sound</td>
+<td>none</td>
+<td>Sound made when walking.</td>
+</tr>
+<tr>
+<td>walkSoundVolume</td>
+<td>float</td>
+<td>0.1</td>
+<td>Volume of walk sound.</td>
+</tr>
+<tr>
+<td>walkSoundPitchMin</td>
+<td>float</td>
+<td>0.8</td>
+<td></td>
+</tr>
+<tr>
+<td>walkSoundPitchMax</td>
+<td>float</td>
+<td>1.2</td>
+<td></td>
+</tr>
+<tr>
+<td>drownUpdateEffect</td>
+<td>Effect</td>
+<td>bubble</td>
+<td>Effect displayed when drowning.</td>
+</tr>
+<tr>
+<td>status</td>
+<td>StatusEffect</td>
+<td>none</td>
+<td>Status effect applied when walking on.</td>
+</tr>
+<tr>
+<td>statusDuration</td>
+<td>float</td>
+<td>60.0</td>
+<td>Intensity of applied status effect.</td>
+</tr>
+<tr>
+<td>liquidDrop</td>
+<td>Liquid</td>
+<td>null</td>
+<td>liquids dropped from this block (pumps).</td>
+</tr>
+<tr>
+<td>liquidMultiplier</td>
+<td>float</td>
+<td>1.0</td>
+<td>Multiplier for pumped liquids (deep water).</td>
+</tr>
+<tr>
+<td>isLiquid</td>
+<td>boolean</td>
+<td>false</td>
+<td>whether this block is liquid.</td>
+</tr>
+<tr>
+<td>overlayAlpha</td>
+<td>float</td>
+<td>0.65</td>
+<td>opacity of overlay for liquid floors.</td>
+</tr>
+<tr>
+<td>supportsOverlay</td>
+<td>boolean</td>
+<td>false</td>
+<td>whether this floor supports an overlay floor.</td>
+</tr>
+<tr>
+<td>shallow</td>
+<td>boolean</td>
+<td>false</td>
+<td>shallow water flag for generation.</td>
+</tr>
+<tr>
+<td>blendGroup</td>
+<td>Block</td>
+<td>this</td>
+<td>Group that this block does not draw edges on.</td>
+</tr>
+<tr>
+<td>oreDefault</td>
+<td>boolean</td>
+<td>false</td>
+<td>Whether this ore generates in maps by default.</td>
+</tr>
+<tr>
+<td>oreScale</td>
+<td>float</td>
+<td>24.0</td>
+<td>Ore generation params.</td>
+</tr>
+<tr>
+<td>oreThreshold</td>
+<td>float</td>
+<td>0.828</td>
+<td>Ore generation params.</td>
+</tr>
+<tr>
+<td>wall</td>
+<td>Block</td>
+<td>air</td>
+<td>Wall variant of this block.</td>
+</tr>
+<tr>
+<td>decoration</td>
+<td>Block</td>
+<td>air</td>
+<td>Decoration block. Usually a rock.</td>
+</tr>
+<tr>
+<td>canShadow</td>
+<td>boolean</td>
+<td>true</td>
+<td>Whether units can draw shadows over this.</td>
+</tr>
+<tr>
+<td>forceDrawLight</td>
+<td>boolean</td>
+<td>false</td>
+<td>If true, ignores obstructsLight of overlays.</td>
+</tr>
+<tr>
+<td>needsSurface</td>
+<td>boolean</td>
+<td>true</td>
+<td>Whether this overlay needs a surface. False for floating blocks.</td>
+</tr>
+<tr>
+<td>allowCorePlacement</td>
+<td>boolean</td>
+<td>false</td>
+<td>If true, cores can be placed on this floor.</td>
+</tr>
+<tr>
+<td>wallOre</td>
+<td>boolean</td>
+<td>false</td>
+<td>If true, this ore is allowed on walls.</td>
+</tr>
+<tr>
+<td>autotile</td>
+<td>boolean</td>
+<td>false</td>
+<td>If true, uses autotiling; variants not supported.</td>
+</tr>
+<tr>
+<td>autotileMidVariants</td>
+<td>int</td>
+<td>1</td>
+<td>If &gt;1, middle region has random variants.</td>
+</tr>
+<tr>
+<td>autotileVariants</td>
+<td>int</td>
+<td>1</td>
+<td>Variants of main autotile sprite.</td>
+</tr>
+<tr>
+<td>drawEdgeIn</td>
+<td>boolean</td>
+<td>true</td>
+<td>If true, draws edges of other floors on itself.</td>
+</tr>
+<tr>
+<td>drawEdgeOut</td>
+<td>boolean</td>
+<td>true</td>
+<td>If true, draws its edges onto other floors.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="oreblockextends-overlayfloor">OreBlock（extends OverlayFloor）</h4>
+<blockquote>
+<p>官方页：An overlay ore for a specific item type. 无额外字段（继承 Floor/OverlayFloor）。</p>
+</blockquote>
+<h4 id="propextends-block">Prop（extends Block）</h4>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>type</th>
+<th>default</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>layer</td>
+<td>float</td>
+<td>32.0</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="179-units">17.9 Units 单位</h3>
+<h4 id="unitfactoryextends-unitblock">UnitFactory（extends UnitBlock）</h4>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>type</th>
+<th>default</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>capacities</td>
+<td>int[]</td>
+<td>[]</td>
+<td></td>
+</tr>
+<tr>
+<td>plans</td>
+<td>Seq of UnitPlan</td>
+<td>[]</td>
+<td></td>
+</tr>
+<tr>
+<td>createSound</td>
+<td>Sound</td>
+<td>unitCreate</td>
+<td></td>
+</tr>
+<tr>
+<td>createSoundVolume</td>
+<td>float</td>
+<td>1.0</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h4 id="reconstructorextends-unitblock">Reconstructor（extends UnitBlock）</h4>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>type</th>
+<th>default</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>constructTime</td>
+<td>float</td>
+<td>120.0</td>
+<td></td>
+</tr>
+<tr>
+<td>upgrades</td>
+<td>Seq of UnitType[]</td>
+<td>[]</td>
+<td></td>
+</tr>
+<tr>
+<td>capacities</td>
+<td>int[]</td>
+<td>[]</td>
+<td></td>
+</tr>
+<tr>
+<td>createSound</td>
+<td>Sound</td>
+<td>unitCreate</td>
+<td></td>
+</tr>
+<tr>
+<td>createSoundVolume</td>
+<td>float</td>
+<td>1.0</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h4 id="unittypeextends-unlockablecontent">UnitType（extends UnlockableContent）</h4>
+<blockquote>
+<p>官方页 5625 token，为最庞大的字段表之一。以下为关键分组字段。</p>
+</blockquote>
+<p><strong>运动与属性：</strong></p>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>type</th>
+<th>default</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>speed</td>
+<td>float</td>
+<td>1.1</td>
+<td>movement speed (world units/t)</td>
+</tr>
+<tr>
+<td>boostMultiplier</td>
+<td>float</td>
+<td>1.0</td>
+<td>multiplier for speed when boosting</td>
+</tr>
+<tr>
+<td>floorMultiplier</td>
+<td>float</td>
+<td>1.0</td>
+<td>how affected by terrain</td>
+</tr>
+<tr>
+<td>rotateSpeed</td>
+<td>float</td>
+<td>5.0</td>
+<td>body rotation speed in degrees/t</td>
+</tr>
+<tr>
+<td>drag</td>
+<td>float</td>
+<td>0.3</td>
+<td>movement drag as fraction</td>
+</tr>
+<tr>
+<td>accel</td>
+<td>float</td>
+<td>0.5</td>
+<td>acceleration as fraction of speed</td>
+</tr>
+<tr>
+<td>hitSize</td>
+<td>float</td>
+<td>6.0</td>
+<td>size of one side of hitbox square</td>
+</tr>
+<tr>
+<td>health</td>
+<td>float</td>
+<td>200.0</td>
+<td>raw health amount</td>
+</tr>
+<tr>
+<td>armor</td>
+<td>float</td>
+<td>0.0</td>
+<td>incoming damage reduced by this amount</td>
+</tr>
+<tr>
+<td>range</td>
+<td>float</td>
+<td>-1.0</td>
+<td>min range of any weapon (approach targets). Override if &gt;0.</td>
+</tr>
+<tr>
+<td>maxRange</td>
+<td>float</td>
+<td>-1.0</td>
+<td>max range of any weapon</td>
+</tr>
+<tr>
+<td>mineRange</td>
+<td>float</td>
+<td>70.0</td>
+<td>range at which can mine ores</td>
+</tr>
+<tr>
+<td>buildRange</td>
+<td>float</td>
+<td>220.0</td>
+<td>range at which can build</td>
+</tr>
+<tr>
+<td>payloadCapacity</td>
+<td>float</td>
+<td>8.0</td>
+<td>Payload capacity in world units^2</td>
+</tr>
+<tr>
+<td>buildSpeed</td>
+<td>float</td>
+<td>-1.0</td>
+<td>building speed multiplier; &lt;0 to disable.</td>
+</tr>
+<tr>
+<td>researchCostMultiplier</td>
+<td>float</td>
+<td>50.0</td>
+<td>multiplier for research cost</td>
+</tr>
+</tbody>
+</table>
+<p><strong>布尔标志：</strong></p>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>type</th>
+<th>default</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>flying</td>
+<td>boolean</td>
+<td>false</td>
+<td>if true, always at elevation 1</td>
+</tr>
+<tr>
+<td>targetAir</td>
+<td>boolean</td>
+<td>true</td>
+<td>whether tries to attack air units</td>
+</tr>
+<tr>
+<td>targetGround</td>
+<td>boolean</td>
+<td>true</td>
+<td>whether tries to attack ground units</td>
+</tr>
+<tr>
+<td>canBoost</td>
+<td>boolean</td>
+<td>false</td>
+<td>if true, can boost into air</td>
+</tr>
+<tr>
+<td>logicControllable</td>
+<td>boolean</td>
+<td>true</td>
+<td>if false, processors cannot control</td>
+</tr>
+<tr>
+<td>playerControllable</td>
+<td>boolean</td>
+<td>true</td>
+<td>if false, players cannot control</td>
+</tr>
+<tr>
+<td>canDrown</td>
+<td>boolean</td>
+<td>true</td>
+<td>if true, ground unit drowns in deep liquids</td>
+</tr>
+<tr>
+<td>useUnitCap</td>
+<td>boolean</td>
+<td>true</td>
+<td>if false, ignores unit cap</td>
+</tr>
+<tr>
+<td>createWreck</td>
+<td>boolean</td>
+<td>true</td>
+<td>if false, no falling corpse on death</td>
+</tr>
+<tr>
+<td>createScorch</td>
+<td>boolean</td>
+<td>true</td>
+<td>if false, no scorch marks on death</td>
+</tr>
+<tr>
+<td>lowAltitude</td>
+<td>boolean</td>
+<td>false</td>
+<td>drawn under effects/bullets (visual)</td>
+</tr>
+<tr>
+<td>hovering</td>
+<td>boolean</td>
+<td>false</td>
+<td>if true, not affected by floor under it</td>
+</tr>
+<tr>
+<td>omniMovement</td>
+<td>boolean</td>
+<td>true</td>
+<td>if true, can move any direction regardless of rotation</td>
+</tr>
+<tr>
+<td>naval</td>
+<td>boolean</td>
+<td>false</td>
+<td>detected as naval - do NOT assign manually!</td>
+</tr>
+<tr>
+<td>mineFloor</td>
+<td>boolean</td>
+<td>true</td>
+<td>whether can mine ores from floors</td>
+</tr>
+<tr>
+<td>mineWalls</td>
+<td>boolean</td>
+<td>false</td>
+<td>whether can mine ores from walls</td>
+</tr>
+</tbody>
+</table>
+<p><strong>武器与 AI：</strong></p>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>type</th>
+<th>default</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>abilities</td>
+<td>Seq of Ability</td>
+<td>[]</td>
+<td>list of "abilities" updating each frame</td>
+</tr>
+<tr>
+<td>weapons</td>
+<td>Seq of Weapon</td>
+<td>[]</td>
+<td>All weapons</td>
+</tr>
+<tr>
+<td>immunities</td>
+<td>ObjectSet of StatusEffect</td>
+<td>[]</td>
+<td>status effects that cannot be applied</td>
+</tr>
+<tr>
+<td>aiController</td>
+<td>Prov of UnitController</td>
+<td>{code}</td>
+<td>default AI controller</td>
+</tr>
+<tr>
+<td>commands</td>
+<td>Seq of UnitCommand</td>
+<td>[]</td>
+<td>RTS commands</td>
+</tr>
+<tr>
+<td>stances</td>
+<td>Seq of UnitStance</td>
+<td>[]</td>
+<td>unit stances</td>
+</tr>
+<tr>
+<td>mineTier</td>
+<td>int</td>
+<td>-1</td>
+<td>max hardness of ore mineable (&lt;0 to disable)</td>
+</tr>
+<tr>
+<td>mineSpeed</td>
+<td>float</td>
+<td>1.0</td>
+<td>mining speed</td>
+</tr>
+<tr>
+<td>mineItems</td>
+<td>Seq of Item</td>
+<td>[Copper, Lead, Titanium, Thorium]</td>
+<td>Target items to mine</td>
+</tr>
+</tbody>
+</table>
+<p><strong>声音与视觉：</strong></p>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>type</th>
+<th>default</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>deathSound</td>
+<td>Sound</td>
+<td>unset</td>
+<td>when unit explodes</td>
+</tr>
+<tr>
+<td>loopSound</td>
+<td>Sound</td>
+<td>none</td>
+<td>looped when around</td>
+</tr>
+<tr>
+<td>stepSound</td>
+<td>Sound</td>
+<td>mechStepSmall</td>
+<td>step sound</td>
+</tr>
+<tr>
+<td>moveSound</td>
+<td>Sound</td>
+<td>none</td>
+<td>looped when moving</td>
+</tr>
+<tr>
+<td>outlineColor</td>
+<td>Color</td>
+<td>565666ff</td>
+<td>sprite outline color</td>
+</tr>
+<tr>
+<td>outlineRadius</td>
+<td>int</td>
+<td>3</td>
+<td>outline thickness</td>
+</tr>
+<tr>
+<td>outline</td>
+<td>boolean</td>
+<td>true</td>
+<td>if false, no sprite outlines</td>
+</tr>
+<tr>
+<td>healColor</td>
+<td>Color</td>
+<td>98ffa9ff</td>
+<td>flash color when healed</td>
+</tr>
+</tbody>
+</table>
+<p><strong>腿部/机甲/履带（细分单位类型用）：</strong></p>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>type</th>
+<th>default</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>legCount</td>
+<td>int</td>
+<td>4</td>
+<td>number of legs</td>
+</tr>
+<tr>
+<td>legGroupSize</td>
+<td>int</td>
+<td>2</td>
+<td>size of groups legs move in</td>
+</tr>
+<tr>
+<td>legLength</td>
+<td>float</td>
+<td>10.0</td>
+<td>total leg length (both segments)</td>
+</tr>
+<tr>
+<td>legSpeed</td>
+<td>float</td>
+<td>0.1</td>
+<td>how fast legs move to destination</td>
+</tr>
+<tr>
+<td>legMaxLength</td>
+<td>float</td>
+<td>1.75</td>
+<td>max length as fraction</td>
+</tr>
+<tr>
+<td>legMinLength</td>
+<td>float</td>
+<td>0.0</td>
+<td>min length as fraction</td>
+</tr>
+<tr>
+<td>mechSideSway</td>
+<td>float</td>
+<td>0.54</td>
+<td>mech swaying animation</td>
+</tr>
+<tr>
+<td>mechFrontSway</td>
+<td>float</td>
+<td>0.1</td>
+<td>mech swaying animation</td>
+</tr>
+<tr>
+<td>treadRects</td>
+<td>Rect[]</td>
+<td>[]</td>
+<td>treads as rectangles in IMAGE COORDINATES</td>
+</tr>
+<tr>
+<td>treadFrames</td>
+<td>int</td>
+<td>18</td>
+<td>frames of movement in a tread</td>
+</tr>
+</tbody>
+</table>
+<p><strong>分段/导弹/坦克（蠕虫、导弹、坦克单位用）：</strong></p>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>type</th>
+<th>default</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>segments</td>
+<td>int</td>
+<td>0</td>
+<td>number of independent segments</td>
+</tr>
+<tr>
+<td>segmentUnits</td>
+<td>int</td>
+<td>1</td>
+<td>number of independent units spawned</td>
+</tr>
+<tr>
+<td>segmentMaxRot</td>
+<td>float</td>
+<td>30.0</td>
+<td>max difference between segment angles</td>
+</tr>
+<tr>
+<td>crushDamage</td>
+<td>float</td>
+<td>0.0</td>
+<td>damage to blocks under tank/crawler per frame</td>
+</tr>
+<tr>
+<td>crushFragile</td>
+<td>boolean</td>
+<td>false</td>
+<td>fragile blocks crushed in 1x1</td>
+</tr>
+<tr>
+<td>crawlSlowdown</td>
+<td>float</td>
+<td>0.5</td>
+<td>speed multiplier at crawlSlowdownFrac</td>
+</tr>
+<tr>
+<td>crawlSlowdownFrac</td>
+<td>float</td>
+<td>0.55</td>
+<td>fraction of solids needed for crawlSlowdown</td>
+</tr>
+<tr>
+<td>lifetime</td>
+<td>float</td>
+<td>300.0</td>
+<td>lifetime of this missile</td>
+</tr>
+<tr>
+<td>homingDelay</td>
+<td>float</td>
+<td>10.0</td>
+<td>ticks before missile starts homing</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>完整字段（含 engines、parts、trail、shadow 等约 200+ 字段）见官方 UnitType 类页。</p>
+</blockquote>
+<h3 id="1710-content">17.10 Content 内容类型</h3>
+<h4 id="itemextends-unlockablecontent">Item（extends UnlockableContent）</h4>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>type</th>
+<th>default</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>color</td>
+<td>Color</td>
+<td>000000ff</td>
+<td></td>
+</tr>
+<tr>
+<td>explosiveness</td>
+<td>float</td>
+<td>0.0</td>
+<td>how explosive this item is.</td>
+</tr>
+<tr>
+<td>flammability</td>
+<td>float</td>
+<td>0.0</td>
+<td>&gt;0.3 makes eligible for item burners.</td>
+</tr>
+<tr>
+<td>radioactivity</td>
+<td>float</td>
+<td>0.0</td>
+<td>how radioactive this item is.</td>
+</tr>
+<tr>
+<td>charge</td>
+<td>float</td>
+<td>0.0</td>
+<td>how electrically potent.</td>
+</tr>
+<tr>
+<td>hardness</td>
+<td>int</td>
+<td>0</td>
+<td>drill hardness of the item</td>
+</tr>
+<tr>
+<td>cost</td>
+<td>float</td>
+<td>1.0</td>
+<td>base material cost (1 cost = 1 tick build time)</td>
+</tr>
+<tr>
+<td>healthScaling</td>
+<td>float</td>
+<td>0.0</td>
+<td>block default health multiplied by 1+scaling</td>
+</tr>
+<tr>
+<td>lowPriority</td>
+<td>boolean</td>
+<td>false</td>
+<td>if true, lowest priority to drills.</td>
+</tr>
+<tr>
+<td>frames</td>
+<td>int</td>
+<td>0</td>
+<td>If &gt;0, animated.</td>
+</tr>
+<tr>
+<td>transitionFrames</td>
+<td>int</td>
+<td>0</td>
+<td>generated transition frames between each frame</td>
+</tr>
+<tr>
+<td>frameTime</td>
+<td>float</td>
+<td>5.0</td>
+<td>ticks between animation frames.</td>
+</tr>
+<tr>
+<td>buildable</td>
+<td>boolean</td>
+<td>true</td>
+<td>If false, incinerated in certain cores.</td>
+</tr>
+<tr>
+<td>hidden</td>
+<td>boolean</td>
+<td>false</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h4 id="liquidextends-unlockablecontent">Liquid（extends UnlockableContent）</h4>
+<p>"A better name for this class would be 'fluid', but it's too late for that."</p>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>type</th>
+<th>default</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>gas</td>
+<td>boolean</td>
+<td>false</td>
+<td>If true, treated as gas (no puddles)</td>
+</tr>
+<tr>
+<td>color</td>
+<td>Color</td>
+<td>000000ff</td>
+<td>Color in pipes and on ground.</td>
+</tr>
+<tr>
+<td>gasColor</td>
+<td>Color</td>
+<td>bfbfbfff</td>
+<td>Color in gas form.</td>
+</tr>
+<tr>
+<td>barColor</td>
+<td>Color</td>
+<td>null</td>
+<td>Color used in bars.</td>
+</tr>
+<tr>
+<td>lightColor</td>
+<td>Color</td>
+<td>00000000</td>
+<td>Color for lights (alpha = brightness).</td>
+</tr>
+<tr>
+<td>flammability</td>
+<td>float</td>
+<td>0.0</td>
+<td>0-1. 0.5+ very flammable.</td>
+</tr>
+<tr>
+<td>temperature</td>
+<td>float</td>
+<td>0.5</td>
+<td>0.5 = room temp, 0 = very cold, 1 = molten hot</td>
+</tr>
+<tr>
+<td>heatCapacity</td>
+<td>float</td>
+<td>0.5</td>
+<td>how much heat stored. 0.4=water.</td>
+</tr>
+<tr>
+<td>viscosity</td>
+<td>float</td>
+<td>0.5</td>
+<td>thickness. 0.5=water, 1=tar.</td>
+</tr>
+<tr>
+<td>explosiveness</td>
+<td>float</td>
+<td>0.0</td>
+<td>prone to explode when heated. 0=nothing, 1=nuke.</td>
+</tr>
+<tr>
+<td>blockReactive</td>
+<td>boolean</td>
+<td>true</td>
+<td>whether reacts in blocks (slag with water).</td>
+</tr>
+<tr>
+<td>coolant</td>
+<td>boolean</td>
+<td>true</td>
+<td>if false, cannot be coolant.</td>
+</tr>
+<tr>
+<td>moveThroughBlocks</td>
+<td>boolean</td>
+<td>false</td>
+<td>if true, moves through blocks as puddle.</td>
+</tr>
+<tr>
+<td>incinerable</td>
+<td>boolean</td>
+<td>true</td>
+<td>if true, can be incinerated.</td>
+</tr>
+<tr>
+<td>effect</td>
+<td>StatusEffect</td>
+<td>none</td>
+<td>Associated status effect.</td>
+</tr>
+<tr>
+<td>particleEffect</td>
+<td>Effect</td>
+<td>none</td>
+<td>Effect shown in puddles.</td>
+</tr>
+<tr>
+<td>particleSpacing</td>
+<td>float</td>
+<td>60.0</td>
+<td>particle effect rate spacing in ticks.</td>
+</tr>
+<tr>
+<td>boilPoint</td>
+<td>float</td>
+<td>2.0</td>
+<td>Temperature at which vaporizes.</td>
+</tr>
+<tr>
+<td>vaporEffect</td>
+<td>Effect</td>
+<td>vapor</td>
+<td>Effect when vaporizes.</td>
+</tr>
+<tr>
+<td>hidden</td>
+<td>boolean</td>
+<td>false</td>
+<td>if true, hidden in most UI.</td>
+</tr>
+<tr>
+<td>canStayOn</td>
+<td>ObjectSet of Liquid</td>
+<td>new ObjectSet&lt;&gt;()</td>
+<td>puddles this can stay on (oil on water).</td>
+</tr>
+</tbody>
+</table>
+<h4 id="statuseffectextends-unlockablecontent">StatusEffect（extends UnlockableContent）</h4>
+<p>Built-in constants: <code>none</code> <code>burning</code> <code>freezing</code> <code>unmoving</code> <code>slow</code> <code>fast</code> <code>wet</code> <code>muddy</code> <code>melting</code> <code>sapped</code> <code>tarred</code> <code>overdrive</code> <code>overclock</code> <code>shielded</code> <code>shocked</code> <code>blasted</code> <code>corroded</code> <code>boss</code> <code>sporeSlowed</code> <code>disarmed</code> <code>electrified</code> <code>invincible</code> <code>dynamic</code></p>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>type</th>
+<th>default</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>damageMultiplier</td>
+<td>float</td>
+<td>1.0</td>
+<td>Damage dealt by unit with effect.</td>
+</tr>
+<tr>
+<td>healthMultiplier</td>
+<td>float</td>
+<td>1.0</td>
+<td>Unit health multiplier.</td>
+</tr>
+<tr>
+<td>speedMultiplier</td>
+<td>float</td>
+<td>1.0</td>
+<td>Unit speed multiplier.</td>
+</tr>
+<tr>
+<td>reloadMultiplier</td>
+<td>float</td>
+<td>1.0</td>
+<td>Unit reload multiplier.</td>
+</tr>
+<tr>
+<td>buildSpeedMultiplier</td>
+<td>float</td>
+<td>1.0</td>
+<td>Unit build speed multiplier.</td>
+</tr>
+<tr>
+<td>dragMultiplier</td>
+<td>float</td>
+<td>1.0</td>
+<td>Unit drag multiplier.</td>
+</tr>
+<tr>
+<td>transitionDamage</td>
+<td>float</td>
+<td>0.0</td>
+<td>Damage upon transition to an affinity.</td>
+</tr>
+<tr>
+<td>disarm</td>
+<td>boolean</td>
+<td>false</td>
+<td>Unit weapon(s) disabled.</td>
+</tr>
+<tr>
+<td>damage</td>
+<td>float</td>
+<td>0.0</td>
+<td>Damage per frame.</td>
+</tr>
+<tr>
+<td>intervalDamageTime</td>
+<td>float</td>
+<td>0.0</td>
+<td>Spacing between interval damage. &lt;=0 disable.</td>
+</tr>
+<tr>
+<td>intervalDamage</td>
+<td>float</td>
+<td>0.0</td>
+<td>Interval damage dealt.</td>
+</tr>
+<tr>
+<td>intervalDamagePierce</td>
+<td>boolean</td>
+<td>false</td>
+<td>If true, interval damage is armor piercing.</td>
+</tr>
+<tr>
+<td>effectChance</td>
+<td>float</td>
+<td>0.15</td>
+<td>Chance of visual effect appearing.</td>
+</tr>
+<tr>
+<td>permanent</td>
+<td>boolean</td>
+<td>false</td>
+<td>If true, never disappears.</td>
+</tr>
+<tr>
+<td>reactive</td>
+<td>boolean</td>
+<td>false</td>
+<td>Only reacts with other effects, cannot be applied.</td>
+</tr>
+<tr>
+<td>show</td>
+<td>boolean</td>
+<td>true</td>
+<td>Whether to show in database.</td>
+</tr>
+<tr>
+<td>color</td>
+<td>Color</td>
+<td>ffffffff</td>
+<td>Tint color of effect.</td>
+</tr>
+<tr>
+<td>effect</td>
+<td>Effect</td>
+<td>none</td>
+<td>Effect randomly on top of affected unit.</td>
+</tr>
+<tr>
+<td>applyEffect</td>
+<td>Effect</td>
+<td>none</td>
+<td>Effect when applied to a unit.</td>
+</tr>
+<tr>
+<td>applyColor</td>
+<td>Color</td>
+<td>ffffffff</td>
+<td>Tint color of apply effect.</td>
+</tr>
+<tr>
+<td>affinities</td>
+<td>ObjectSet of StatusEffect</td>
+<td>[]</td>
+<td>Affinity values for stat displays.</td>
+</tr>
+<tr>
+<td>opposites</td>
+<td>ObjectSet of StatusEffect</td>
+<td>[]</td>
+<td>Opposite values for stat displays.</td>
+</tr>
+<tr>
+<td>outline</td>
+<td>boolean</td>
+<td>true</td>
+<td>Set false to disable outline generation.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="1711-bullettype">17.11 BulletType 子弹类型</h3>
+<h4 id="basicbullettypeextends-bullettype">BasicBulletType（extends BulletType）</h4>
+<p>Built-in constants: <code>placeholder</code> <code>spaceLiquid</code> <code>damageLightning</code> <code>damageLightningGround</code> <code>damageLightningAir</code> <code>fireball</code></p>
+<p>"An extended BulletType for most ammo-based bullets shot from turrets and units. Draws 1-2 sprites that can spin or shrink."</p>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>type</th>
+<th>default</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>backColor</td>
+<td>Color</td>
+<td>f9c27aff</td>
+<td></td>
+</tr>
+<tr>
+<td>frontColor</td>
+<td>Color</td>
+<td>fff8e8ff</td>
+<td></td>
+</tr>
+<tr>
+<td>mixColorFrom</td>
+<td>Color</td>
+<td>ffffff00</td>
+<td></td>
+</tr>
+<tr>
+<td>mixColorTo</td>
+<td>Color</td>
+<td>ffffff00</td>
+<td></td>
+</tr>
+<tr>
+<td>width</td>
+<td>float</td>
+<td>5.0</td>
+<td></td>
+</tr>
+<tr>
+<td>height</td>
+<td>float</td>
+<td>7.0</td>
+<td></td>
+</tr>
+<tr>
+<td>shrinkX</td>
+<td>float</td>
+<td>0.0</td>
+<td></td>
+</tr>
+<tr>
+<td>shrinkY</td>
+<td>float</td>
+<td>0.5</td>
+<td></td>
+</tr>
+<tr>
+<td>shrinkInterp</td>
+<td>Interp</td>
+<td>linear</td>
+<td></td>
+</tr>
+<tr>
+<td>spin</td>
+<td>float</td>
+<td>0.0</td>
+<td></td>
+</tr>
+<tr>
+<td>rotationOffset</td>
+<td>float</td>
+<td>0.0</td>
+<td></td>
+</tr>
+<tr>
+<td>sprite</td>
+<td>String</td>
+<td>bullet</td>
+<td></td>
+</tr>
+<tr>
+<td>backSprite</td>
+<td>String</td>
+<td>null</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h4 id="missilebullettypeextends-basicbullettype">MissileBulletType（extends BasicBulletType）</h4>
+<blockquote>
+<p>官方页无额外字段（仅继承 BasicBulletType，无新字段列出）。</p>
+</blockquote>
+<h3 id="1712-weather">17.12 Weather 天气</h3>
+<h4 id="weatherextends-unlockablecontent">Weather（extends UnlockableContent）</h4>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>type</th>
+<th>default</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>duration</td>
+<td>float</td>
+<td>36000.0</td>
+<td>Default duration in ticks.</td>
+</tr>
+<tr>
+<td>opacityMultiplier</td>
+<td>float</td>
+<td>1.0</td>
+<td></td>
+</tr>
+<tr>
+<td>attrs</td>
+<td>Attributes</td>
+<td>new Attributes()</td>
+<td></td>
+</tr>
+<tr>
+<td>sound</td>
+<td>Sound</td>
+<td>none</td>
+<td></td>
+</tr>
+<tr>
+<td>soundVol</td>
+<td>float</td>
+<td>0.1</td>
+<td></td>
+</tr>
+<tr>
+<td>soundVolMin</td>
+<td>float</td>
+<td>0.0</td>
+<td></td>
+</tr>
+<tr>
+<td>soundVolOscMag</td>
+<td>float</td>
+<td>0.0</td>
+<td></td>
+</tr>
+<tr>
+<td>soundVolOscScl</td>
+<td>float</td>
+<td>20.0</td>
+<td></td>
+</tr>
+<tr>
+<td>hidden</td>
+<td>boolean</td>
+<td>false</td>
+<td></td>
+</tr>
+<tr>
+<td>type</td>
+<td>Prov of WeatherState</td>
+<td>WeatherState::create</td>
+<td></td>
+</tr>
+<tr>
+<td>status</td>
+<td>StatusEffect</td>
+<td>none</td>
+<td></td>
+</tr>
+<tr>
+<td>statusDuration</td>
+<td>float</td>
+<td>120.0</td>
+<td></td>
+</tr>
+<tr>
+<td>statusAir</td>
+<td>boolean</td>
+<td>true</td>
+<td></td>
+</tr>
+<tr>
+<td>statusGround</td>
+<td>boolean</td>
+<td>true</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h4 id="particleweatherextends-weather">ParticleWeather（extends Weather）</h4>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>type</th>
+<th>default</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>particleRegion</td>
+<td>String</td>
+<td>"circle-shadow"</td>
+<td></td>
+</tr>
+<tr>
+<td>color</td>
+<td>Color</td>
+<td>ffffffff</td>
+<td></td>
+</tr>
+<tr>
+<td>yspeed</td>
+<td>float</td>
+<td>-2.0</td>
+<td></td>
+</tr>
+<tr>
+<td>xspeed</td>
+<td>float</td>
+<td>0.25</td>
+<td></td>
+</tr>
+<tr>
+<td>padding</td>
+<td>float</td>
+<td>16.0</td>
+<td></td>
+</tr>
+<tr>
+<td>sizeMin</td>
+<td>float</td>
+<td>2.4</td>
+<td></td>
+</tr>
+<tr>
+<td>sizeMax</td>
+<td>float</td>
+<td>12.0</td>
+<td></td>
+</tr>
+<tr>
+<td>density</td>
+<td>float</td>
+<td>1200.0</td>
+<td></td>
+</tr>
+<tr>
+<td>minAlpha</td>
+<td>float</td>
+<td>1.0</td>
+<td></td>
+</tr>
+<tr>
+<td>maxAlpha</td>
+<td>float</td>
+<td>1.0</td>
+<td></td>
+</tr>
+<tr>
+<td>force</td>
+<td>float</td>
+<td>0.0</td>
+<td></td>
+</tr>
+<tr>
+<td>noiseScale</td>
+<td>float</td>
+<td>2000.0</td>
+<td></td>
+</tr>
+<tr>
+<td>baseSpeed</td>
+<td>float</td>
+<td>6.1</td>
+<td></td>
+</tr>
+<tr>
+<td>sinSclMin</td>
+<td>float</td>
+<td>30.0</td>
+<td></td>
+</tr>
+<tr>
+<td>sinSclMax</td>
+<td>float</td>
+<td>80.0</td>
+<td></td>
+</tr>
+<tr>
+<td>sinMagMin</td>
+<td>float</td>
+<td>1.0</td>
+<td></td>
+</tr>
+<tr>
+<td>sinMagMax</td>
+<td>float</td>
+<td>7.0</td>
+<td></td>
+</tr>
+<tr>
+<td>noiseColor</td>
+<td>Color</td>
+<td>ffffffff</td>
+<td></td>
+</tr>
+<tr>
+<td>drawNoise</td>
+<td>boolean</td>
+<td>false</td>
+<td></td>
+</tr>
+<tr>
+<td>drawParticles</td>
+<td>boolean</td>
+<td>true</td>
+<td></td>
+</tr>
+<tr>
+<td>useWindVector</td>
+<td>boolean</td>
+<td>false</td>
+<td></td>
+</tr>
+<tr>
+<td>randomParticleRotation</td>
+<td>boolean</td>
+<td>false</td>
+<td></td>
+</tr>
+<tr>
+<td>noiseLayers</td>
+<td>int</td>
+<td>1</td>
+<td></td>
+</tr>
+<tr>
+<td>noiseLayerSpeedM</td>
+<td>float</td>
+<td>1.1</td>
+<td></td>
+</tr>
+<tr>
+<td>noiseLayerAlphaM</td>
+<td>float</td>
+<td>0.8</td>
+<td></td>
+</tr>
+<tr>
+<td>noiseLayerSclM</td>
+<td>float</td>
+<td>0.99</td>
+<td></td>
+</tr>
+<tr>
+<td>noiseLayerColorM</td>
+<td>float</td>
+<td>1.0</td>
+<td></td>
+</tr>
+<tr>
+<td>noisePath</td>
+<td>String</td>
+<td>"noiseAlpha"</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="1713-logic">17.13 Logic 逻辑方块</h3>
+<h4 id="logicblockextends-block">LogicBlock（extends Block）</h4>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>type</th>
+<th>default</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>maxInstructionScale</td>
+<td>int</td>
+<td>5</td>
+<td></td>
+</tr>
+<tr>
+<td>instructionsPerTick</td>
+<td>int</td>
+<td>1</td>
+<td></td>
+</tr>
+<tr>
+<td>maxInstructionsPerTick</td>
+<td>int</td>
+<td>40</td>
+<td></td>
+</tr>
+<tr>
+<td>range</td>
+<td>float</td>
+<td>80.0</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="1714-targetdummy">17.14 TargetDummy</h3>
+<h4 id="targetdummyextends-block">TargetDummy（extends Block）</h4>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>type</th>
+<th>default</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>dpsUpdateTime</td>
+<td>int</td>
+<td>1</td>
+<td></td>
+</tr>
+<tr>
+<td>unitType</td>
+<td>UnitType</td>
+<td>dummy</td>
+<td></td>
+</tr>
+<tr>
+<td>pullScale</td>
+<td>float</td>
+<td>0.33</td>
+<td></td>
+</tr>
+<tr>
+<td>emptyStr</td>
+<td>String</td>
+<td>"---"</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="18">18. 三条路线对照表</h2>
+<blockquote>
+<p>v2 将 v1 的"两条路线"扩充为"三条路线"：HJSON 内容 mod / JS 脚本 / Java 插件。</p>
+</blockquote>
+<h3 id="181">18.1 路线概述</h3>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>HJSON 内容 mod</th>
+<th>JS 脚本 mod</th>
+<th>Java/JVM 插件 mod</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>内容定义方式</strong></td>
+<td>HJSON/JSON 数据文件，声明式</td>
+<td>Rhino JS，<code>extend()</code>/<code>Item()</code> + <code>require()</code></td>
+<td>Java 类，继承 <code>mindustry.mod.Mod</code>，重写方法</td>
+</tr>
+<tr>
+<td><strong>脚本能力</strong></td>
+<td>无（纯数据）</td>
+<td>现代 JS API：<code>extend()</code>、<code>Events.on()</code>、<code>BaseDialog</code>、<code>loadSound()</code></td>
+<td>完整 Java，可访问全部游戏类</td>
+</tr>
+<tr>
+<td><strong>学习曲线</strong></td>
+<td>低——懂 HJSON 就能加内容</td>
+<td>中——需懂 JS + 游戏 API 概念</td>
+<td>高——需懂 Java + 游戏源码结构</td>
+</tr>
+<tr>
+<td><strong>性能</strong></td>
+<td>HJSON 解析有开销</td>
+<td>JS 解释执行，有开销</td>
+<td>原生编译执行，性能最佳</td>
+</tr>
+<tr>
+<td><strong>分发</strong></td>
+<td>文件夹/zip，游戏内直接加载</td>
+<td>文件夹/zip，游戏内直接加载</td>
+<td>需编译为 jar，用 GitHub Releases 分发（只取最新 release）</td>
+</tr>
+<tr>
+<td><strong>跨平台</strong></td>
+<td>天然跨平台</td>
+<td>天然跨平台</td>
+<td>天然跨平台（JVM），桌面/Android</td>
+</tr>
+<tr>
+<td><strong>主类/入口</strong></td>
+<td>无（<code>content/</code> 自动加载）</td>
+<td><code>scripts/main.js</code></td>
+<td><code>mod.hjson</code> 的 <code>main:</code> 指定全限定类</td>
+</tr>
+<tr>
+<td><strong>服务器端</strong></td>
+<td>客户端/服务器同内容</td>
+<td>客户端/服务器同内容</td>
+<td>Plugin 可仅服务器端（继承 <code>mindustry.mod.Plugin</code>，隐式 hidden）</td>
+</tr>
+<tr>
+<td><strong>安全沙箱</strong></td>
+<td>无风险（纯数据）</td>
+<td>有限</td>
+<td><strong>无沙箱</strong>——可完全访问客户端电脑，勿从不信任来源导入</td>
+</tr>
+</tbody>
+</table>
+<h3 id="182">18.2 各自能力边界</h3>
+<p><strong>HJSON 内容 mod 能做的：</strong>
+- 添加新物品、液体、方块（炮塔、传送带、发电机等已有类型的变体）
+- 修改已有方块的参数（伤害、射程、射速、消耗等）
+- 添加新贴图、音效、翻译
+- 添加战役 Planet 内容、蓝图</p>
+<p><strong>HJSON 内容 mod 做不到的：</strong>
+- 全新的方块交互逻辑（全新合成机制、全新游戏模式）
+- 修改游戏核心系统</p>
+<p><strong>JS 脚本 mod 额外能做的：</strong>
+- 监听事件（<code>Events.on(UnitDestroyEvent, ...)</code>）
+- 用 <code>extend()</code> 扩展已有方块/单位类型，重写少量方法
+- 显示对话框（<code>BaseDialog</code>）
+- 播放自定义音效
+- 自定义特效（<code>newEffect</code>）</p>
+<p><strong>Java/JVM 插件 mod 能做的：</strong>
+- 以上所有
+- 全新的方块类型、单位 AI、游戏机制
+- 修改/扩展核心游戏系统（渲染、网络、UI）
+- 完整的自定义渲染、网络同步
+- 服务器端命令/游戏模式（Plugin）
+- 任何 Java 能做到的事（含反射、字节码修改——但有安全风险）</p>
+<h3 id="183">18.3 何时用哪个</h3>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>推荐路线</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>只想加几个新炮塔/传送带/物品</td>
+<td>HJSON</td>
+</tr>
+<tr>
+<td>想调数值、换贴图、加音效</td>
+<td>HJSON</td>
+</tr>
+<tr>
+<td>想做简单自定义行为（事件监听、对话框、点击触发效果）</td>
+<td>JS 脚本</td>
+</tr>
+<tr>
+<td>想做全新游戏机制/模式</td>
+<td>Java 插件</td>
+</tr>
+<tr>
+<td>想深度改造游戏核心</td>
+<td>Java 插件</td>
+</tr>
+<tr>
+<td>服务器端加命令/游戏模式（客户端无需下载）</td>
+<td>Java Plugin</td>
+</tr>
+<tr>
+<td>追求极致性能</td>
+<td>Java 插件</td>
+</tr>
+</tbody>
+</table>
+<h3 id="184">18.4 核心结论</h3>
+<p>三条路线是<strong>递进关系</strong>：</p>
+<ol>
+<li><strong>HJSON</strong> 是数据驱动的内容扩展——不写一行代码就能大量扩展游戏内容，适合快速原型和中小型 mod。</li>
+<li><strong>JS 脚本</strong>在 HJSON 之上叠加了事件和少量行为扩展——能做简单交互，但受限于白名单 API。</li>
+<li><strong>Java 插件</strong>是代码驱动的深度改造——能做任何事，但门槛最高、需编译分发、且无沙箱（信任风险）。</li>
+</ol>
+<p>推荐工作流：先用 HJSON 快速验证内容想法 → 需要简单交互时加 JS → 需要深度定制时转 Java。</p>
+<hr />
+<blockquote>
+<p>本文档由官方 Wiki 抓取整理而成。代码块与字段表忠实保留官方原文（英文），中文讲解围绕其组织。
+抓取来源：9 个 Wiki 页面（1-modding / 2-plugins / 3-scripting / 4-spriting / 5-markup / 5-types / 6-migrationv6 / 7-migrationv7 / 8-migrationv8）+ 47 个 Modding Classes 字段页。
+缺口：<code>Turret</code> 基类官方页为空（字段见 Java 源码 <code>mindustry.world.blocks.defense.turrets.Turret</code>）；<code>Planet</code> 官方链接失效；Spriting 页面的图像示例（调色板、各阶段画法图）未收录为文本。</p>
+</blockquote>
+</main>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script>Prism.plugins.autoloader.languages_path='https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/';</script>
+<script>
+function copyCode(btn){
+  var pre = btn.parentElement.querySelector('pre');
+  var code = pre.querySelector('code');
+  var text = code.innerText;
+  navigator.clipboard.writeText(text).then(function(){
+    btn.textContent='已复制'; btn.classList.add('done');
+    setTimeout(function(){btn.textContent='复制'; btn.classList.remove('done');},1500);
+  });
+}
+function toggleMenu(){document.querySelector('nav.sidebar').classList.toggle('open');}
+// close sidebar on nav click (mobile)
+document.querySelectorAll('nav.sidebar a').forEach(function(a){
+  a.addEventListener('click',function(){
+    if(window.innerWidth<=900) document.querySelector('nav.sidebar').classList.remove('open');
+  });
+});
+</script>
+</body>
+</html>

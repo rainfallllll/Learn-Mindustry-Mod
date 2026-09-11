@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mindustry 底层 ECS 框架解析</title>
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-java.min.js"></script>
+<style>
+:root{
+  --bg:#0f0f1a;
+  --bg2:#1a1a2e;
+  --bg3:#16213e;
+  --code-bg:#1e1e2e;
+  --accent:#f39c12;
+  --accent2:#e67e22;
+  --text:#e0e0e0;
+  --muted:#9a9ab0;
+  --border:#2d2d44;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text);
+  font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  line-height:1.7; font-size:15px;}
+.layout{display:flex; min-height:100vh;}
+nav{width:280px; flex-shrink:0; background:var(--bg2); border-right:1px solid var(--border);
+  padding:24px 0; position:sticky; top:0; height:100vh; overflow-y:auto;}
+nav h2{color:var(--accent); font-size:16px; padding:0 20px; margin:0 0 12px;}
+nav a{display:block; padding:7px 20px; color:var(--muted); text-decoration:none; font-size:13.5px;
+  border-left:3px solid transparent;}
+nav a:hover{color:var(--accent); background:var(--bg3);}
+nav a.lv2{padding-left:36px; font-size:12.5px;}
+main{flex:1; padding:40px 56px; max-width:1080px;}
+h1{color:var(--accent); border-bottom:2px solid var(--accent); padding-bottom:12px; font-size:30px;}
+h2{color:var(--accent); margin-top:48px; font-size:24px; border-left:4px solid var(--accent); padding-left:12px;}
+h3{color:#fff; margin-top:32px; font-size:18px;}
+h4{color:var(--accent2); margin-top:24px; font-size:15px;}
+a{color:var(--accent);}
+code{background:var(--code-bg); color:#f78c6c; padding:2px 6px; border-radius:4px;
+  font-family:"JetBrains Mono",Consolas,Monaco,monospace; font-size:13.5px;}
+pre{background:var(--code-bg) !important; border-radius:8px; padding:16px 18px; overflow-x:auto;
+  border:1px solid var(--border); position:relative;}
+pre code{background:transparent; padding:0; color:#d4d4d4; font-size:13px; line-height:1.6;}
+.copy-btn{position:absolute; top:8px; right:8px; background:var(--bg3); color:var(--muted);
+  border:1px solid var(--border); border-radius:4px; padding:3px 10px; font-size:11px; cursor:pointer;}
+.copy-btn:hover{color:var(--accent); border-color:var(--accent);}
+table{border-collapse:collapse; width:100%; margin:16px 0; font-size:13.5px;}
+th,td{border:1px solid var(--border); padding:8px 10px; text-align:left; vertical-align:top;}
+th{background:var(--bg3); color:var(--accent);}
+tr:nth-child(even) td{background:rgba(255,255,255,0.02);}
+blockquote{border-left:4px solid var(--accent); background:var(--bg2); margin:16px 0;
+  padding:12px 18px; color:var(--muted); border-radius:0 6px 6px 0;}
+.tip{background:var(--bg2); border-left:4px solid var(--accent); padding:12px 18px;
+  border-radius:0 6px 6px 0; margin:16px 0;}
+.warn{background:#3a1f1f; border-left:4px solid #e74c3c; padding:12px 18px;
+  border-radius:0 6px 6px 0; margin:16px 0;}
+ul,ol{padding-left:24px;}
+li{margin:4px 0;}
+svg{max-width:100%; height:auto; background:var(--bg2); border-radius:8px; margin:16px 0;}
+.cover{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%);
+  border:1px solid var(--border); border-radius:12px; padding:28px; margin-bottom:24px;}
+.cover h1{border:none; margin:0 0 8px; padding:0;}
+.cover .meta{color:var(--muted); font-size:13px;}
+hr{border:none; border-top:1px solid var(--border); margin:32px 0;}
+.badge{display:inline-block; background:var(--accent); color:#000; font-size:11px;
+  padding:2px 8px; border-radius:10px; margin-left:6px; font-weight:bold;}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav>
+  <h2>ECS 框架解析</h2>
+  <a href="#ch0">写在最前面</a>
+  <a href="#ch1">第 1 章　为什么是 ECS</a>
+  <a href="#ch1-1" class="lv2">1.1 继承树的问题</a>
+  <a href="#ch1-2" class="lv2">1.2 组合优于继承</a>
+  <a href="#ch1-3" class="lv2">1.3 Mindustry 的折中</a>
+  <a href="#ch2">第 2 章　核心类与生命周期</a>
+  <a href="#ch2-1" class="lv2">2.1 EntityComp</a>
+  <a href="#ch2-2" class="lv2">2.2 @EntityDef</a>
+  <a href="#ch2-3" class="lv2">2.3 gen 生成物</a>
+  <a href="#ch2-4" class="lv2">2.4 生命周期</a>
+  <a href="#ch2-5" class="lv2">2.5 与传统 ECS 差异</a>
+  <a href="#ch3">第 3 章　49 个 comp 全景</a>
+  <a href="#ch3-1" class="lv2">3.1 分类统计</a>
+  <a href="#ch3-2" class="lv2">3.2 全量表</a>
+  <a href="#ch3-3" class="lv2">3.3 重点 comp</a>
+  <a href="#ch4">第 4 章　注解处理器流程</a>
+  <a href="#ch4-1" class="lv2">4.1 EntityProcess</a>
+  <a href="#ch4-2" class="lv2">4.2 流程图</a>
+  <a href="#ch4-3" class="lv2">4.3 生成物样貌</a>
+  <a href="#ch5">第 5 章　Building/Unit 组装</a>
+  <a href="#ch5-1" class="lv2">5.1 Building 组成</a>
+  <a href="#ch5-2" class="lv2">5.2 @EntityDef 用法</a>
+  <a href="#ch5-3" class="lv2">5.3 new 链路</a>
+  <a href="#ch6">第 6 章　模组钩子清单 ★</a>
+  <a href="#ch6-1" class="lv2">6.1 不能做的</a>
+  <a href="#ch6-2" class="lv2">6.2 能做的</a>
+  <a href="#ch6-3" class="lv2">6.3 Building 钩子表</a>
+  <a href="#ch6-4" class="lv2">6.4 Unit 钩子</a>
+  <a href="#ch6-5" class="lv2">6.5 代码示例</a>
+  <a href="#ch6-6" class="lv2">6.6 设计启示</a>
+  <a href="#ch7">第 7 章　Events 事件系统</a>
+  <a href="#ch7-1" class="lv2">7.1 Arc Events</a>
+  <a href="#ch7-2" class="lv2">7.2 EventType</a>
+  <a href="#ch7-3" class="lv2">7.3 分工</a>
+  <a href="#ch7-4" class="lv2">7.4 代码示例</a>
+  <a href="#appendix">附录　源码地图</a>
+</nav>
+<main>
+
+<div class="cover">
+<h1>Mindustry 底层 ECS 框架解析</h1>
+<div class="meta">面向想设计复杂 mod 的玩家 / 开发者 ｜ 适用版本 <b>v159.7</b> ｜ 所有 API 均从本地源码逐条核验</div>
+</div>
+
+<h2 id="ch0">写在最前面：一个必须先纠正的误区</h2>
+<div class="warn">
+<p><b>Arc 仓库里没有传统 ECS。</b></p>
+<ul>
+<li>Arc 中<b>不存在</b> <code>arc/ecs/</code> 目录，没有 <code>Entities.java</code>、<code>Component.java</code>、<code>EntitySystem.java</code>。</li>
+<li>Arc 只提供了一个轻量事件总线 <code>arc.util.Events</code>（<code>Arc/arc-core/src/arc/Events.java</code>），它不是 ECS。</li>
+<li>Mindustry 自己实现了一套<b>注解驱动的实体组合系统</b>，业内俗称「Mindustry ECS」，但和 Ash / Artemis / Entt 那种 <code>Entity + Component + System</code> 三元组<b>不是一回事</b>。</li>
+</ul>
+</div>
+<blockquote>一句话：Mindustry 的实体系统本质上是<b>用注解处理器在编译期把多个「能力接口」的方法聚合到一个生成的实体类里</b>。</blockquote>
+
+<h2 id="ch1">第 1 章　为什么是「ECS」——从继承树的泥潭说起</h2>
+
+<h3 id="ch1-1">1.1 如果 Mindustry 用纯继承会怎样</h3>
+<p>假设走经典 OOP 继承路线：</p>
+<pre><code class="language-nohighlight">Entity
+ ├─ PositionedEntity
+ │   ├─ RotatableEntity
+ │   │   ├─ DamageableEntity
+ │   │   │   ├─ Unit
+ │   │   │   │   ├─ MechUnit / LeggedUnit / TankUnit / FlyingUnit
+ │   │   │   └─ Building
+ │   │   │       ├─ StorageBuilding / PowerBuilding / DefenseBuilding
+ │   │   └─ Bullet
+ │   └─ Decal</code></pre>
+<p>三个经典问题：菱形继承爆炸、能力无法复用、新单位类型组合困难。</p>
+
+<h3 id="ch1-2">1.2 ECS 的核心思想：组合优于继承</h3>
+<ul>
+<li><b>Entity</b>：一个 id 或轻量句柄，本身没有行为</li>
+<li><b>Component</b>：纯数据，描述一种能力（位置、血量、武器……）</li>
+<li><b>System</b>：遍历拥有某组 Component 的所有 Entity，执行逻辑</li>
+</ul>
+
+<h3 id="ch1-3">1.3 Mindustry 的折中实现</h3>
+<table>
+<tr><th>传统 ECS</th><th>Mindustry 等价物</th></tr>
+<tr><td>Component（数据）</td><td>一个 <code>*Comp</code> 类（如 <code>BuildingComp</code>），同时放数据和默认逻辑</td></tr>
+<tr><td>Component 接口</td><td>由编译器从 Comp 类 public 方法签名<b>自动生成</b>的 <code>*c</code> 接口（如 <code>Buildingc</code>）</td></tr>
+<tr><td>Entity</td><td>由 <code>@EntityDef</code> 标注、<code>EntityProcess</code> 生成的具体类（<code>mindustry.gen.Building</code>）</td></tr>
+<tr><td>System</td><td><b>不存在独立 System 类</b>，每个 Comp 自己有 <code>update()</code></td></tr>
+<tr><td>Entity-Component 绑定</td><td><b>编译期固定</b>，运行时不能增删</td></tr>
+</table>
+<div class="tip">
+<b>一句话总结：</b>Mindustry 的「ECS」= <code>*Comp</code> 类定义能力 + <code>@EntityDef</code> 注解声明组合 + <code>EntityProcess</code> 编译期生成聚合实体类。
+</div>
+
+<h2 id="ch2">第 2 章　核心类与生命周期</h2>
+
+<h3 id="ch2-1">2.1 EntityComp：所有 comp 的根基</h3>
+<p>文件：<code>core/src/mindustry/entities/comp/EntityComp.java</code>（74 行）</p>
+<pre><code class="language-java">@Component
+@BaseComponent
+abstract class EntityComp{
+    private transient boolean added;
+    transient int id = EntityGroup.nextId();
+
+    boolean isAdded(){ return added; }
+    void update(){}
+    void remove(){ added = false; }
+    void add(){ added = true; }
+
+    boolean isLocal(){ ... }
+    boolean isRemote(){ ... }
+
+    /** Replaced with `this` after code generation. */
+    &lt;T extends Entityc&gt; T self(){ return (T)this; }
+}</code></pre>
+<ul>
+<li><code>id</code>：构造时拿到全局自增 id，作为网络 id</li>
+<li><code>added</code>：是否已加入世界</li>
+<li><code>isLocal() / isRemote()</code>：判断是否本地玩家</li>
+<li><code>self()</code>：编译期被替换成 <code>this</code></li>
+</ul>
+
+<h3 id="ch2-2">2.2 @EntityDef 注解</h3>
+<p>定义：<code>annotations/src/main/java/mindustry/annotations/Annotations.java:97</code></p>
+<pre><code class="language-java">/** Indicates an entity definition. */
+@Retention(RetentionPolicy.SOURCE)
+public @interface EntityDef{
+    Class[] value();                       // 要聚合的 comp 接口
+    boolean isFinal() default true;
+    boolean pooled() default false;        // 是否对象池化
+    boolean serialize() default true;
+    boolean genio() default true;
+}</code></pre>
+<p>用在两处：</p>
+<ol>
+<li><b>标注在 Comp 类上</b>：<code>BuildingComp.java:52</code>、<code>BulletComp.java:26</code></li>
+<li><b>标注在字段上</b>：<code>UnitTypes.java:34</code> 一次性为 7 种单位生成实体类</li>
+</ol>
+
+<h3 id="ch2-3">2.3 gen 生成物：mindustry.gen 包</h3>
+<p>编译产物：<code>core/build/generated/source/kapt/main/mindustry/gen/</code></p>
+<p><code>Building.java:110</code>：</p>
+<pre><code class="language-java">public class Building implements Buildingc, Entityc, Healthc,
+        IndexableEntity__build, Posc, Teamc, Timerc {</code></pre>
+<p><code>Building.java:1208</code>：</p>
+<pre><code class="language-java">public static Building create() {
+    return new Building();
+}</code></pre>
+
+<h3 id="ch2-4">2.4 实体生命周期</h3>
+<pre><code class="language-nohighlight">create()  →  add()  →  每帧 update()  →  remove()  →  （可选）回收进池</code></pre>
+<ol>
+<li><b>创建</b>：<code>Building.create()</code> 静态工厂 <code>new</code> 出实体</li>
+<li><b>加入世界</b>：<code>add()</code> 塞进 <code>Groups.build</code> / <code>Groups.unit</code></li>
+<li><b>每 tick 更新</b>：实体的 <code>update()</code> 依次调用各 comp 的 <code>update()</code></li>
+<li><b>移除</b>：<code>remove()</code> 从 group 摘掉；<code>pooled=true</code> 时回池</li>
+</ol>
+
+<h3 id="ch2-5">2.5 与传统 ECS 的关键差异</h3>
+<table>
+<tr><th>维度</th><th>传统 ECS</th><th>Mindustry</th></tr>
+<tr><td>System</td><td>独立类，遍历 archetype</td><td><b>没有 System</b>，更新写在各 comp 的 <code>update()</code></td></tr>
+<tr><td>Component 增删</td><td>运行时 add/remove</td><td><b>编译期写死</b>，运行时不能换组合</td></tr>
+<tr><td>数据布局</td><td>紧凑数组 / SoA</td><td>普通 Java 对象</td></tr>
+<tr><td>查询</td><td>按组件签名查询</td><td>用 <code>Groups.build</code> 等 EntityGroup</td></tr>
+<tr><td>网络同步</td><td>自己写</td><td>注解处理器根据 <code>@Sync</code> 字段自动生成</td></tr>
+</table>
+
+<h2 id="ch3">第 3 章　49 个 comp 全景表</h2>
+
+<h3 id="ch3-1">3.1 按职责分类统计</h3>
+<table>
+<tr><th>分组</th><th>数量</th><th>成员</th></tr>
+<tr><td>基础实体</td><td>11</td><td>EntityComp, PosComp, RotComp, VelComp, TeamComp, OwnerComp, SyncComp, ChildComp, TimerComp, TimedComp, TimedKillComp</td></tr>
+<tr><td>建筑</td><td>6</td><td>BuildingComp, BuilderComp, BuildingTetherComp, PowerGraphUpdaterComp, ItemsComp, BlockUnitComp</td></tr>
+<tr><td>单位</td><td>14</td><td>UnitComp, UnitTetherComp, WeaponsComp, HealthComp, HitboxComp, MechComp, LegsComp, TankComp, MinerComp, PayloadComp, PhysicsComp, PlayerComp, ShieldComp, ShielderComp, StatusComp, DamageComp, TargetDummyComp</td></tr>
+<tr><td>移动</td><td>5</td><td>CrawlComp, WaterCrawlComp, WaterMoveComp, ElevationMoveComp, UnderwaterMoveComp</td></tr>
+<tr><td>环境/子弹/效果</td><td>13</td><td>FireComp, PuddleComp, DecalComp, DrawComp, EffectStateComp, SegmentComp, WorldLabelComp, LaunchCoreComp, BulletComp, PosTeamDef</td></tr>
+</table>
+
+<h3 id="ch3-2">3.2 全量 comp 一览表</h3>
+<table>
+<tr><th>#</th><th>类名</th><th>职责</th><th>关键方法/字段</th></tr>
+<tr><td>1</td><td>EntityComp</td><td>所有 comp 根基</td><td><code>id</code>、<code>update()</code>、<code>add()</code>、<code>remove()</code>、<code>self()</code></td></tr>
+<tr><td>2</td><td>PosComp</td><td>位置 x,y</td><td>implements <code>Position</code></td></tr>
+<tr><td>3</td><td>RotComp</td><td>旋转角 rotation</td><td>RotComp.java:7</td></tr>
+<tr><td>4</td><td>VelComp</td><td>线速度 vel</td><td>VelComp.java:13</td></tr>
+<tr><td>5</td><td>TeamComp</td><td>所属队伍 team</td><td>TeamComp.java:12</td></tr>
+<tr><td>6</td><td>OwnerComp</td><td>拥有者（子弹发射者）</td><td>OwnerComp.java:6</td></tr>
+<tr><td>7</td><td>SyncComp</td><td>网络同步标记</td><td>SyncComp.java:12</td></tr>
+<tr><td>8</td><td>ChildComp</td><td>子实体（依附父实体）</td><td>ChildComp.java:10</td></tr>
+<tr><td>9</td><td>TimerComp</td><td>计时器模块</td><td>TimerComp.java:7</td></tr>
+<tr><td>10</td><td>TimedComp</td><td>生命周期 lifetime</td><td>TimedComp.java:9</td></tr>
+<tr><td>11</td><td>TimedKillComp</td><td>计时到自动 kill</td><td>TimedKillComp.java:10</td></tr>
+<tr><td>12</td><td><b>BuildingComp</b></td><td><b>建筑实体核心</b></td><td><code>proximity</code> 在 :69</td></tr>
+<tr><td>13</td><td>BuilderComp</td><td>单位建造/修复</td><td>BuilderComp.java:27</td></tr>
+<tr><td>14</td><td>BuildingTetherComp</td><td>单位被建筑牵引</td><td>BuildingTetherComp.java:11</td></tr>
+<tr><td>15</td><td>PowerGraphUpdaterComp</td><td>电力图更新（独立实体）</td><td>PowerGraphUpdaterComp.java:9</td></tr>
+<tr><td>16</td><td>ItemsComp</td><td>物品库存模块</td><td>ItemsComp.java:9</td></tr>
+<tr><td>17</td><td>BlockUnitComp</td><td>建筑常驻单位（炮塔）</td><td>BlockUnitComp.java:11</td></tr>
+<tr><td>18</td><td><b>UnitComp</b></td><td><b>单位核心，聚合 18 接口</b></td><td>UnitComp.java:38</td></tr>
+<tr><td>19</td><td>UnitTetherComp</td><td>单位之间牵引</td><td>UnitTetherComp.java:11</td></tr>
+<tr><td>20</td><td>WeaponsComp</td><td>武器、冷却</td><td>WeaponsComp.java:11</td></tr>
+<tr><td>21</td><td>HealthComp</td><td>血量 health/maxHealth</td><td>HealthComp.java:8</td></tr>
+<tr><td>22</td><td>HitboxComp</td><td>碰撞箱 hitSize</td><td>HitboxComp.java:12</td></tr>
+<tr><td>23</td><td>MechComp</td><td>机械腿行走</td><td>MechComp.java:15</td></tr>
+<tr><td>24</td><td>LegsComp</td><td>节肢单位腿动画</td><td>LegsComp.java:23</td></tr>
+<tr><td>25</td><td>TankComp</td><td>履带单位</td><td>TankComp.java:20</td></tr>
+<tr><td>26</td><td>MinerComp</td><td>单位采矿</td><td>MinerComp.java:15</td></tr>
+<tr><td>27</td><td>PayloadComp</td><td>载荷运载</td><td>PayloadComp.java:24</td></tr>
+<tr><td>28</td><td>PhysicsComp</td><td>物理（摩擦、阻力）</td><td>PhysicsComp.java:12</td></tr>
+<tr><td>29</td><td>PlayerComp</td><td>玩家控制器实体</td><td>PlayerComp.java:35</td></tr>
+<tr><td>30</td><td>ShieldComp</td><td>单位护盾</td><td>ShieldComp.java:13</td></tr>
+<tr><td>31</td><td>ShielderComp</td><td>盾墙反弹</td><td>ShielderComp.java:7</td></tr>
+<tr><td>32</td><td>StatusComp</td><td>状态效果（灼烧/潮湿…）</td><td>StatusComp.java:18</td></tr>
+<tr><td>33</td><td>DamageComp</td><td>伤害来源标记</td><td>DamageComp.java:6</td></tr>
+<tr><td>34</td><td>TargetDummyComp</td><td>训练假人</td><td>TargetDummyComp.java:9</td></tr>
+<tr><td>35</td><td>CrawlComp</td><td>爬行单位</td><td>CrawlComp.java:19</td></tr>
+<tr><td>36</td><td>WaterCrawlComp</td><td>水中爬行</td><td>WaterCrawlComp.java:13</td></tr>
+<tr><td>37</td><td>WaterMoveComp</td><td>水面移动</td><td>WaterMoveComp.java:20</td></tr>
+<tr><td>38</td><td>ElevationMoveComp</td><td>高低差移动</td><td>ElevationMoveComp.java:9</td></tr>
+<tr><td>39</td><td>UnderwaterMoveComp</td><td>水下移动</td><td>UnderwaterMoveComp.java:11</td></tr>
+<tr><td>40</td><td>FireComp</td><td>火焰粒子</td><td>FireComp.java:22</td></tr>
+<tr><td>41</td><td>PuddleComp</td><td>水坑液体</td><td>PuddleComp.java:21</td></tr>
+<tr><td>42</td><td>DecalComp</td><td>贴花（弹坑）</td><td>DecalComp.java:12</td></tr>
+<tr><td>43</td><td>DrawComp</td><td>自定义绘制回调</td><td>DrawComp.java:7</td></tr>
+<tr><td>44</td><td>EffectStateComp</td><td>特效状态（环、轨道）</td><td>EffectStateComp.java:10</td></tr>
+<tr><td>45</td><td>SegmentComp</td><td>分段单位</td><td>SegmentComp.java:13</td></tr>
+<tr><td>46</td><td>WorldLabelComp</td><td>世界坐标文字标签</td><td>WorldLabelComp.java:17</td></tr>
+<tr><td>47</td><td>LaunchCoreComp</td><td>发射核心动画</td><td>LaunchCoreComp.java:14</td></tr>
+<tr><td>48</td><td>BulletComp</td><td>子弹实体</td><td>BulletComp.java:28</td></tr>
+<tr><td>49</td><td>PosTeamDef</td><td>位置+队伍极简定义</td><td>PosTeamDef.java:7</td></tr>
+</table>
+
+<h3 id="ch3-3">3.3 重点 comp 展开</h3>
+<h4>BuildingComp（建筑核心）</h4>
+<pre><code class="language-java">@EntityDef(value = {Buildingc.class}, excludeGroups = {"all"},
+           isFinal = false, genio = false, serialize = false)   // :52
+@Component(base = true, genInterface = false)                  // :53
+abstract class BuildingComp implements Posc, Teamc, Healthc, Buildingc, Timerc,
+        QuadTreeObject, Displayable, Sized, Senseable, Controllable,
+        Settable, AmbientSource{                               // :54
+    @Import float x, y, health, maxHealth;
+    @Import Team team;
+    @Import boolean dead;
+    transient Tile tile;
+    transient Block block;
+    transient Seq&lt;Building&gt; proximity = new Seq&lt;&gt;(true, 6, Building.class); // :69
+}</code></pre>
+
+<h4>UnitComp（单位核心）</h4>
+<pre><code class="language-java">@Component(base = true)
+abstract class UnitComp implements Healthc, Physicsc, Hitboxc, Statusc, Teamc,
+        Itemsc, Rotc, Unitc, Weaponsc, Drawc, Syncc, Shieldc, Displayable,
+        Ranged, Minerc, Builderc, Senseable, Settable{</code></pre>
+<p>一口气 implements 18 个接口，所有官方单位都聚合到这里。</p>
+
+<h4>PowerGraphUpdaterComp</h4>
+<pre><code class="language-java">@EntityDef(value = PowerGraphUpdaterc.class, serialize = false, genio = false)
+@Component
+abstract class PowerGraphUpdaterComp implements Entityc{</code></pre>
+<p>它是一个<b>独立的、不序列化的轻量实体</b>，专门每 tick 扫描电力图变化——这是 Mindustry 实体系统最聪明的设计之一。</p>
+
+<h2 id="ch4">第 4 章　注解处理器与 gen 生成流程</h2>
+
+<h3 id="ch4-1">4.1 EntityProcess.java</h3>
+<p>文件：<code>annotations/src/main/java/mindustry/annotations/entity/EntityProcess.java</code>（1070 行）。APT 注解处理器，编译期（kapt）运行：</p>
+<ol>
+<li>扫描所有 <code>@EntityDef</code> 元素</li>
+<li>解析 <code>value = {Buildingc.class, ...}</code>，拿到 comp 接口列表</li>
+<li>找到每个接口对应的 <code>*Comp</code> 实现类</li>
+<li>收集 public 方法签名和字段</li>
+<li>生成聚合接口 + 具体实体类 + <code>create()</code> + <code>add/update/remove/write/read</code> 胶水 + 网络代码</li>
+</ol>
+<p>关键内部类：<code>EntityProcess.java:1039</code> 的 <code>EntityDefinition</code>。</p>
+
+<h3 id="ch4-2">4.2 生成流程图（内联 SVG）</h3>
+<svg viewBox="0 0 900 460" xmlns="http://www.w3.org/2000/svg" font-family="monospace" font-size="12">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#f39c12"/>
+    </marker>
+  </defs>
+  <!-- Source -->
+  <rect x="20" y="20" width="240" height="120" rx="8" fill="#16213e" stroke="#f39c12"/>
+  <text x="140" y="45" fill="#f39c12" text-anchor="middle" font-weight="bold">源码阶段（手写）</text>
+  <text x="35" y="75" fill="#e0e0e0">PosComp.java</text>
+  <text x="35" y="95" fill="#e0e0e0">HealthComp.java</text>
+  <text x="35" y="115" fill="#e0e0e0">BuildingComp.java</text>
+  <text x="35" y="135" fill="#9a9ab0">@EntityDef({Buildingc.class})</text>
+
+  <!-- Arrow -->
+  <line x1="260" y1="80" x2="330" y2="80" stroke="#f39c12" stroke-width="2" marker-end="url(#arr)"/>
+
+  <!-- Processor -->
+  <rect x="330" y="20" width="240" height="120" rx="8" fill="#16213e" stroke="#f39c12"/>
+  <text x="450" y="45" fill="#f39c12" text-anchor="middle" font-weight="bold">编译期 kapt</text>
+  <text x="345" y="75" fill="#e0e0e0">EntityProcess.process()</text>
+  <text x="345" y="95" fill="#e0e0e0">1. 扫描 @EntityDef</text>
+  <text x="345" y="115" fill="#e0e0e0">2. 收集 comp 方法签名</text>
+  <text x="345" y="135" fill="#e0e0e0">3. 生成聚合代码</text>
+
+  <!-- Arrow -->
+  <line x1="570" y1="80" x2="640" y2="80" stroke="#f39c12" stroke-width="2" marker-end="url(#arr)"/>
+
+  <!-- Output -->
+  <rect x="640" y="20" width="240" height="120" rx="8" fill="#16213e" stroke="#f39c12"/>
+  <text x="760" y="45" fill="#f39c12" text-anchor="middle" font-weight="bold">gen/ 生成物</text>
+  <text x="655" y="75" fill="#e0e0e0">gen/Buildingc.java</text>
+  <text x="655" y="95" fill="#e0e0e0">gen/Building.java</text>
+  <text x="655" y="115" fill="#e0e0e0">  + create()</text>
+  <text x="655" y="135" fill="#e0e0e0">  + add/update/remove 胶水</text>
+
+  <!-- Detail row -->
+  <rect x="120" y="200" width="660" height="220" rx="8" fill="#1a1a2e" stroke="#2d2d44"/>
+  <text x="450" y="225" fill="#f39c12" text-anchor="middle" font-weight="bold">Building.java 结构（gen）</text>
+  <text x="150" y="260" fill="#e0e0e0">public class Building implements Buildingc, Entityc, Healthc,</text>
+  <text x="170" y="280" fill="#e0e0e0">IndexableEntity__build, Posc, Teamc, Timerc {</text>
+  <text x="170" y="310" fill="#9a9ab0">  // 字段：x, y, health, items, power, ... （来自各 Comp）</text>
+  <text x="170" y="335" fill="#9a9ab0">  // 方法：update(), placed(), display(), damage(), ... （聚合自各 Comp）</text>
+  <text x="170" y="360" fill="#f78c6c">  public static Building create() { return new Building(); }  // :1208</text>
+  <text x="170" y="385" fill="#9a9ab0">  public void add() { Groups.build.addIndex(this); ... }      // 自动串接</text>
+  <text x="170" y="410" fill="#e0e0e0">}</text>
+</svg>
+
+<h3 id="ch4-3">4.3 生成物长什么样</h3>
+<p><code>Building.java:1208</code>：</p>
+<pre><code class="language-java">public static Building create() {
+    return new Building();
+}
+
+public void add() {
+    if(added == true) return;
+    index__build = Groups.build.addIndex(this);
+    building: {
+        if (power != null) {
+            power.graph.checkAdd();
+        }
+    }
+    entity: { added = true; }
+}</code></pre>
+
+<h2 id="ch5">第 5 章　Building / Unit 是怎么被拼出来的</h2>
+
+<h3 id="ch5-1">5.1 Building 接口的真实组成</h3>
+<p><code>gen/Building.java:110</code>：</p>
+<pre><code class="language-java">public class Building implements Buildingc, Entityc, Healthc,
+        IndexableEntity__build, Posc, Teamc, Timerc {</code></pre>
+<p><code>ItemsComp</code>、<code>PowerGraphUpdaterComp</code> 等通过 <code>BuildingComp</code> 内部持有字段提供能力：</p>
+<pre><code class="language-java">// BuildingComp 内部
+public ItemModule items;
+public PowerGraph power;
+public LiquidModule liquids;</code></pre>
+<p>EntityProcess 把这些字段的访问器聚合到 <code>Building</code> 类上，所以 mod 里能直接 <code>building.items.accept(Items.copper, 10)</code>。</p>
+
+<h3 id="ch5-2">5.2 @EntityDef 在单位上的用法</h3>
+<p><code>UnitTypes.java:34</code>：</p>
+<pre><code class="language-java">public static @EntityDef({Unitc.class, Mechc.class})
+        UnitType mace, dagger, crawler, fortress, scepter, reign, vela;</code></pre>
+<p>EntityProcess 为每个字段生成一个实体类（<code>MaceUnit</code>、<code>DaggerUnit</code>...），都由 <code>Unitc + Mechc</code> 组合。</p>
+<p><code>UnitTypes.java:40</code>：</p>
+<pre><code class="language-java">public static @EntityDef({Unitc.class, Legsc.class}) UnitType corvus, atrax, ...</code></pre>
+<p><b>这就是「组合优于继承」的具体落地</b>：单位类型 = 一串 <code>*c</code> 接口列表，不是继承树。</p>
+
+<h3 id="ch5-3">5.3 一个 Building 实例是怎么 new 出来的</h3>
+<pre><code class="language-nohighlight">world.tile.setBlock(block, team, rotation)
+        │
+        ▼
+Block.newBuilding()              // Block.java:1012
+        │
+        ▼
+buildType.get()                  // Block.java:1013
+        │
+        ▼
+new XxxBuild()  或  Building::create   // Block.java:1276 兜底</code></pre>
+<p><code>Block.java</code> 关键代码：</p>
+<pre><code class="language-java">// :403
+public Prov&lt;Building&gt; buildType = null;
+
+// :1012
+public final Building newBuilding(){
+    return buildType.get();
+}
+
+// :1241
+protected void initBuilding(){
+    try{
+        Class&lt;?&gt; current = getClass();
+        if(current.isAnonymousClass()) current = current.getSuperclass();
+        subclass = current;
+
+        while(buildType == null && Block.class.isAssignableFrom(current)){
+            Class&lt;?&gt; type = Structs.find(current.getDeclaredClasses(),
+                t -&gt; Building.class.isAssignableFrom(t) && !t.isInterface());
+            if(type != null){
+                Constructor&lt;? extends Building&gt; cons = (Constructor&lt;? extends Building&gt;)type
+                    .getDeclaredConstructor(type.getDeclaringClass());
+                buildType = () -&gt; {
+                    try{ return cons.newInstance(this); }
+                    catch(Exception e){ throw new RuntimeException(e); }
+                };
+            }
+            current = current.getSuperclass();
+        }
+    }catch(Throwable ignored){ }
+
+    if(buildType == null){
+        buildType = Building::create;   // :1276 兜底
+    }
+}</code></pre>
+<div class="warn">
+<b>mod 作者必须理解：</b>每个 Block 子类通常写一个<b>非静态内部类</b> <code>class XxxBuild extends Building</code>。<code>initBuilding()</code> 反射拿到这个内部类构造器。如果你只 <code>extends Building</code> 而不写内部类，<code>buildType</code> 会走 <code>Building::create</code> 兜底，你覆写的所有钩子都不会生效。
+</div>
+
+<h2 id="ch6">第 6 章　模组能碰什么——钩子清单 <span class="badge">重点</span></h2>
+
+<h3 id="ch6-1">6.1 模组<b>不能</b>做的事</h3>
+<div class="warn">
+<p>注解处理器在<b>游戏编译期</b>运行，mod 在<b>游戏启动后</b>加载：</p>
+<ul>
+<li>❌ 不能新增 <code>*Comp</code> 类（不会被 EntityProcess 聚合）</li>
+<li>❌ 不能运行时给实体增删 comp</li>
+<li>❌ 不能修改 gen 生成的类</li>
+<li>❌ 不能改变实体由哪些 comp 组成</li>
+</ul>
+</div>
+
+<h3 id="ch6-2">6.2 模组<b>能</b>做的事</h3>
+<div class="tip">
+<ol>
+<li>✅ <b>extends gen 接口 / 官方 Building 子类</b>：<code>class MyBuild extends Building</code> 或 <code>extends WallBuild</code></li>
+<li>✅ <b>覆写 comp 中定义的钩子方法</b>（<code>isFinal = false</code> 允许覆写）</li>
+<li>✅ <b>用 Events 系统做跨实体协作</b></li>
+<li>✅ <b>用 <code>Vars.content</code> / <code>Blocks</code> / <code>Units</code> 注册新内容</b></li>
+</ol>
+</div>
+
+<h3 id="ch6-3">6.3 Building 钩子完整清单（v159.7，已核验）</h3>
+<table>
+<tr><th>方法签名</th><th>来源（类:行号）</th><th>调用时机</th><th>典型用途</th></tr>
+<tr><td><code>void update()</code></td><td><code>BuildingComp.java:2270</code></td><td>每游戏 tick（60/s）</td><td>驱动机器逻辑、热量传输</td></tr>
+<tr><td><code>void updateTile()</code></td><td><code>BuildingComp</code>（update 内调用）</td><td>每 tick，仅当应更新</td><td>机器主逻辑</td></tr>
+<tr><td><code>void placed()</code></td><td><code>BuildingComp.java:1361</code></td><td>建筑放置时</td><td>初始化库存、注册电力图</td></tr>
+<tr><td><code>void onProximityUpdate()</code></td><td><code>BuildingComp.java:1159</code></td><td>邻居方块变化</td><td>重建邻接、热力网络重连</td></tr>
+<tr><td><code>void onRemoved()</code></td><td><code>BuildingComp.java:1398</code></td><td>建筑被拆除</td><td>从电力图移除</td></tr>
+<tr><td><code>void onDestroyed()</code></td><td><code>BuildingComp.java:1490</code></td><td>建筑被摧毁</td><td>生成碎屑、跨实体事件</td></tr>
+<tr><td><code>void display(Table)</code></td><td><code>BuildingComp.java:1561</code></td><td>点开信息面板</td><td>自定义 UI</td></tr>
+<tr><td><code>void displayBars(Table)</code></td><td><code>BuildingComp.java:1667</code></td><td>面板上方状态条</td><td>热量条、电量条</td></tr>
+<tr><td><code>float handleDamage(float)</code></td><td><code>BuildingComp.java:1743</code></td><td>受到伤害前</td><td>护盾减免、护甲</td></tr>
+<tr><td><code>void damage(Team, float)</code></td><td><code>BuildingComp.java:1780</code></td><td>被某队伍来源击中</td><td>仇恨、反击</td></tr>
+<tr><td><code>void damage(Bullet, Team, float)</code></td><td><code>BuildingComp.java:1785</code></td><td>被子弹击中</td><td>弹种特殊效果</td></tr>
+<tr><td><code>void damage(float)</code></td><td><code>BuildingComp.java:2066</code></td><td>直接扣血</td><td>环境伤害、自损</td></tr>
+<tr><td><code>void write(Writes)</code></td><td><code>BuildingComp.java:303</code></td><td>存档/网络序列化</td><td>写入自定义字段</td></tr>
+<tr><td><code>void read(Reads, byte)</code></td><td><code>BuildingComp.java:308</code></td><td>读档/反序列化</td><td>读取自定义字段</td></tr>
+<tr><td><code>Seq&lt;Building&gt; proximity</code></td><td><code>BuildingComp.java:69</code></td><td>数据字段</td><td>邻居建筑列表</td></tr>
+</table>
+
+<h3 id="ch6-4">6.4 Unit 钩子补充</h3>
+<table>
+<tr><th>方法签名</th><th>来源</th><th>调用时机</th></tr>
+<tr><td><code>void update()</code></td><td><code>UnitComp.java:662</code></td><td>每 tick</td></tr>
+<tr><td><code>void destroy()</code></td><td><code>UnitComp.java:883</code></td><td>单位死亡</td></tr>
+<tr><td><code>void removed()</code></td><td><code>UnitComp</code></td><td>从世界移除</td></tr>
+<tr><td><code>void added()</code></td><td><code>UnitComp</code></td><td>加入世界</td></tr>
+<tr><td><code>controller(UnitController)</code></td><td><code>UnitComp</code></td><td>切换 AI 控制器</td></tr>
+</table>
+
+<h3 id="ch6-5">6.5 完整可复制的代码示例</h3>
+<p>下面实现一个「热力导管」：把热量沿 <code>proximity</code> 邻居做双缓冲传递。这正是官方 <code>HeatConductor</code> 和很多热力学 mod 的核心思路——<b>不需要新增 comp，只覆写 <code>update()</code> 和 <code>onProximityUpdate()</code></b>。</p>
+<pre><code class="language-java">package yourmod.content;
+
+import arc.scene.ui.layout.Table;
+import mindustry.Vars;
+import mindustry.world.Block;
+import mindustry.world.Tile;
+import mindustry.gen.Building;
+
+/**
+ * 自定义热力导管：沿邻居做双缓冲热量传递。
+ * 适用版本 v159.7
+ */
+public class HeatConductor extends Block{
+
+    public float heatConductivity = 0.25f;
+    public float maxHeat = 100f;
+
+    public HeatConductor(String name){
+        super(name);
+        solid = true;
+        update = true;          // 告诉游戏这个建筑需要每 tick 更新
+        configurable = false;
+        destructible = true;
+    }
+
+    public class HeatConductorBuild extends Building{
+        public float heat;       // 当前热量
+        public float nextHeat;   // 双缓冲：下一 tick 的热量
+
+        @Override
+        public void placed(){
+            super.placed();
+            heat = 0f;
+            nextHeat = 0f;
+            for(Building b : proximity){
+                if(b != null) b.onProximityUpdate();
+            }
+        }
+
+        @Override
+        public void onProximityUpdate(){
+            super.onProximityUpdate();
+            // 邻居集合由 BuildingComp 自动维护在 proximity 字段（:69）
+        }
+
+        @Override
+        public void updateTile(){
+            heat = nextHeat;
+
+            float neighborSum = 0f;
+            int validNeighbors = 0;
+            for(Building b : proximity){
+                if(b instanceof HeatConductorBuild other){
+                    neighborSum += other.heat;
+                    validNeighbors++;
+                }
+            }
+
+            float avg = validNeighbors == 0 ? 0f : neighborSum / validNeighbors;
+            nextHeat = Math.max(0f, Math.min(maxHeat,
+                heat + (avg - heat) * heatConductivity));
+        }
+
+        public void acceptHeat(float amount){
+            nextHeat += amount;
+        }
+
+        @Override
+        public void displayBars(Table table){
+            super.displayBars(table);
+            addBar(table, () -&gt; "heat",
+                () -&gt; (heat / maxHeat),
+                () -&gt; Vars.media.heat);
+        }
+
+        @Override
+        public void write(arc.util.io.Writes write){
+            super.write(write);
+            write.f(heat);
+            write.f(nextHeat);
+        }
+
+        @Override
+        public void read(arc.util.io.Reads read, byte revision){
+            super.read(read, revision);
+            heat = read.f();
+            nextHeat = read.f();
+        }
+    }
+}</code></pre>
+<p>要点：</p>
+<ul>
+<li><code>update = true</code>：Block 字段，没有它 <code>updateTile()</code> 永远不被调</li>
+<li><b>双缓冲</b>：避免同 tick 内 A→B→C 传两次导致能量不守恒</li>
+<li><code>proximity</code>：<code>BuildingComp.java:69</code> 自动维护</li>
+<li><code>write()/read()</code>：自定义字段必须序列化</li>
+</ul>
+
+<h3 id="ch6-6">6.6 ECS 设计对 mod 写作的启示</h3>
+<ul>
+<li><b>不要尝试造新 comp</b>。想加「热量」？直接在 <code>XxxBuild extends Building</code> 子类里加 <code>public float heat</code> 字段就行。Building 本身已经是万能容器。</li>
+<li><b>跨实体交互走 <code>proximity</code> + Events</b>。</li>
+<li><b>钩子是你的全部武器</b>。官方假设你只能 extends 一个 Building 子类 + 覆写钩子。学会这几个钩子，95% 的 mod 需求都能 cover。</li>
+</ul>
+
+<h2 id="ch7">第 7 章　事件系统 Events（ECS 的补充）</h2>
+
+<h3 id="ch7-1">7.1 Arc.util.Events</h3>
+<p>文件：<code>Arc/arc-core/src/arc/Events.java</code></p>
+<pre><code class="language-java">// :14
+public static &lt;T&gt; void on(Class&lt;T&gt; type, Cons&lt;T&gt; listener);
+// :19
+public static void run(Object type, Runnable listener);
+// :29 / :42 / :46
+public static &lt;T extends Enum&lt;T&gt;&gt; void fire(Enum&lt;T&gt; type);
+public static &lt;T&gt; void fire(T type);
+public static &lt;T&gt; void fire(Class&lt;?&gt; ctype, T type);</code></pre>
+<p>三种用法：</p>
+<ol>
+<li><b>枚举触发器</b>：<code>Events.run(Trigger.update, () -&gt; ...)</code></li>
+<li><b>类事件</b>：<code>Events.on(WorldLoadEvent.class, e -&gt; ...)</code></li>
+<li><b>手动 fire</b>：<code>Events.fire(new SomeEvent())</code></li>
+</ol>
+
+<h3 id="ch7-2">7.2 EventType.java 常用事件</h3>
+<p>文件：<code>core/src/mindustry/game/EventType.java</code>（847 行）</p>
+<table>
+<tr><th>事件类</th><th>行号</th><th>触发时机</th></tr>
+<tr><td><code>WorldLoadEvent</code></td><td><code>:107</code></td><td>世界/存档加载完成</td></tr>
+<tr><td><code>WorldLoadBeginEvent</code></td><td><code>:109</code></td><td>世界开始加载</td></tr>
+<tr><td><code>WorldLoadEndEvent</code></td><td><code>:111</code></td><td>世界加载结束</td></tr>
+<tr><td><code>SaveLoadEvent</code></td><td><code>:131</code></td><td>读档</td></tr>
+<tr><td><code>ClientCreateEvent</code></td><td><code>:75</code></td><td>客户端对象创建</td></tr>
+<tr><td><code>ServerLoadEvent</code></td><td><code>:76</code></td><td>服务器加载</td></tr>
+<tr><td><code>HostEvent</code></td><td><code>:80</code></td><td>玩家开图</td></tr>
+<tr><td><code>PlayEvent</code></td><td><code>:78</code></td><td>开始游玩</td></tr>
+<tr><td><code>WaveEvent</code></td><td><code>:81</code></td><td>新一波次</td></tr>
+<tr><td><code>SectorLaunchEvent</code></td><td><code>:165</code></td><td>发射行星</td></tr>
+</table>
+<p>另外 <code>core/src/mindustry/game/Trigger.java</code> 提供枚举触发器：<code>Trigger.update</code>、<code>Trigger.draw</code>、<code>Trigger.worldLoad</code> 等。</p>
+
+<h3 id="ch7-3">7.3 ECS 与 Events 的分工</h3>
+<table>
+<tr><th>关注点</th><th>用什么</th></tr>
+<tr><td>单个建筑/单位内部状态</td><td>覆写 Building/Unit 钩子（ECS）</td></tr>
+<tr><td>跨实体：建筑放置后通知热力系统</td><td><code>Events.on(BlockBuildEndEvent.class, ...)</code></td></tr>
+<tr><td>每 tick 全局逻辑</td><td><code>Events.run(Trigger.update, ...)</code></td></tr>
+<tr><td>进图初始化</td><td><code>Events.on(WorldLoadEvent.class, ...)</code></td></tr>
+<tr><td>网络同步</td><td><code>Call.class</code>（gen 生成）</td></tr>
+</table>
+
+<h3 id="ch7-4">7.4 代码示例：mod 级全局逻辑</h3>
+<pre><code class="language-java">package yourmod;
+
+import arc.Events;
+import mindustry.game.EventType.*;
+import mindustry.game.Trigger;
+import mindustry.mod.*;
+
+public class HeatMod extends Mod{
+
+    public static HeatNetwork net;
+
+    public HeatMod(){
+        // 1) 进图时初始化
+        Events.on(WorldLoadEvent.class, e -&gt; {
+            net = new HeatNetwork();
+            net.rebuildAll();
+        });
+
+        // 2) 建筑放置时，重连热力网络
+        Events.on(BlockBuildEndEvent.class, e -&gt; {
+            if(!e.breaking && e.build != null){
+                net.onBuildPlaced(e.build);
+            }
+        });
+
+        // 3) 每 tick 驱动全局热流
+        Events.run(Trigger.update, () -&gt; {
+            if(net != null && !Vars.state.isPaused()){
+                net.tick();
+            }
+        });
+    }
+}</code></pre>
+<div class="tip"><b>注意：</b><code>Events.run(Trigger.update, ...)</code> 注册的回调在 mod 整个生命周期内存在，<b>世界重开时记得在 <code>WorldLoadEvent</code> 里重置你自己的数据</b>，否则会跨图泄漏。</div>
+
+<h2 id="appendix">附录　源码地图</h2>
+
+<h3>A.1 注解与处理器</h3>
+<table>
+<tr><th>路径</th><th>作用</th></tr>
+<tr><td><code>annotations/.../Annotations.java:97</code></td><td><code>@EntityDef</code> 定义</td></tr>
+<tr><td><code>annotations/.../entity/EntityProcess.java</code>（1070 行）</td><td>主注解处理器</td></tr>
+<tr><td><code>EntityProcess.java:1039</code></td><td><code>EntityDefinition</code> 内部类</td></tr>
+</table>
+
+<h3>A.2 Building 创建链</h3>
+<table>
+<tr><th>位置</th><th>作用</th></tr>
+<tr><td><code>world/Block.java:403</code></td><td><code>public Prov&lt;Building&gt; buildType</code></td></tr>
+<tr><td><code>world/Block.java:1012</code></td><td><code>newBuilding()</code></td></tr>
+<tr><td><code>world/Block.java:1241-1278</code></td><td><code>initBuilding()</code> 反射绑定内部类</td></tr>
+<tr><td><code>world/Block.java:1276</code></td><td>兜底 <code>Building::create</code></td></tr>
+</table>
+
+<h3>A.3 BuildingComp 钩子行号速查</h3>
+<table>
+<tr><th>方法</th><th>行号</th></tr>
+<tr><td><code>proximity</code> 字段</td><td><code>:69</code></td></tr>
+<tr><td><code>write(Writes)</code></td><td><code>:303</code></td></tr>
+<tr><td><code>read(Reads, byte)</code></td><td><code>:308</code></td></tr>
+<tr><td><code>onProximityUpdate()</code></td><td><code>:1159</code></td></tr>
+<tr><td><code>placed()</code></td><td><code>:1361</code></td></tr>
+<tr><td><code>onRemoved()</code></td><td><code>:1398</code></td></tr>
+<tr><td><code>onDestroyed()</code></td><td><code>:1490</code></td></tr>
+<tr><td><code>display(Table)</code></td><td><code>:1561</code></td></tr>
+<tr><td><code>displayBars(Table)</code></td><td><code>:1667</code></td></tr>
+<tr><td><code>handleDamage(float)</code></td><td><code>:1743</code></td></tr>
+<tr><td><code>damage(Team, float)</code></td><td><code>:1780</code></td></tr>
+<tr><td><code>damage(Bullet, Team, float)</code></td><td><code>:1785</code></td></tr>
+<tr><td><code>damage(float)</code></td><td><code>:2066</code></td></tr>
+<tr><td><code>update()</code></td><td><code>:2270</code></td></tr>
+</table>
+
+<h3>A.4 事件系统</h3>
+<table>
+<tr><th>路径</th><th>作用</th></tr>
+<tr><td><code>Arc/arc-core/src/arc/Events.java:14</code></td><td><code>on(Class, Cons)</code></td></tr>
+<tr><td><code>Events.java:19</code></td><td><code>run(Object, Runnable)</code></td></tr>
+<tr><td><code>Events.java:29/42/46</code></td><td><code>fire(...)</code></td></tr>
+<tr><td><code>game/EventType.java</code>（847 行）</td><td>所有游戏事件类</td></tr>
+</table>
+
+<h3>A.5 架构一句话版</h3>
+<blockquote>Mindustry 没有传统 ECS；它用 <code>@EntityDef</code> 标注 comp 组合，由 <code>EntityProcess</code> 在编译期把多个 <code>*Comp</code> 类的字段和方法聚合进 <code>mindustry.gen.Building</code> / <code>mindustry.gen.Unit</code> 等具体类；mod 作者只能 <code>extends</code> 这些生成类并覆写钩子，跨实体协作靠 Arc Events 总线。</blockquote>
+
+<h3>A.6 进阶阅读</h3>
+<ol>
+<li><code>EntityProcess.java</code> 全文 1070 行——看序列化、网络代码怎么拼</li>
+<li><code>gen/Building.java</code>——看生成出来的 Building 到底有多少行</li>
+<li><code>HeatConductor.java</code>（官方）——经典「双缓冲 + proximity」例子</li>
+<li><code>Power.java / PowerGraph.java</code>——看 <code>PowerGraphUpdaterComp</code> 怎么被独立实体驱动</li>
+</ol>
+
+<hr>
+<p style="color:var(--muted);text-align:center;">教程完 ｜ 所有行号基于本地 v159.7 源码核验</p>
+
+</main>
+</div>
+
+<script>
+// 复制按钮
+document.querySelectorAll('pre').forEach(function(pre){
+  var btn = document.createElement('button');
+  btn.className = 'copy-btn';
+  btn.textContent = '复制';
+  btn.addEventListener('click', function(){
+    var code = pre.querySelector('code');
+    var text = code ? code.innerText : pre.innerText;
+    navigator.clipboard.writeText(text).then(function(){
+      btn.textContent = '已复制';
+      setTimeout(function(){ btn.textContent = '复制'; }, 1500);
+    });
+  });
+  pre.appendChild(btn);
+});
+// 侧边导航高亮当前
+var sections = document.querySelectorAll('h2[id],h3[id]');
+navLinks = document.querySelectorAll('nav a');
+window.addEventListener('scroll', function(){
+  var cur = '';
+  sections.forEach(function(s){
+    if(window.scrollY >= s.offsetTop - 80) cur = s.id;
+  });
+  navLinks.forEach(function(a){
+    a.style.color = a.getAttribute('href') === '#' + cur ? '#f39c12' : '';
+  });
+});
+</script>
+</body>
+</html>

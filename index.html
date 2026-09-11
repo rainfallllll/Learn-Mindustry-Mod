@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mindustry Java 模组开发教程门户</title>
+<style>
+:root{
+  --bg:#0f0f1a;
+  --bg2:#1a1a2e;
+  --bg3:#16162a;
+  --card-bg:#1e1e30;
+  --accent:#f39c12;
+  --accent2:#e67e22;
+  --text:#d6d6e8;
+  --muted:#8a8aa8;
+  --border:#2a2a48;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  line-height:1.75;
+  font-size:15.5px;
+  min-height:100vh;
+}
+a{color:var(--accent);text-decoration:none;transition:all .2s;}
+a:hover{color:var(--accent2);text-decoration:underline;}
+
+.container{
+  max-width:1200px;
+  margin:0 auto;
+  padding:48px 32px;
+}
+
+/* Hero */
+.hero{
+  text-align:center;
+  padding:48px 32px;
+  background:linear-gradient(135deg,rgba(243,156,18,.08),rgba(230,126,34,.03));
+  border:1px solid var(--border);
+  border-radius:16px;
+  margin-bottom:48px;
+}
+.hero h1{
+  font-size:36px;
+  color:#fff;
+  margin-bottom:12px;
+  line-height:1.3;
+}
+.hero .badge{
+  display:inline-block;
+  background:var(--accent);
+  color:#1a1a2e;
+  font-weight:700;
+  font-size:13px;
+  padding:4px 14px;
+  border-radius:20px;
+  margin-bottom:16px;
+}
+.hero p{
+  color:var(--muted);
+  font-size:16px;
+  max-width:700px;
+  margin:0 auto;
+}
+
+/* Learning Path */
+.section-title{
+  font-size:24px;
+  color:#fff;
+  margin-bottom:24px;
+  padding-left:12px;
+  border-left:4px solid var(--accent);
+}
+.path-container{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  margin-bottom:48px;
+  position:relative;
+  flex-wrap:wrap;
+  gap:16px;
+}
+.path-step{
+  flex:1;
+  min-width:140px;
+  text-align:center;
+  position:relative;
+  z-index:1;
+}
+.path-step .num{
+  width:48px;
+  height:48px;
+  line-height:48px;
+  border-radius:50%;
+  background:var(--card-bg);
+  border:2px solid var(--accent);
+  color:var(--accent);
+  font-weight:700;
+  font-size:18px;
+  margin:0 auto 12px;
+  transition:all .2s;
+}
+.path-step:hover .num{
+  background:var(--accent);
+  color:#1a1a2e;
+}
+.path-step .label{
+  font-size:14px;
+  color:var(--text);
+  font-weight:500;
+}
+.path-step .desc{
+  font-size:12px;
+  color:var(--muted);
+  margin-top:4px;
+}
+.path-connector{
+  position:absolute;
+  top:24px;
+  left:10%;
+  right:10%;
+  height:2px;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+  opacity:.3;
+  z-index:0;
+}
+
+/* Cards Grid */
+.cards-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(340px,1fr));
+  gap:24px;
+  margin-bottom:48px;
+}
+.card{
+  background:var(--card-bg);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:28px;
+  transition:all .2s;
+  display:flex;
+  flex-direction:column;
+}
+.card:hover{
+  border-color:var(--accent);
+  transform:translateY(-4px);
+  box-shadow:0 8px 24px rgba(243,156,18,.1);
+}
+.card .tag{
+  display:inline-block;
+  font-size:11px;
+  font-weight:600;
+  padding:3px 10px;
+  border-radius:12px;
+  margin-bottom:12px;
+  width:fit-content;
+}
+.tag-beginner{background:rgba(46,204,113,.15);color:#2ecc71;}
+.tag-v160{background:rgba(46,204,113,.25);color:#2ecc71;box-shadow:0 0 0 1px rgba(46,204,113,.4) inset;}
+.tag-intermediate{background:rgba(52,152,219,.15);color:#3498db;}
+.tag-reference{background:rgba(155,89,182,.15);color:#9b59b6;}
+.tag-practice{background:rgba(231,76,60,.15);color:#e74c3c;}
+.card h3{
+  font-size:20px;
+  color:#fff;
+  margin-bottom:8px;
+}
+.card .desc{
+  color:var(--muted);
+  font-size:14px;
+  margin-bottom:16px;
+  flex-grow:1;
+}
+.card .files{
+  border-top:1px solid var(--border);
+  padding-top:16px;
+}
+.card .files a{
+  display:inline-block;
+  margin-right:12px;
+  margin-bottom:6px;
+  font-size:13px;
+  padding:4px 12px;
+  background:rgba(243,156,18,.1);
+  border-radius:6px;
+}
+.card .files a.web{
+  background:rgba(52,152,219,.15);
+  border:1px solid rgba(52,152,219,.4);
+}
+.card .files a.web:hover{
+  background:rgba(52,152,219,.3);
+}
+.card .files a:hover{
+  background:rgba(243,156,18,.2);
+  text-decoration:none;
+}
+
+/* Footer / Toolchain */
+.footer{
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:32px;
+  margin-top:24px;
+}
+.footer h3{
+  font-size:18px;
+  color:#fff;
+  margin-bottom:16px;
+}
+.toolchain-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:16px;
+  margin-bottom:20px;
+}
+.tool-item{
+  padding:12px 16px;
+  background:var(--bg3);
+  border-radius:8px;
+  border:1px solid var(--border);
+}
+.tool-item .name{
+  font-weight:600;
+  color:#fff;
+  font-size:14px;
+}
+.tool-item .ver{
+  color:var(--accent);
+  font-size:13px;
+  margin-top:2px;
+}
+.footer .note{
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.6;
+}
+.footer .note code{
+  background:rgba(243,156,18,.12);
+  color:#f5b95c;
+  padding:1px 6px;
+  border-radius:4px;
+  font-size:.88em;
+}
+
+/* Responsive */
+@media (max-width:768px){
+  .container{padding:24px 16px;}
+  .hero{padding:32px 20px;}
+  .hero h1{font-size:26px;}
+  .path-container{flex-direction:column;align-items:center;}
+  .path-connector{display:none;}
+  .path-step{width:100%;max-width:200px;}
+  .cards-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="badge">Mindustry v160</div>
+    <h1>Mindustry Java 模组开发教程门户</h1>
+    <p>从零开始，循序渐进。涵盖项目搭建、内容创作、API 速查、源码深挖与实战项目的完整学习路径。</p>
+  </div>
+
+  <!-- Learning Path -->
+  <h2 class="section-title">学习路径</h2>
+  <div class="path-container">
+    <div class="path-connector"></div>
+    <a href="tutorials/main-tutorial/Mindustry-Java-Mod-Tutorial.html#ch1" class="path-step">
+      <div class="num">1</div>
+      <div class="label">建项目</div>
+      <div class="desc">Gradle 环境搭建</div>
+    </a>
+    <a href="tutorials/template-gallery/Template-Gallery-v2.html" class="path-step">
+      <div class="num">2</div>
+      <div class="label">仿模版</div>
+      <div class="desc">27 张开箱即用模板</div>
+    </a>
+    <a href="tutorials/main-tutorial/Mindustry-Java-Mod-Tutorial.html#ch2" class="path-step">
+      <div class="num">3</div>
+      <div class="label">自定义内容</div>
+      <div class="desc">仿官方造物品与方块</div>
+    </a>
+    <a href="tutorials/main-tutorial/Mindustry-Java-Mod-Tutorial.html#ch4" class="path-step">
+      <div class="num">4</div>
+      <div class="label">深挖源码</div>
+      <div class="desc">Block/Building 框架</div>
+    </a>
+    <a href="tutorials/thermal-mod/Feasibility-Report.html" class="path-step">
+      <div class="num">5</div>
+      <div class="label">实战项目</div>
+      <div class="desc">热力学 mod 可行性</div>
+    </a>
+    <a href="tutorials/api-reference/API-Reference.html" class="path-step">
+      <div class="num">6</div>
+      <div class="label">工具参考</div>
+      <div class="desc">API 参数速查表</div>
+    </a>
+  </div>
+
+  <!-- Tutorial Cards -->
+  <h2 class="section-title">教程资源</h2>
+  <div class="cards-grid">
+
+    <!-- Card 1: Main Tutorial -->
+    <div class="card">
+      <span class="tag tag-beginner">入门</span>
+      <h3>主线 Java 教程</h3>
+      <p class="desc">从零到深入的四章循序渐进教程。搭项目 → 仿模版 → 自定义墙体 → 源码框架全局观。每段代码标注 v159.7，完整可复制。</p>
+      <div class="files">
+        <a href="https://aka.doubaocdn.com/s/RgNhldwZ6C" class="web">🔗 网页直链</a>
+        <a href="tutorials/main-tutorial/Mindustry-Java-Mod-Tutorial.html">📖 在线阅读</a>
+        <a href="tutorials/main-tutorial/Mindustry-Java-Mod-Tutorial.md">📄 Markdown</a>
+      </div>
+    </div>
+
+    <!-- Card 2: API Reference -->
+    <div class="card">
+      <span class="tag tag-reference">参考</span>
+      <h3>API 参考表</h3>
+      <p class="desc">35 建筑类 + 效果类的参数速查 + 最小实现。按 Category 分类，附构造参数表与有趣实现示例。配套工具书。</p>
+      <div class="files">
+        <a href="https://aka.doubaocdn.com/s/I6G6J0UMaP" class="web">🔗 网页直链</a>
+        <a href="tutorials/api-reference/API-Reference.html">📖 在线阅读</a>
+        <a href="tutorials/api-reference/API-Reference.md">📄 Markdown</a>
+      </div>
+    </div>
+
+    <!-- Card 3: Template Gallery -->
+    <div class="card">
+      <span class="tag tag-beginner">入门</span>
+      <h3>模板库 v2</h3>
+      <p class="desc">27 张开箱即用模板卡片。找最像的抄，改改名字和参数就能跑。从基础墙到炮塔、发电机、传送带应有尽有。</p>
+      <div class="files">
+        <a href="https://aka.doubaocdn.com/s/NqI7VYUPqT" class="web">🔗 网页直链</a>
+        <a href="tutorials/template-gallery/Template-Gallery-v2.html">📖 在线阅读</a>
+        <a href="tutorials/template-gallery/Template-Gallery-v2.md">📄 Markdown</a>
+      </div>
+    </div>
+
+    <!-- Card 4: Official Tutorial v2 -->
+    <div class="card">
+      <span class="tag tag-intermediate">进阶</span>
+      <h3>官方教程 v2</h3>
+      <p class="desc">官方 Wiki HJSON+JS 路线全量整理，47 类字段表。不写 Java 也能做 mod 的另一条路，适合快速原型验证。</p>
+      <div class="files">
+        <a href="https://aka.doubaocdn.com/s/6ly3ciUuom" class="web">🔗 网页直链</a>
+        <a href="tutorials/official-tutorial/official-mod-tutorial-v2.html">📖 在线阅读</a>
+        <a href="tutorials/official-tutorial/official-mod-tutorial-v2.md">📄 Markdown</a>
+      </div>
+    </div>
+
+    <!-- Card 5: Thermal Mod -->
+    <div class="card">
+      <span class="tag tag-practice">实战</span>
+      <h3>热力学 mod 实战</h3>
+      <p class="desc">可行性评估 + 最小可载入 mod（双缓冲热力系统）+ 实战开发全记录。从需求分析到技术选型，再到 7 步分步实现、7 个真实踩坑（3 API + 4 运行时），并含 headless 真实温度曲线与运行调试实录，完整抄一个项目。</p>
+      <div class="files">
+        <a href="https://aka.doubaocdn.com/s/iIyUYDm7D2" class="web">🔗 网页直链</a>
+        <a href="tutorials/thermal-mod/Feasibility-Report.html">📋 可行性报告</a>
+        <a href="tutorials/thermal-mod/thermal-mod-dev-log.html">📖 开发全记录</a>
+        <a href="tutorials/thermal-mod/thermal-mod-dev-log.html#9-headless-server">🔬 运行调试实录</a>
+        <a href="tutorials/thermal-mod/README.md">📄 Mod README</a>
+      </div>
+    </div>
+
+    <!-- Card 6: Example Mod -->
+    <div class="card">
+      <span class="tag tag-practice">实战</span>
+      <h3>示例模组项目</h3>
+      <p class="desc">完整可运行 gradle 工程，含自定义墙体（最大受 1 点伤害）。直接拷走改改就是你的第一个 mod。</p>
+      <div class="files">
+        <a href="https://aka.doubaocdn.com/s/xGcX2xXkhm" class="web">🔗 项目说明直链</a>
+        <a href="tutorials/example-mod/README.md">📖 项目说明</a>
+        <a href="tutorials/example-mod/build.gradle">⚙️ build.gradle</a>
+      </div>
+    </div>
+
+    <!-- Card 7: Archaeology -->
+    <div class="card">
+      <span class="tag tag-reference">背景</span>
+      <h3>版本考古全记录</h3>
+      <p class="desc">游戏演进史：数据目录路径变迁、像素风转变（v70）、模组支持历史与 minGameVersion 阈值、设置项演进（v136 起 53 项基准）。适合想了解版本差异的玩家。</p>
+      <div class="files">
+        <a href="https://aka.doubaocdn.com/s/HCelIYQUs8" class="web">🔗 网页直链</a>
+        <a href="tutorials/archaeology/Mindustry考古全记录.html">📖 在线阅读</a>
+        <a href="tutorials/archaeology/Mindustry版本考古全记录.md">📄 Markdown</a>
+      </div>
+    </div>
+
+    <!-- Card 8: Custom UI -->
+    <div class="card">
+      <span class="tag tag-intermediate">进阶</span>
+      <h3>自建 UI（信息类）</h3>
+      <p class="desc">信息层四件套：建筑状态条（addBar/displayBars）、点选信息面板（display）、数据库统计（setStats）、自定义窗口（Dialog）。含热力学四建筑综合案例。</p>
+      <div class="files">
+        <a href="https://aka.doubaocdn.com/s/ZCvEkIh0Kg" class="web">🔗 网页直链</a>
+        <a href="tutorials/custom-ui/custom-ui-tutorial.html">📖 在线阅读</a>
+        <a href="tutorials/custom-ui/custom-ui-tutorial.md">📄 Markdown</a>
+      </div>
+    </div>
+
+    <!-- Card 9: ECS Framework -->
+    <div class="card">
+      <span class="tag tag-intermediate">进阶</span>
+      <h3>ECS 框架解析</h3>
+      <p class="desc">底层架构：49 个 comp 全景、注解处理器与 gen 生成机制、Building/Unit 组装原理、模组可覆写的 19 个钩子清单。想设计复杂 mod 必读。</p>
+      <div class="files">
+        <a href="https://aka.doubaocdn.com/s/J2No2khVj1" class="web">🔗 网页直链</a>
+        <a href="tutorials/ecs/ecs-framework.html">📖 在线阅读</a>
+        <a href="tutorials/ecs/ecs-framework.md">📄 Markdown</a>
+      </div>
+    </div>
+
+    <!-- Card 10: v160 Update -->
+    <div class="card">
+      <span class="tag tag-v160">🟢 v160</span>
+      <h3>v159.7 → v160 变更速查</h3>
+      <p class="desc">499 提交 / 371 文件的考古式升级笔记：新方块 HeatCrafter + HeatConsumer 接口全解、StatValues 大改、GenericCrafter 分批输出、核心机制未变确认表。写工厂 / 做热力必读。</p>
+      <div class="files">
+        <a href="https://aka.doubaocdn.com/s/UGPo6wOFPf" class="web">🔗 网页直链</a>
+        <a href="tutorials/v160-update/v160-changes.html">📖 在线阅读</a>
+        <a href="tutorials/v160-update/v160-changes.md">📄 Markdown</a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Toolchain Footer -->
+  <div class="footer">
+    <h3>工具链与环境</h3>
+    <div class="toolchain-grid">
+      <div class="tool-item">
+        <div class="name">JDK</div>
+        <div class="ver">17+</div>
+      </div>
+      <div class="tool-item">
+        <div class="name">Gradle</div>
+        <div class="ver">7.5+ / Wrapper 8.x</div>
+      </div>
+      <div class="tool-item">
+        <div class="name">Mindustry</div>
+        <div class="ver">v160</div>
+      </div>
+      <div class="tool-item">
+        <div class="name">IDE</div>
+        <div class="ver">IntelliJ IDEA</div>
+      </div>
+    </div>
+    <p class="note">
+      主线教程基于 <code>Mindustry v159.7</code>；<b>v160 变更速查</b>基于 <code>Mindustry v160</code>（HEAD <code>0ac15152d8</code>）源码逐条核验。
+      源码位置：<code>Mindustry/core/src/mindustry/</code>。
+      编译产物 <code>build/libs/*.jar</code> 拷进游戏 <code>mods/</code> 文件夹即可加载。
+    </p>
+  </div>
+
+</div>
+</body>
+</html>

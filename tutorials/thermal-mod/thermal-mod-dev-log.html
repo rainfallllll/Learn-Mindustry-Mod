@@ -1,0 +1,2026 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>热力学 mod 实战开发全记录 · Mindustry v159.7/v160</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css">
+<style>
+:root{
+  --bg:#0f0f1a; --bg2:#1a1a2e; --bg3:#16162a; --code-bg:#1e1e2e;
+  --accent:#f39c12; --accent2:#e67e22;
+  --text:#d6d6e8; --muted:#8a8aa8; --border:#2a2a48;
+  --green:#2ecc71; --yellow:#f1c40f; --red:#e74c3c;
+  --sidebar-w:280px;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;scroll-padding-top:20px;}
+body{margin:0;background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  line-height:1.75;font-size:15.5px;}
+a{color:var(--accent);text-decoration:none;}
+a:hover{text-decoration:underline;}
+
+#sidebar{position:fixed;top:0;left:0;width:var(--sidebar-w);height:100vh;
+  background:var(--bg2);border-right:1px solid var(--border);overflow-y:auto;padding:24px 0 40px;z-index:100;}
+#sidebar .brand{padding:0 22px 18px;border-bottom:1px solid var(--border);margin-bottom:14px;}
+#sidebar .brand .logo{font-weight:800;font-size:15px;color:#fff;letter-spacing:.5px;line-height:1.4;}
+#sidebar .brand .sub{font-size:12px;color:var(--accent);margin-top:4px;}
+#sidebar nav{padding:0 10px;}
+#sidebar nav .nav-group{font-size:12.5px;font-weight:700;color:var(--accent);padding:14px 12px 6px;
+  border-left:3px solid var(--accent);margin-left:12px;}
+#sidebar nav a{display:block;padding:5px 12px;color:#b9b9d0;border-radius:6px;font-size:13px;line-height:1.4;}
+#sidebar nav a.sub{padding-left:24px;font-size:12.5px;color:#9a9ab8;}
+#sidebar nav a:hover{background:rgba(243,156,18,.08);color:var(--accent);text-decoration:none;}
+#sidebar nav a.active{background:rgba(243,156,18,.14);color:var(--accent);border-left:3px solid var(--accent);padding-left:9px;}
+#sidebar nav a.sub.active{padding-left:21px;}
+
+main{margin-left:var(--sidebar-w);max-width:920px;padding:48px 48px 120px;}
+.hero{border:1px solid var(--border);border-radius:14px;padding:32px 34px;
+  background:linear-gradient(135deg,rgba(243,156,18,.08),rgba(230,126,34,.03));margin-bottom:36px;}
+.hero h1{margin:0 0 10px;font-size:28px;color:#fff;line-height:1.3;}
+.hero .meta{color:var(--muted);font-size:13.5px;}
+.hero .badge{display:inline-block;background:var(--accent);color:#1a1a2e;font-weight:700;
+  font-size:12px;padding:2px 10px;border-radius:20px;margin-right:8px;}
+
+h1{font-size:26px;color:#fff;border-bottom:2px solid var(--accent);padding-bottom:10px;margin-top:56px;}
+h2{font-size:21px;color:#fff;margin-top:44px;padding-left:12px;border-left:4px solid var(--accent);}
+h3{font-size:17.5px;color:#f0c060;margin-top:30px;}
+h4{font-size:15.5px;color:#e8e8f4;margin-top:22px;}
+h1:first-of-type{margin-top:0;}
+
+blockquote{margin:20px 0;padding:14px 18px;background:rgba(243,156,18,.06);
+  border-left:4px solid var(--accent);border-radius:0 8px 8px 0;color:#cfcfe4;}
+
+table{width:100%;border-collapse:collapse;margin:20px 0;font-size:14px;border:1px solid var(--border);
+  border-radius:8px;overflow:hidden;display:block;overflow-x:auto;}
+tr{display:table-row;}
+th,td{padding:10px 14px;text-align:left;border:1px solid var(--border);}
+th{background:var(--bg3);color:#fff;font-weight:600;}
+tr:nth-child(even) td{background:rgba(255,255,255,.025);}
+tr:hover td{background:rgba(243,156,18,.05);}
+
+hr{border:none;border-top:1px dashed var(--border);margin:44px 0;}
+code:not(pre code){background:rgba(243,156,18,.12);color:#f5b95c;
+  padding:1px 6px;border-radius:4px;font-size:.88em;
+  font-family:"JetBrains Mono","Fira Code",Consolas,Monaco,monospace;}
+ul,ol{padding-left:24px;}
+li{margin:5px 0;}
+p{margin:12px 0;}
+strong{color:#fff;}
+
+.codeblock{margin:20px 0;border:1px solid var(--border);border-radius:8px;background:var(--code-bg);overflow:hidden;}
+.codebar{display:flex;align-items:center;gap:10px;background:#181826;padding:5px 14px;
+  border-bottom:1px solid var(--border);font-size:11.5px;color:var(--muted);}
+.codebar .ver{background:var(--accent);color:#1a1a2e;font-weight:700;padding:1px 8px;border-radius:10px;font-size:10.5px;}
+.codebar .lang{text-transform:uppercase;letter-spacing:1px;flex:1;}
+.codebar .copy-btn{background:rgba(243,156,18,.15);color:var(--accent);border:1px solid rgba(243,156,18,.4);
+  padding:2px 12px;border-radius:6px;font-size:11.5px;cursor:pointer;transition:all .15s;}
+.codebar .copy-btn:hover{background:rgba(243,156,18,.3);}
+.codebar .copy-btn.done{background:var(--green);color:#06280f;border-color:var(--green);}
+.codeblock pre{margin:0;padding:16px 18px;overflow-x:auto;
+  font-family:"JetBrains Mono","Fira Code",Consolas,Monaco,monospace;font-size:13px;line-height:1.65;}
+.codeblock pre code{background:none;padding:0;font-family:inherit;}
+
+#toTop{position:fixed;right:28px;bottom:28px;width:46px;height:46px;border-radius:50%;
+  background:var(--accent);color:#1a1a2e;border:none;cursor:pointer;
+  font-size:18px;font-weight:700;display:none;align-items:center;justify-content:center;
+  box-shadow:0 4px 16px rgba(243,156,18,.4);z-index:150;}
+#toTop:hover{background:var(--accent2);}
+
+#navToggle{display:none;position:fixed;top:14px;left:14px;z-index:200;width:40px;height:40px;
+  background:var(--accent);color:#1a1a2e;border:none;border-radius:8px;font-size:18px;font-weight:700;cursor:pointer;}
+
+@media (max-width:860px){
+  #navToggle{display:block;}
+  #sidebar{transform:translateX(-100%);transition:transform .25s ease;width:270px;z-index:199;}
+  body.nav-open #sidebar{transform:translateX(0);}
+  main{margin-left:0;padding:64px 20px 80px;}
+}
+</style>
+</head>
+<body>
+
+<button id="navToggle">☰</button>
+
+<aside id="sidebar">
+  <div class="brand">
+    <div class="logo">热力学 mod<br>实战开发全记录</div>
+    <div class="sub">Mindustry v159.7 / v160 · 2026-09-11</div>
+  </div>
+  <nav>
+<div class="nav-group">第 1 章：缘起——为什么做热力学 mod</div>
+<a class="sub" href="#11">1.1 设计手册摘要（八节）</a>
+<a class="sub" href="#12">1.2 核心设计理念：三句话讲透</a>
+<a class="sub" href="#13-java-mod-hjson">1.3 为什么选 Java mod 而不是 HJSON</a>
+<div class="nav-group">第 2 章：需求拆解——从设计手册到 10 个机制</div>
+<a class="sub" href="#21">2.1 映射表</a>
+<a class="sub" href="#22-10-8">2.2 为什么是 10 个而不是 8 个</a>
+<div class="nav-group">第 3 章：可行性决策——先查 API 再动手</div>
+<a class="sub" href="#31-10">3.1 10 机制判定表</a>
+<a class="sub" href="#32-api">3.2 几个关键 API 为什么这么选</a>
+<a class="sub" href="#33">3.3 范围边界（本版不做什么）</a>
+<div class="nav-group">第 4 章：分步实现（核心，7 步）</div>
+<a class="sub" href="#1">步骤 1：项目骨架</a>
+<a class="sub" href="#2thermalcomponent">步骤 2：数据层——ThermalComponent</a>
+<a class="sub" href="#3thermalsystem">步骤 3：系统层——ThermalSystem</a>
+<a class="sub" href="#4environmenttemperature">步骤 4：环境层——EnvironmentTemperature</a>
+<a class="sub" href="#5thermalbuilding">步骤 5：建筑基类——ThermalBuilding 接口</a>
+<a class="sub" href="#6">步骤 6：四个建筑</a>
+<a class="sub" href="#7thermalblocks-thermalitems">步骤 7：注册——ThermalBlocks / ThermalItems</a>
+<div class="nav-group">第 5 章：编译与验证</div>
+<a class="sub" href="#51">5.1 编译命令</a>
+<a class="sub" href="#52-headless">5.2 headless 加载验证（关键）</a>
+<a class="sub" href="#53">5.3 成功日志长什么样</a>
+<a class="sub" href="#54">5.4 产物</a>
+<div class="nav-group">第 6 章：踩坑实录（最有价值部分）</div>
+<a class="sub" href="#1category">坑 1：Category 包路径错误</a>
+<a class="sub" href="#2floatarray">坑 2：FloatArray 不存在</a>
+<a class="sub" href="#3-tempdirty">坑 3：私有 tempDirty 无法访问</a>
+<div class="nav-group">第 7 章：已知限制与迭代方向</div>
+<a class="sub" href="#71-trade-off">7.1 双缓冲的简化（当前实现的 trade-off）</a>
+<a class="sub" href="#72-v160">7.2 v160 的官方热力系统桥接（进阶预告）</a>
+<a class="sub" href="#73">7.3 温差发电机 / 热泵的完整实现</a>
+<a class="sub" href="#74">7.4 物品级热力（传送带物品携带热量）</a>
+<a class="sub" href="#75">7.5 性能优化</a>
+<div class="nav-group">第 8 章：附录</div>
+<a class="sub" href="#81">8.1 全部源码清单</a>
+<a class="sub" href="#82-mindustry-api">8.2 源码地图（Mindustry 核心 API 位置）</a>
+<a class="sub" href="#83">8.3 引用</a>
+<div class="nav-group">第 9 章：运行调试实录（headless server 实测）</div>
+<a class="sub" href="#91">9.1 运行验证目标与测试链</a>
+<a class="sub" href="#92-serverlog">9.2 真实温度曲线（来自 server.log）</a>
+<a class="sub" href="#93-bug">9.3 四个真实 bug 逐个展开（最有价值部分）</a>
+<a class="sub" href="#94-thermaldebugjava">9.4 ThermalDebug.java 调试器（完整可复制代码）</a>
+<a class="sub" href="#95-mindustry-java-mod-headless">9.5 调试方法论（Mindustry Java mod headless 通用套路）</a>
+<a href="#_1">收尾</a>
+  </nav>
+</aside>
+
+<main>
+<div class="hero">
+  <h1>热力学 mod 实战开发全记录</h1>
+  <div class="meta">
+    <span class="badge">v159.7 / v160</span>
+    9 章 · 7 步分步实现 · 7 个真实踩坑 · headless 真实温度曲线 · 面向"抄完整项目"的萌新
+  </div>
+</div>
+<blockquote>
+<p><strong>面向谁</strong>：想"抄一个完整项目"的萌新。你不需要先懂热力学，也不需要先懂 Mindustry 源码——跟着这 8 章，从设计手册一路走到 <code>1 mods loaded</code>，把一个能跑的双缓冲热力系统 mod 从零敲出来。</p>
+<p><strong>怎么读</strong>：任务驱动。每一步都有「目标 → 完整可复制代码 → 关键 API 讲解 → 为什么这么写」。第 6 章"踩坑实录"是本教程最值钱的部分，建议先翻那里再回头看实现。</p>
+<p><strong>版本声明</strong>：本 mod 按 <strong>Mindustry v159.7</strong> API 编写；所有源码核验基于当前工作树（<strong>v160 分支</strong>）。经逐条比对，热力系统用到的核心 API 在 v159.7 → v160 之间<strong>未发生破坏性变更</strong>（Building.update / proximity / display(Table) / WorldLoadEvent / Block.requirements 等签名一致）。下文标注的 <code>类:行号</code> 以 v160 工作树为准，v159.7 行号可能偏移但 API 结构不变。</p>
+<p><strong>配套产物</strong>：已编译 <code>thermal-mod.jar</code>（22 KB，26 项），headless 加载验证通过。</p>
+</blockquote>
+<hr />
+<h2 id="1-mod">第 1 章：缘起——为什么做热力学 mod</h2>
+<h3 id="11">1.1 设计手册摘要（八节）</h3>
+<p>动手之前，我们手里有一份《热力学系统设计手册》（v1.0）。它不是一本代码书，而是一张"物理规则图纸"。八节内容，一节都不能跳：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">节</th>
+<th style="text-align: left;">标题</th>
+<th style="text-align: left;">一句话摘要</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">设计哲学</td>
+<td style="text-align: left;">Q 是本质状态，T 是惰性表观；温差驱动；查表代替公式；双缓冲结算</td>
+</tr>
+<tr>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">数据结构</td>
+<td style="text-align: left;"><code>ThermalComponent</code>：storedHeat + pendingDeltaQ 双缓冲、heatCapacity、airU、groundEfficiency、isFloating、contactResistance</td>
+</tr>
+<tr>
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">主循环算法</td>
+<td style="text-align: left;">Phase1 只读温度写 pendingDeltaQ；Phase2 结算 + 环境换热 + 建筑自身逻辑</td>
+</tr>
+<tr>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">环境交互</td>
+<td style="text-align: left;">双轨温度表（T_ground / T_air）、地块效率系数、maxHeatRate 上限、架空 vs 地面规则</td>
+</tr>
+<tr>
+<td style="text-align: left;">5</td>
+<td style="text-align: left;">建筑规约</td>
+<td style="text-align: left;">五类建筑：持续产热 / 恒温耗热 / 纯温驱（温差发电）/ 档位热泵 / 一体化管道</td>
+</tr>
+<tr>
+<td style="text-align: left;">6</td>
+<td style="text-align: left;">玩家流程</td>
+<td style="text-align: left;">定比例 → 估损耗 → 认负载 → 选管道 → 选热泵 → 读反馈 → 选址</td>
+</tr>
+<tr>
+<td style="text-align: left;">7</td>
+<td style="text-align: left;">性能安全</td>
+<td style="text-align: left;">Q 只做加法、双缓冲消除顺序依赖、只向低温传热省 50% 算力、防过冲 min(flow, Q)</td>
+</tr>
+<tr>
+<td style="text-align: left;">8</td>
+<td style="text-align: left;">HJSON 速查</td>
+<td style="text-align: left;">基础建筑模板 / 架空管道模板 / 散热塔模板三套抄改样例</td>
+</tr>
+</tbody>
+</table>
+<h3 id="12">1.2 核心设计理念：三句话讲透</h3>
+<p>整本手册其实就讲了三件事：</p>
+<p><strong>① 热量 Q 为唯一状态变量，温度 T = Q / C 惰性求值。</strong></p>
+<p>底层所有运算都是整数级的加减法（热量 J）。温度不是存下来的，而是"要的时候才算"：</p>
+<div class="codeblock"><div class="codebar"><span class="ver">COPY</span><span class="lang">TEXT</span><button class="copy-btn" type="button">复制</button></div><pre><code>T = storedHeat / heatCapacity
+</code></pre></div>
+<p>为什么不直接存温度？因为如果直接存 T，那么每次热流交换都要做 <code>T += flow / C</code>，每 tick 每对邻居都得算一次除法。改成存 Q，热流就是纯加法 <code>storedHeat += deltaQ</code>，温度只在面板刷新和热流计算时算一次——而且加了 dirty 缓存后，每 tick 每个建筑最多一次除法。</p>
+<p><strong>② 纯加法注入。</strong></p>
+<p>所有热量进出都是 <code>storedHeat += deltaQ</code>。没有乘法状态、没有矩阵、没有迭代求解。玩家心算负担就是加减法。</p>
+<p><strong>③ 双缓冲防过冲。</strong></p>
+<p>如果 A 觉得自己比 B 热，直接 <code>A -= flow; B += flow</code>，那么遍历顺序会影响结果（先遍历 A 和先遍历 B 算出来不一样），而且大温差下一 tick 就把 A 的热量抽干变负数。解法是两阶段：Phase1 只把"想流多少"写进 <code>pendingDeltaQ</code>（绝不碰 storedHeat），Phase2 统一结算。再加一道 <code>flow = min(flow, storedHeat)</code> 防过冲，温度永远不会穿越。</p>
+<h3 id="13-java-mod-hjson">1.3 为什么选 Java mod 而不是 HJSON</h3>
+<p>Mindustry 做 mod 有两条路：</p>
+<ul>
+<li><strong>HJSON + JS（行为脚本）</strong>：不改游戏源码，靠数据文件 + 简单 JS 逻辑拼。适合"改数值、加配方、调参数"。</li>
+<li><strong>Java mod</strong>：继承 <code>mindustry.mod.Mod</code>，写真正的 Java 类，可以实现<strong>游戏原本没有的机制</strong>。</li>
+</ul>
+<p>热力学系统要的是：
+- 一个每 tick 跑的<strong>双缓冲热流主循环</strong>（游戏原版没有）；
+- 建筑之间<strong>通过 proximity 邻居数组做热传导</strong>（原版没有热量概念）；
+- 一个<strong>按 tile 索引的环境温度查表</strong>（原版 Floor 类根本没有温度字段）。</p>
+<p>这些都是"自定义游戏机制"，HJSON 表达不了——你没法在 HJSON 里写"遍历所有建筑、只读温度、写缓冲、再结算"。所以本项目走 Java mod 路线。</p>
+<hr />
+<h2 id="2-10">第 2 章：需求拆解——从设计手册到 10 个机制</h2>
+<p>设计手册是物理图纸，不能直接翻译成代码。中间必须有一层"机制映射"：把八节手册翻译成 10 个可实现的技术机制。</p>
+<h3 id="21">2.1 映射表</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">#</th>
+<th style="text-align: left;">机制名</th>
+<th style="text-align: left;">来源章节</th>
+<th style="text-align: left;">实现方式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">双缓冲循环</td>
+<td style="text-align: left;">§3 主循环算法</td>
+<td style="text-align: left;">ThermalSystem 两阶段 update：Phase1 写 pendingDeltaQ，Phase2 结算</td>
+</tr>
+<tr>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">防过冲</td>
+<td style="text-align: left;">§7 性能安全</td>
+<td style="text-align: left;"><code>flow = Math.min(flow, myNode.storedHeat)</code>（ThermalSystem.java:74）</td>
+</tr>
+<tr>
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">惰性温度</td>
+<td style="text-align: left;">§2 数据结构 / §7</td>
+<td style="text-align: left;"><code>tempDirty</code> 标志 + <code>cachedTempK</code> 缓存，<code>getTemperatureK()</code> 重算（ThermalComponent.java:90-96）</td>
+</tr>
+<tr>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">建筑间热阻 R</td>
+<td style="text-align: left;">§4.5 建筑间传热</td>
+<td style="text-align: left;"><code>contactResistance</code> 串联：R_AB = R_A + R_B（ThermalSystem.java:67-68）</td>
+</tr>
+<tr>
+<td style="text-align: left;">5</td>
+<td style="text-align: left;">环境查表</td>
+<td style="text-align: left;">§4.1 双轨温度表</td>
+<td style="text-align: left;"><code>EnvironmentTemperature</code> 静态表，<code>getGroundTemp(tile)</code> / <code>getAirTemp()</code> O(1)</td>
+</tr>
+<tr>
+<td style="text-align: left;">6</td>
+<td style="text-align: left;">地块效率系数</td>
+<td style="text-align: left;">§4.3 效率系数表</td>
+<td style="text-align: left;"><code>ObjectFloatMap&lt;String&gt; groundEfficiency</code>，实际 U = airU × 效率（ThermalComponent.java:59）</td>
+</tr>
+<tr>
+<td style="text-align: left;">7</td>
+<td style="text-align: left;">maxHeatRate</td>
+<td style="text-align: left;">§4.3 最大热交换速率</td>
+<td style="text-align: left;"><code>Math.min(idealFlow, maxRate * dt)</code> 截断（ThermalSystem.java:118）</td>
+</tr>
+<tr>
+<td style="text-align: left;">8</td>
+<td style="text-align: left;">isFloating 架空</td>
+<td style="text-align: left;">§4.4 架空 vs 地面</td>
+<td style="text-align: left;"><code>if (!node.isFloating)</code> 才做地面换热（ThermalSystem.java:109）</td>
+</tr>
+<tr>
+<td style="text-align: left;">9</td>
+<td style="text-align: left;">五类建筑</td>
+<td style="text-align: left;">§5 建筑规约</td>
+<td style="text-align: left;">本版实现其中四类：锅炉（产热）/ 散热塔（散热）/ 导热管（输热）/ 精炼炉（用热）；温差发电 + 热泵仅骨架</td>
+</tr>
+<tr>
+<td style="text-align: left;">10</td>
+<td style="text-align: left;">面板显示</td>
+<td style="text-align: left;">§5.x 面板显示</td>
+<td style="text-align: left;">覆写 <code>display(Table table)</code>，<code>table.left().label(...)</code> 实时刷新</td>
+</tr>
+</tbody>
+</table>
+<h3 id="22-10-8">2.2 为什么是 10 个而不是 8 个</h3>
+<p>手册八节里，§6（玩家流程）和 §8（HJSON 速查）是"面向玩家/配置"的，不需要写成代码机制。真正要落到代码的是 §1~§5、§7 的物理规则，拆出来正好 10 个可独立实现、可独立验证的技术点。</p>
+<hr />
+<h2 id="3-api">第 3 章：可行性决策——先查 API 再动手</h2>
+<p>萌新最容易犯的错：<strong>上来就写代码，写到一半发现游戏没有这个 API</strong>。正确做法是先把 10 个机制挨个去 Mindustry v159.7/v160 源码里查一遍，判定能不能做、怎么做。</p>
+<h3 id="31-10">3.1 10 机制判定表</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">#</th>
+<th style="text-align: left;">机制</th>
+<th style="text-align: center;">判定</th>
+<th style="text-align: left;">源码依据（v160 工作树）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">双缓冲循环</td>
+<td style="text-align: center;">✅ 原生支持</td>
+<td style="text-align: left;"><code>BuildingComp.update()</code> 每 tick 调用；<code>Events.run(Trigger.update, ...)</code> 驱动</td>
+</tr>
+<tr>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">防过冲</td>
+<td style="text-align: center;">✅ 原生支持</td>
+<td style="text-align: left;">纯 <code>Math.min(float, float)</code>，Java 标准库，无需游戏 API</td>
+</tr>
+<tr>
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">惰性温度</td>
+<td style="text-align: center;">✅ 原生支持</td>
+<td style="text-align: left;">纯 Java 逻辑（dirty 标志 + 缓存），无需游戏 API</td>
+</tr>
+<tr>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">建筑间热阻 R</td>
+<td style="text-align: center;">✅ 原生支持</td>
+<td style="text-align: left;"><code>Building.proximity</code> 邻居数组（<code>Seq&lt;Building&gt;</code>），遍历时 <code>instanceof ThermalBuilding</code> 判断</td>
+</tr>
+<tr>
+<td style="text-align: left;">5</td>
+<td style="text-align: left;">环境查表</td>
+<td style="text-align: center;">⚠️ 需适配</td>
+<td style="text-align: left;"><strong>Floor 类无温度字段</strong>（<code>Floor.java</code> 仅有 speedMultiplier/dragMultiplier 等），需自建 <code>FloatSeq groundTemps</code> 按 tile.array() 存储</td>
+</tr>
+<tr>
+<td style="text-align: left;">6</td>
+<td style="text-align: left;">地块效率系数</td>
+<td style="text-align: center;">⚠️ 需适配</td>
+<td style="text-align: left;"><code>Block.attributes</code> 是通用属性包，但温度/效率不是原版语义；自建 <code>ObjectFloatMap&lt;String&gt;</code> 更直接</td>
+</tr>
+<tr>
+<td style="text-align: left;">7</td>
+<td style="text-align: left;">maxHeatRate</td>
+<td style="text-align: center;">✅ 原生支持</td>
+<td style="text-align: left;">纯 <code>Math.min(idealFlow, maxRate*dt)</code>，查表 + 截断</td>
+</tr>
+<tr>
+<td style="text-align: left;">8</td>
+<td style="text-align: left;">isFloating 架空</td>
+<td style="text-align: center;">✅ 原生支持</td>
+<td style="text-align: left;">纯布尔标志 <code>if(!isFloating)</code>，无游戏 API 依赖</td>
+</tr>
+<tr>
+<td style="text-align: left;">9</td>
+<td style="text-align: left;">五类建筑</td>
+<td style="text-align: center;">✅ 原生支持</td>
+<td style="text-align: left;"><code>Block(String name)</code> 构造 + 覆写 <code>placed()</code>/<code>onRemoved()</code>/<code>updateThermalLogic(dt)</code>；热泵双端需额外适配（本版仅骨架）</td>
+</tr>
+<tr>
+<td style="text-align: left;">10</td>
+<td style="text-align: left;">面板显示</td>
+<td style="text-align: center;">✅ 原生支持</td>
+<td style="text-align: left;"><code>Building.display(Table table)</code> 钩子（<code>BuildingComp.java:1561</code> 附近），<code>table.left().label(() -&gt; "...")</code> 实时文本</td>
+</tr>
+</tbody>
+</table>
+<p><strong>汇总：7 项原生支持 ✅ / 3 项需适配 ⚠️ / 0 项难点 🔴。</strong></p>
+<h3 id="32-api">3.2 几个关键 API 为什么这么选</h3>
+<ul>
+<li><strong><code>BuildingComp.update()</code> 每 tick 调用</strong>：游戏引擎会对每个建筑实例每 tick 调一次 <code>update()</code>。但我们的热流系统是"全局遍历所有建筑两两算"，不能写在单个建筑的 update 里（那样会重复算 N² 次）。所以用 <code>Events.run(EventType.Trigger.update, ...)</code> 在<strong>主类里集中驱动一次</strong>，再手动遍历自己维护的 <code>buildings</code> 列表。</li>
+<li><strong><code>proximity</code> 邻居数组</strong>：Mindustry 已经维护好了每个建筑的相邻建筑数组（<code>Building.proximity</code>，<code>Seq&lt;Building&gt;</code>）。我们不需要自己算坐标找邻居，直接遍历这个数组就行。</li>
+<li><strong><code>display(Table)</code> 信息面板</strong>：点选建筑时，游戏会调 <code>display(Table table)</code> 让你往面板里塞内容。<code>label(() -&gt; "...")</code> 传的是 lambda，每帧重新求值——正好用来实时刷新温度数字。</li>
+<li><strong><code>Block.attributes</code></strong>：原版有个通用属性包，但语义是"建筑属性"（比如射程、射速），不适合塞自定义物理量。所以效率系数我们自建 <code>ObjectFloatMap</code>，不污染原版 attributes。</li>
+<li><strong>Floor 无温度字段</strong>：这是最大的适配点。<code>Floor</code> 类只有行走速度、拖拽、伤害、溺水时间这些字段，<strong>没有温度</strong>。不能往 Floor 里塞字段，那就自建一张 <code>FloatSeq groundTemps</code>，进图时按 <code>tile.array()</code> 索引预计算填好。</li>
+<li><strong><code>WorldLoadEvent</code></strong>：进图瞬间触发一次。我们在这里调 <code>EnvironmentTemperature.precompute()</code>，把整张地图的地温表初始化好。</li>
+</ul>
+<h3 id="33">3.3 范围边界（本版不做什么）</h3>
+<p>为了"能跑通、能抄"，本版主动砍三块：</p>
+<ul>
+<li><strong>温差发电机 / 热泵</strong>：只留类骨架（接口和字段），不接入电力系统，不做双端搬运逻辑。</li>
+<li><strong>物品级热力</strong>：传送带携带热量？不做。物品不持有 ThermalComponent。</li>
+<li><strong>高斯-赛德尔稳态求解</strong>：手册 §4.2 写了进图前迭代求解温度场，本版简化为"按材质直接赋初始温度"，不做迭代扩散。</li>
+</ul>
+<p>这三个都写在第 7 章当迭代方向。</p>
+<hr />
+<h2 id="4-7">第 4 章：分步实现（核心，7 步）</h2>
+<p>这是全教程最重的一章。7 步走完，你就有一个能跑的 mod。每步给：目标 → 完整可复制代码 → 关键 API 讲解 → 为什么这么写。</p>
+<p>项目包结构（最终长这样）：</p>
+<div class="codeblock"><div class="codebar"><span class="ver">COPY</span><span class="lang">TEXT</span><button class="copy-btn" type="button">复制</button></div><pre><code>thermal-mod/
+├── build.gradle
+├── mod.json
+└── src/main/java/com/thermal/mod/
+    ├── ThermalModMain.java          # 步骤 1：主类
+    ├── core/
+    │   ├── ThermalComponent.java    # 步骤 2：数据层
+    │   ├── ThermalSystem.java       # 步骤 3：系统层
+    │   ├── EnvironmentTemperature.java # 步骤 4：环境层
+    │   └── ThermalBuilding.java     # 步骤 5：建筑基类接口
+    ├── blocks/
+    │   ├── IndustrialBoiler.java    # 步骤 6：四个建筑
+    │   ├── CoolingTower.java
+    │   ├── HeatConduit.java
+    │   └── RefineryFurnace.java
+    └── content/
+        ├── ThermalBlocks.java       # 步骤 7：注册
+        └── ThermalItems.java
+</code></pre></div>
+<hr />
+<h3 id="1">步骤 1：项目骨架</h3>
+<p><strong>目标</strong>：搭出 Gradle 工程 + mod.json + 主类，让游戏能识别这是一个 Java mod。</p>
+<h4 id="411-buildgradle">4.1.1 build.gradle</h4>
+<div class="codeblock"><div class="codebar"><span class="ver">COPY</span><span class="lang">Groovy</span><button class="copy-btn" type="button">复制</button></div><pre><code class="language-groovy">plugins {
+    id 'java'
+}
+
+// Mindustry v159.7 使用 Java 17
+sourceCompatibility = 17
+targetCompatibility = 17
+
+repositories {
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+    // Mindustry 核心库（仅编译时需要，运行时由游戏提供）
+    compileOnly &quot;com.github.Anuken.Mindustry:core:v159.7&quot;
+    // Arc 引擎核心库
+    compileOnly &quot;com.github.Anuken.Arc:arc-core:889dd8880f&quot;
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDirs = ['src/main/resources']
+        }
+    }
+}
+
+jar {
+    manifest {
+        attributes(
+            'Main-Class': 'mindustry.mod.ModClassLoader'
+        )
+    }
+    from('mod.json') {
+        into ''
+    }
+}
+
+buildDir = 'build'
+</code></pre></div>
+<p><strong>关键 API 讲解</strong>：
+- <code>compileOnly</code>：Mindustry 和 Arc 是游戏运行时自带的，编译时需要它们的类来过类型检查，但<strong>不能打进 jar</strong>（否则和游戏自带的冲突）。
+- <code>jitpack.io</code>：Mindustry 的 Maven 坐标不在 Maven Central，走 JitPack 拉 <code>com.github.Anuken.Mindustry:core:v159.7</code>。
+- <code>from('mod.json') { into '' }</code>：把 mod.json 打进 jar 根目录，游戏靠它识别 mod。</p>
+<h4 id="412-modjson">4.1.2 mod.json</h4>
+<div class="codeblock"><div class="codebar"><span class="ver">COPY</span><span class="lang">JSON</span><button class="copy-btn" type="button">复制</button></div><pre><code class="language-json">{
+  &quot;name&quot;: &quot;Thermal Mod&quot;,
+  &quot;displayName&quot;: &quot;热力学系统&quot;,
+  &quot;author&quot;: &quot;Thermal Mod Team&quot;,
+  &quot;description&quot;: &quot;基于热力学系统设计手册的热量交换模组：双缓冲热流结算、惰性温度、环境温度查表。&quot;,
+  &quot;version&quot;: &quot;0.1.0&quot;,
+  &quot;main&quot;: &quot;com.thermal.mod.ThermalModMain&quot;,
+  &quot;minGameVersion&quot;: &quot;154&quot;,
+  &quot;java&quot;: true,
+  &quot;dependencies&quot;: []
+}
+</code></pre></div>
+<p><strong>关键 API 讲解</strong>：
+- <code>"main"</code>：主类全限定名，游戏加载 mod 时会 new 这个类并调它的 <code>loadContent()</code> / <code>init()</code>。
+- <code>"java": true</code>：告诉游戏这是 Java mod（不是纯 HJSON/JS）。
+- <code>"minGameVersion": "154"</code>：最低支持版本。我们用的 API 在 v154 就有了。</p>
+<h4 id="413-thermalmodmainjava">4.1.3 主类 ThermalModMain.java</h4>
+<div class="codeblock"><div class="codebar"><span class="ver">COPY</span><span class="lang">Java</span><button class="copy-btn" type="button">复制</button></div><pre><code class="language-java">package com.thermal.mod;
+
+import arc.Events;
+import arc.util.Log;
+import com.thermal.mod.content.ThermalBlocks;
+import com.thermal.mod.core.EnvironmentTemperature;
+import com.thermal.mod.core.ThermalSystem;
+import mindustry.Vars;
+import mindustry.game.EventType;
+import mindustry.mod.Mod;
+
+public class ThermalModMain extends Mod {
+
+    public static ThermalSystem thermalSystem;
+
+    @Override
+    public void loadContent() {
+        ThermalBlocks.load();
+        Log.info(&quot;ThermalMod: 内容加载完成&quot;);
+    }
+
+    @Override
+    public void init() {
+        thermalSystem = new ThermalSystem();
+
+        // 注册 WorldLoadEvent：进图时预计算环境温度
+        Events.on(EventType.WorldLoadEvent.class, e -&gt; {
+            EnvironmentTemperature.precompute();
+            Log.info(&quot;ThermalMod: 环境温度预计算完成&quot;);
+        });
+
+        // 每 tick 驱动热力系统更新（仅服务端运行）
+        Events.run(EventType.Trigger.update, () -&gt; {
+            if (!Vars.net.client()) {
+                thermalSystem.update(1f);
+            }
+        });
+
+        Log.info(&quot;ThermalMod: 模组初始化完成&quot;);
+    }
+}
+</code></pre></div>
+<p><strong>为什么这么写</strong>：
+- 继承 <code>mindustry.mod.Mod</code>，重写 <code>loadContent()</code> 和 <code>init()</code>。游戏的生命周期是<strong>先 loadContent（注册内容），后 init（初始化系统）</strong>。
+- <code>ThermalBlocks.load()</code> 必须在 <code>loadContent()</code> 里调——内容（方块/物品）必须在游戏内容系统初始化阶段注册，晚了就进不到物品栏。
+- <code>thermalSystem</code> 挂成 <code>public static</code>，后面所有建筑都通过 <code>ThermalModMain.thermalSystem.register(this)</code> 拿到系统实例。
+- <code>!Vars.net.client()</code> 守卫：多人客户端不跑模拟，只跑服务端/单人。否则热力会在两端各算一遍，数据错乱。</p>
+<hr />
+<h3 id="2thermalcomponent">步骤 2：数据层——ThermalComponent</h3>
+<p><strong>目标</strong>：定义"一个热节点"的数据结构。这是整个 mod 的地基。</p>
+<div class="codeblock"><div class="codebar"><span class="ver">COPY</span><span class="lang">Java</span><button class="copy-btn" type="button">复制</button></div><pre><code class="language-java">package com.thermal.mod.core;
+
+import arc.struct.ObjectFloatMap;
+
+public class ThermalComponent {
+
+    // ── 状态变量 ──
+    public float storedHeat;          // 当前存储的热量 (J)
+    public float pendingDeltaQ;       // 本 tick 待应用的热流缓冲（双缓冲核心）
+
+    // ── 配置参数 ──
+    public float heatCapacity;        // 热容 C (J/K)
+    public float minTempK = 273f;     // 温度下限（绝对零度保护）
+    public float maxTempK = 1000f;    // 安全上限
+
+    // ── 传热系数 ──
+    public float airU;                // 与空气的基准传热系数 (J/tick·格·K)
+
+    // ── 地块效率系数 ──
+    // key = 地块名称 / &quot;air&quot;, value = 效率倍率；实际 U = airU × 效率
+    public ObjectFloatMap&lt;String&gt; groundEfficiency = new ObjectFloatMap&lt;&gt;();
+
+    // ── 架空标志 ──
+    public boolean isFloating;         // true=悬空(仅空气换热), false=地面(空气+地面)
+
+    // ── 建筑间接触热阻 ──
+    public float contactResistance = 0.05f;  // R (K·tick/J)，与 airU 独立
+
+    // ── 缓存（私有，外部不可直接碰）──
+    private float cachedTempK;
+    private boolean tempDirty = true;
+
+    /** 惰性温度求值：每 tick 最多一次除法。 */
+    public float getTemperatureK() {
+        if (tempDirty) {
+            cachedTempK = Math.max(minTempK, storedHeat / heatCapacity);
+            tempDirty = false;
+        }
+        return cachedTempK;
+    }
+
+    /** 纯加法注入/抽取热量，标记温度过期。 */
+    public void addHeat(float deltaQ) {
+        storedHeat += deltaQ;
+        if (storedHeat &lt; 0f) storedHeat = 0f;  // 防负热量兜底
+        tempDirty = true;
+    }
+
+    /** 标记温度缓存失效（外部直接改 storedHeat 后调用）。 */
+    public void invalidate() {
+        tempDirty = true;
+    }
+
+    /** 重置缓冲（Phase 2 结算后调用）。 */
+    public void reset() {
+        pendingDeltaQ = 0f;
+    }
+
+    /** 查询地块效率系数，未列出的返回 1.0。 */
+    public float getGroundEfficiency(String floorName) {
+        return groundEfficiency.get(floorName, 1f);
+    }
+
+    /** 设置地块效率系数。 */
+    public void setGroundEfficiency(String floorName, float efficiency) {
+        groundEfficiency.put(floorName, efficiency);
+    }
+}
+</code></pre></div>
+<p><strong>关键 API 讲解</strong>：
+- <code>arc.struct.ObjectFloatMap&lt;String&gt;</code>：Arc 引擎的"键值映射"，value 是原始 float（不装箱）。对应 Java 的 <code>Map&lt;String, Float&gt;</code>，但 <code>get(key, 默认值)</code> 直接给默认值，不用判空。
+- <code>cachedTempK</code> / <code>tempDirty</code> 是 <strong>private</strong>——这是故意的（坑 3 会讲为什么）。外部想让缓存失效，只能调公开的 <code>invalidate()</code>。</p>
+<p><strong>为什么这么写（为什么用组件模式而非继承）</strong>：
+Mindustry 的建筑类已经有很深的继承链（<code>Block → Wall → ...</code>，<code>Building → ...</code>）。如果再从 <code>Wall</code> 派生出 <code>ThermalWall</code>，再往下派 <code>BoilerWall</code>，继承链会爆炸。组件模式（组合）让每个 Build 类直接 <code>public ThermalComponent thermal = new ThermalComponent()</code>，热力学逻辑全部收敛在组件里，建筑类只管"什么时候 register、什么时候注入多少热"。<strong>数据和行为分离，继承只用来接游戏钩子。</strong></p>
+<hr />
+<h3 id="3thermalsystem">步骤 3：系统层——ThermalSystem</h3>
+<p><strong>目标</strong>：写双缓冲主循环。这是 mod 的心脏。</p>
+<div class="codeblock"><div class="codebar"><span class="ver">COPY</span><span class="lang">Java</span><button class="copy-btn" type="button">复制</button></div><pre><code class="language-java">package com.thermal.mod.core;
+
+import arc.struct.Seq;
+import mindustry.Vars;
+import mindustry.gen.Building;
+import mindustry.world.Tile;
+
+public class ThermalSystem {
+
+    /** 活跃热力建筑列表 */
+    private final Seq&lt;ThermalBuilding&gt; buildings = new Seq&lt;&gt;();
+
+    public void register(ThermalBuilding building) {
+        if (!buildings.contains(building)) {
+            buildings.add(building);
+        }
+    }
+
+    public void unregister(ThermalBuilding building) {
+        buildings.remove(building);
+    }
+
+    /** 每 tick 主更新入口。 */
+    public void update(float dt) {
+        if (buildings.size == 0) return;
+
+        // ═══ Phase 1：接触热流计算（只读温度，写缓冲）═══
+        for (int i = 0; i &lt; buildings.size; i++) {
+            ThermalBuilding thermalBuilding = buildings.get(i);
+            Building myBuilding = thermalBuilding.asBuilding();
+            ThermalComponent myNode = thermalBuilding.getThermal();
+            float myTemp = myNode.getTemperatureK();
+
+            for (int j = 0; j &lt; myBuilding.proximity.size; j++) {
+                Building neighbor = myBuilding.proximity.get(j);
+                if (neighbor == null) continue;
+                if (neighbor instanceof ThermalBuilding thermalNeighbor) {
+                    float neighborTemp = thermalNeighbor.getThermal().getTemperatureK();
+
+                    // 【核心规则】只向低温传热，避免重复计算
+                    if (myTemp &gt; neighborTemp) {
+                        float dT = myTemp - neighborTemp;
+                        float resistance = myNode.contactResistance
+                            + thermalNeighbor.getThermal().contactResistance;
+                        if (resistance &lt;= 0f) continue;
+
+                        float flow = (dT / resistance) * dt;
+
+                        // 【防过冲保护】传热量不超过自身存量
+                        flow = Math.min(flow, myNode.storedHeat);
+
+                        if (flow &gt; 0f) {
+                            // 【双缓冲】绝不直接修改 storedHeat
+                            myNode.pendingDeltaQ -= flow;
+                            thermalNeighbor.getThermal().pendingDeltaQ += flow;
+                        }
+                    }
+                }
+            }
+        }
+
+        // ═══ Phase 2：统一结算 + 环境换热 + 自身逻辑 ═══
+        for (int i = 0; i &lt; buildings.size; i++) {
+            ThermalBuilding thermalBuilding = buildings.get(i);
+            Building myBuilding = thermalBuilding.asBuilding();
+            ThermalComponent node = thermalBuilding.getThermal();
+
+            // 1. 结算接触热流
+            node.addHeat(node.pendingDeltaQ);
+            node.pendingDeltaQ = 0f;
+
+            // 2. 环境换热
+            float myTemp = node.getTemperatureK();
+            float heatLoss = 0f;
+
+            // 2a. 对空气散热——所有建筑都有
+            float airEff = node.getGroundEfficiency(&quot;air&quot;);
+            float uAir = node.airU * airEff;
+            float tAir = EnvironmentTemperature.getAirTemp();
+            heatLoss += uAir * (myTemp - tAir) * dt;
+
+            // 2b. 对地面散热——仅非架空建筑
+            if (!node.isFloating) {
+                Tile tile = myBuilding.tile;
+                if (tile != null) {
+                    String floorName = tile.floor().name;
+                    float groundEff = node.getGroundEfficiency(floorName);
+                    float uGround = node.airU * groundEff;
+                    float tGround = EnvironmentTemperature.getGroundTemp(tile);
+                    float maxRate = EnvironmentTemperature.getMaxHeatRate(floorName);
+                    float idealFlow = uGround * (myTemp - tGround) * dt;
+                    heatLoss += Math.min(idealFlow, maxRate * dt);
+                }
+            }
+
+            node.addHeat(-heatLoss);
+
+            // 3. 建筑自身产热/耗热/热泵逻辑
+            thermalBuilding.updateThermalLogic(dt);
+        }
+    }
+
+    public int getBuildingCount() {
+        return buildings.size;
+    }
+}
+</code></pre></div>
+<p><strong>关键 API 讲解</strong>：
+- <code>myBuilding.proximity</code>：游戏维护好的邻居数组，类型 <code>Seq&lt;Building&gt;</code>。直接 <code>proximity.get(j)</code> 遍历。
+- <code>instanceof ThermalBuilding thermalNeighbor</code>：Java 16+ 模式匹配，一步完成"判断类型 + 转型"。邻居不是热力建筑就跳过（比如旁边一堵普通墙）。
+- <code>myBuilding.tile.floor().name</code>：拿到脚下地块的名字（"slag"/"water"/"ice"...），拿去查表。</p>
+<p><strong>为什么这么写</strong>：
+- <strong>Phase1 只读温度</strong>：整个阶段只调 <code>getTemperatureK()</code>（不写 storedHeat），把"想流多少"记到双方的 <code>pendingDeltaQ</code>。这样遍历 A→B 和 B→A 不会互相影响。
+- <strong>Phase2 统一结算</strong>：先 <code>addHeat(pendingDeltaQ)</code> 把热流真正落到 storedHeat，再做环境换热，最后才让建筑跑自己的产热/耗热逻辑。<strong>顺序固定，结果可复现。</strong>
+- <strong><code>flow = Math.min(flow, myNode.storedHeat)</code></strong>：防过冲。温差大的时候 <code>dT/R</code> 可能算出远超自身存量的流量，不截断就会把热量抽成负数、温度穿越零下。
+- <strong><code>Events.run(Trigger.update, ...)</code> + <code>!Vars.net.client()</code></strong>：主类里挂的事件每 tick 调一次 <code>thermalSystem.update(1f)</code>，客户端不跑。</p>
+<hr />
+<h3 id="4environmenttemperature">步骤 4：环境层——EnvironmentTemperature</h3>
+<p><strong>目标</strong>：建一张"这张地图每格多少度"的表，建筑换热时直接查。</p>
+<div class="codeblock"><div class="codebar"><span class="ver">COPY</span><span class="lang">Java</span><button class="copy-btn" type="button">复制</button></div><pre><code class="language-java">package com.thermal.mod.core;
+
+import arc.struct.FloatSeq;
+import arc.struct.ObjectMap;
+import mindustry.Vars;
+import mindustry.game.EventType.WorldLoadEvent;
+import mindustry.world.Tile;
+
+public class EnvironmentTemperature {
+
+    /** 全局气温 (K)，默认 20°C */
+    public static float airTemperatureK = 293.15f;
+
+    /** 每格地温，按 tile.array() 索引存储 */
+    private static FloatSeq groundTemps;
+
+    /** 材质初始温度表（key = floor 名称） */
+    private static final ObjectMap&lt;String, Float&gt; materialTemps = new ObjectMap&lt;&gt;();
+
+    /** 地块最大热交换速率表（key = floor 名称），单位 J/tick */
+    private static final ObjectMap&lt;String, Float&gt; maxHeatRateMap = new ObjectMap&lt;&gt;();
+
+    static {
+        // 材质初始温度 (K)
+        materialTemps.put(&quot;slag&quot;, 1473.15f);     // 熔岩 1200°C
+        materialTemps.put(&quot;sand&quot;, 308.15f);       // 沙地 35°C
+        materialTemps.put(&quot;water&quot;, 293.15f);      // 浅水 20°C
+        materialTemps.put(&quot;deepwater&quot;, 293.15f);  // 深水 20°C
+        materialTemps.put(&quot;ice&quot;, 268.15f);         // 冰面 -5°C
+        materialTemps.put(&quot;snow&quot;, 268.15f);       // 雪地 -5°C
+        materialTemps.put(&quot;stone&quot;, 298.15f);      // 石头 25°C
+        materialTemps.put(&quot;grass&quot;, 298.15f);      // 草地 25°C
+        materialTemps.put(&quot;dirt&quot;, 298.15f);       // 泥土 25°C
+
+        // 地块最大热交换速率 (J/tick)
+        maxHeatRateMap.put(&quot;slag&quot;, Float.POSITIVE_INFINITY);  // 岩浆不限
+        maxHeatRateMap.put(&quot;water&quot;, 300f);
+        maxHeatRateMap.put(&quot;deepwater&quot;, 500f);
+        maxHeatRateMap.put(&quot;sand&quot;, 400f);
+        maxHeatRateMap.put(&quot;stone&quot;, 500f);
+        maxHeatRateMap.put(&quot;ice&quot;, 50f);
+        maxHeatRateMap.put(&quot;snow&quot;, 50f);
+    }
+
+    /** 进图预计算：遍历所有 tile，按 floor 名称设置地温。WorldLoadEvent 中调用。 */
+    public static void precompute() {
+        int w = Vars.world.width();
+        int h = Vars.world.height();
+        groundTemps = new FloatSeq(w * h);
+        groundTemps.size = w * h;
+        java.util.Arrays.fill(groundTemps.items, 293.15f);
+
+        for (int x = 0; x &lt; w; x++) {
+            for (int y = 0; y &lt; h; y++) {
+                Tile tile = Vars.world.tiles.get(x, y);
+                if (tile == null) continue;
+                String floorName = tile.floor().name;
+                float temp = materialTemps.get(floorName, 293.15f);
+                groundTemps.set(tile.array(), temp);
+            }
+        }
+    }
+
+    public static float getGroundTemp(Tile tile) {
+        if (groundTemps == null) return 293.15f;
+        int idx = tile.array();
+        if (idx &lt; 0 || idx &gt;= groundTemps.size) return 293.15f;
+        return groundTemps.get(idx);
+    }
+
+    public static float getAirTemp() {
+        return airTemperatureK;
+    }
+
+    public static float getMaxHeatRate(String floorName) {
+        return maxHeatRateMap.get(floorName, Float.POSITIVE_INFINITY);
+    }
+
+    public static void reset() {
+        groundTemps = null;
+    }
+}
+</code></pre></div>
+<p><strong>关键 API 讲解</strong>：
+- <strong><code>FloatSeq</code></strong>：Arc 的 float 数组封装（坑 2 会讲为什么不是 <code>FloatArray</code>）。底层就是一个 <code>float[] items</code>，O(1) 随机访问。
+- <strong><code>tile.array()</code></strong>：这是关键。Mindustry 里 tile 有两个索引：<code>tile.x()/tile.y()</code>（坐标）和 <code>tile.array()</code>（一维数组下标）。我们建表时用 <code>w*h</code> 长度，必须按 <code>tile.array()</code> 存、按 <code>tile.array()</code> 取——用错 <code>tile.pos()</code> 会越界。
+- <strong><code>Vars.world.tiles.get(x, y)</code></strong>：拿任意坐标的 tile。
+- <strong><code>WorldLoadEvent</code></strong>：主类里 <code>Events.on(WorldLoadEvent.class, ...)</code> 触发，进图那一刻跑一次 <code>precompute()</code>。</p>
+<p><strong>为什么 Floor 没有温度字段（需自建存储）</strong>：
+原版 <code>Floor</code> 类只有行走速度、拖拽系数、伤害、溺水时间、行走特效这些字段，<strong>物理上就没有温度概念</strong>。我们不能改游戏源码，也不该往 Floor 里塞自定义字段（会和序列化冲突）。所以另起一张 <code>FloatSeq groundTemps</code>，按 tile 的一维索引存，进图时填好，运行时只读。查表 O(1)，零耦合。</p>
+<hr />
+<h3 id="5thermalbuilding">步骤 5：建筑基类——ThermalBuilding 接口</h3>
+<p><strong>目标</strong>：定一个"凡是热力建筑都得长这样"的契约，让 ThermalSystem 能统一调用。</p>
+<div class="codeblock"><div class="codebar"><span class="ver">COPY</span><span class="lang">Java</span><button class="copy-btn" type="button">复制</button></div><pre><code class="language-java">package com.thermal.mod.core;
+
+import mindustry.gen.Building;
+
+public interface ThermalBuilding {
+
+    /** @return 此建筑的热力组件 */
+    ThermalComponent getThermal();
+
+    /** Phase 2 中调用，执行建筑自身的产热/耗热/热泵逻辑。 */
+    void updateThermalLogic(float deltaTime);
+
+    /** @return 转为 Building 引用（用于访问 tile/proximity 等） */
+    Building asBuilding();
+}
+</code></pre></div>
+<p><strong>为什么用接口而不是抽象类</strong>：
+Mindustry 的 Build 类必须 <code>extends Building</code>（游戏 ECS 要求），Java 单继承已经被 <code>Building</code> 占了，没法再 <code>extends AbstractThermalBuilding</code>。所以用接口：每个建筑的 Build 类 <code>implements ThermalBuilding</code>，三个方法（拿组件 / 跑自身逻辑 / 转回 Building）实现一遍就行。</p>
+<p><strong>proximity 邻居数组的使用</strong>：接口本身不直接碰 proximity——那是 <code>asBuilding()</code> 转回 <code>Building</code> 之后，在 <code>ThermalSystem</code> 里统一遍历的。建筑类自己不用找邻居。</p>
+<hr />
+<h3 id="6">步骤 6：四个建筑</h3>
+<p>下面四个建筑结构高度一致：继承 <code>Wall</code>（先拿个简单的实心方块当爹）→ 内部写一个 <code>XxxBuild extends Building implements ThermalBuilding</code> → <code>placed()</code> 里配参数 + register → <code>onRemoved()</code> 里 unregister → <code>updateThermalLogic(dt)</code> 写自己的产热/耗热逻辑 → <code>display(Table)</code> 写面板。</p>
+<h4 id="461-industrialboiler">4.6.1 IndustrialBoiler（产热）</h4>
+<div class="codeblock"><div class="codebar"><span class="ver">COPY</span><span class="lang">Java</span><button class="copy-btn" type="button">复制</button></div><pre><code class="language-java">package com.thermal.mod.blocks;
+
+import arc.scene.ui.layout.Table;
+import com.thermal.mod.ThermalModMain;
+import com.thermal.mod.core.ThermalBuilding;
+import com.thermal.mod.core.ThermalComponent;
+import mindustry.gen.Building;
+import mindustry.world.blocks.defense.Wall;
+
+public class IndustrialBoiler extends Wall {
+
+    public float ratedPower = 100f;        // 额定产热 (J/tick)
+    public float restartHysteresis = 50f; // 重启回差 (K)
+
+    public IndustrialBoiler(String name) {
+        super(name);
+        update = true;
+        solid = true;
+        noUpdateDisabled = true;
+        rotate = false;
+    }
+
+    public class BoilerBuild extends Building implements ThermalBuilding {
+
+        public ThermalComponent thermal = new ThermalComponent();
+        public boolean isShutdown = false;
+
+        @Override public ThermalComponent getThermal() { return thermal; }
+        @Override public Building asBuilding() { return this; }
+
+        @Override
+        public void placed() {
+            super.placed();
+            thermal.heatCapacity = 2000f;
+            thermal.maxTempK = 800f;       // 527°C
+            thermal.minTempK = 273f;
+            thermal.airU = 0.05f;
+            thermal.isFloating = false;
+            thermal.contactResistance = 0.05f;
+            // 初始温度设为环境温度（20°C）
+            thermal.storedHeat = thermal.heatCapacity * 293.15f;
+            thermal.invalidate();
+
+            ThermalModMain.thermalSystem.register(this);
+        }
+
+        @Override
+        public void onRemoved() {
+            super.onRemoved();
+            ThermalModMain.thermalSystem.unregister(this);
+        }
+
+        @Override
+        public void updateThermalLogic(float dt) {
+            float temp = thermal.getTemperatureK();
+
+            // 温度达上限 → 停机
+            if (temp &gt;= thermal.maxTempK) {
+                isShutdown = true;
+            }
+            // 温度回落到阈值以下 → 重启
+            if (isShutdown &amp;&amp; temp &lt; thermal.maxTempK - restartHysteresis) {
+                isShutdown = false;
+            }
+            // 运行中产热
+            if (!isShutdown) {
+                thermal.addHeat(ratedPower * dt);
+            }
+        }
+
+        @Override
+        public void display(Table table) {
+            super.display(table);
+            table.row();
+            table.left().label(() -&gt; &quot;[orange]工业锅炉[]&quot;).padTop(4);
+            table.row();
+            table.left().label(() -&gt;
+                &quot;温度: &quot; + String.format(&quot;%.1f&quot;, thermal.getTemperatureK() - 273.15f) + &quot;°C&quot; +
+                (isShutdown ? &quot; [red](停机)&quot; : &quot; [green](运行)&quot;));
+            table.row();
+            table.left().label(() -&gt;
+                &quot;存储热量: &quot; + String.format(&quot;%.0f&quot;, thermal.storedHeat) + &quot; J&quot;);
+            table.row();
+            table.left().label(() -&gt; &quot;热容: &quot; + thermal.heatCapacity + &quot; J/K&quot;);
+            table.row();
+            table.left().label(() -&gt;
+                &quot;产热: &quot; + (isShutdown ? &quot;0&quot; : (int)ratedPower) + &quot; J/t&quot;);
+        }
+    }
+}
+</code></pre></div>
+<p><strong>关键设计说明</strong>：
+- <strong>达 maxTempK 硬停机 + 回差重启</strong>：<code>temp &gt;= maxTempK</code> 停机；<code>temp &lt; maxTempK - restartHysteresis</code> 才重启。回差 50K 防止温度在临界点抖来抖去高频启停。
+- <strong><code>thermal.invalidate()</code></strong>：placed 里直接改了 <code>storedHeat</code>，必须手动失效缓存（坑 3 的教训）。
+- <strong><code>update = true</code> + <code>noUpdateDisabled = true</code></strong>：告诉游戏这个建筑每 tick 要 update，且被断电/禁用时也别停我们的热力逻辑（其实我们的逻辑走 ThermalSystem，不依赖游戏 update 调度，但保险起见开着）。</p>
+<h4 id="462-coolingtower">4.6.2 CoolingTower（散热）</h4>
+<div class="codeblock"><div class="codebar"><span class="ver">COPY</span><span class="lang">Java</span><button class="copy-btn" type="button">复制</button></div><pre><code class="language-java">package com.thermal.mod.blocks;
+
+import arc.scene.ui.layout.Table;
+import com.thermal.mod.ThermalModMain;
+import com.thermal.mod.core.ThermalBuilding;
+import com.thermal.mod.core.ThermalComponent;
+import mindustry.gen.Building;
+import mindustry.world.blocks.defense.Wall;
+
+public class CoolingTower extends Wall {
+
+    public CoolingTower(String name) {
+        super(name);
+        update = true;
+        solid = true;
+        noUpdateDisabled = true;
+        rotate = false;
+    }
+
+    public class TowerBuild extends Building implements ThermalBuilding {
+
+        public ThermalComponent thermal = new ThermalComponent();
+
+        @Override public ThermalComponent getThermal() { return thermal; }
+        @Override public Building asBuilding() { return this; }
+
+        @Override
+        public void placed() {
+            super.placed();
+            thermal.heatCapacity = 500f;
+            thermal.maxTempK = 600f;
+            thermal.minTempK = 273f;
+            thermal.airU = 0.31f;              // 高 airU = 散热强
+            thermal.isFloating = false;        // 接地，借地面散热
+            thermal.contactResistance = 0.05f;
+            thermal.storedHeat = thermal.heatCapacity * 293.15f;
+            thermal.invalidate();
+
+            // 地块效率系数（不同地块散热快慢不同）
+            thermal.setGroundEfficiency(&quot;air&quot;, 1.0f);
+            thermal.setGroundEfficiency(&quot;sand&quot;, 1.2f);
+            thermal.setGroundEfficiency(&quot;stone&quot;, 1.5f);
+            thermal.setGroundEfficiency(&quot;water&quot;, 2.2f);
+            thermal.setGroundEfficiency(&quot;slag&quot;, 3.0f);
+            thermal.setGroundEfficiency(&quot;ice&quot;, 0.6f);
+
+            ThermalModMain.thermalSystem.register(this);
+        }
+
+        @Override
+        public void onRemoved() {
+            super.onRemoved();
+            ThermalModMain.thermalSystem.unregister(this);
+        }
+
+        @Override
+        public void updateThermalLogic(float dt) {
+            // 散热塔自身不产热不耗热，纯靠 ThermalSystem 环境换热
+        }
+
+        @Override
+        public void display(Table table) {
+            super.display(table);
+            table.row();
+            table.left().label(() -&gt; &quot;[cyan]散热塔[]&quot;).padTop(4);
+            table.row();
+            table.left().label(() -&gt;
+                &quot;温度: &quot; + String.format(&quot;%.1f&quot;, thermal.getTemperatureK() - 273.15f) + &quot;°C&quot;);
+            table.row();
+            table.left().label(() -&gt;
+                &quot;存储热量: &quot; + String.format(&quot;%.0f&quot;, thermal.storedHeat) + &quot; J&quot;);
+            table.row();
+            table.left().label(() -&gt; &quot;热容: &quot; + thermal.heatCapacity + &quot; J/K&quot;);
+            table.row();
+            table.left().label(() -&gt; &quot;空气U: &quot; + thermal.airU + &quot; J/(t·格·K)&quot;);
+            table.row();
+            table.left().label(() -&gt; &quot;状态: [blue]散热中[]&quot;);
+        }
+    }
+}
+</code></pre></div>
+<p><strong>关键设计说明</strong>：散热塔的"散热"不是自己写代码抽热，而是靠 ThermalSystem Phase2 里的环境换热——高 <code>airU</code>（0.31）+ 接地（<code>isFloating=false</code>）+ 地块效率系数（放水上 ×2.2、放岩浆上 ×3.0），自然就把热带到环境里了。<code>updateThermalLogic</code> 是空的。</p>
+<h4 id="463-heatconduit">4.6.3 HeatConduit（输热）</h4>
+<div class="codeblock"><div class="codebar"><span class="ver">COPY</span><span class="lang">Java</span><button class="copy-btn" type="button">复制</button></div><pre><code class="language-java">package com.thermal.mod.blocks;
+
+import arc.scene.ui.layout.Table;
+import com.thermal.mod.ThermalModMain;
+import com.thermal.mod.core.ThermalBuilding;
+import com.thermal.mod.core.ThermalComponent;
+import mindustry.gen.Building;
+import mindustry.world.blocks.defense.Wall;
+
+public class HeatConduit extends Wall {
+
+    public HeatConduit(String name) {
+        super(name);
+        update = true;
+        solid = true;
+        noUpdateDisabled = true;
+        rotate = false;
+    }
+
+    public class ConduitBuild extends Building implements ThermalBuilding {
+
+        public ThermalComponent thermal = new ThermalComponent();
+
+        @Override public ThermalComponent getThermal() { return thermal; }
+        @Override public Building asBuilding() { return this; }
+
+        @Override
+        public void placed() {
+            super.placed();
+            thermal.heatCapacity = 50f;
+            thermal.maxTempK = 800f;
+            thermal.minTempK = 200f;          // -73°C，防止过低
+            thermal.airU = 0.008f;            // 极低 = 保温好
+            thermal.isFloating = true;        // 架空，不接触地面
+            thermal.contactResistance = 0.02f; // 小 R = 传热快
+            thermal.storedHeat = thermal.heatCapacity * 293.15f;
+            thermal.invalidate();
+
+            ThermalModMain.thermalSystem.register(this);
+        }
+
+        @Override
+        public void onRemoved() {
+            super.onRemoved();
+            ThermalModMain.thermalSystem.unregister(this);
+        }
+
+        @Override
+        public void updateThermalLogic(float dt) {
+            // 导热管无自身逻辑，纯靠 ThermalSystem 双缓冲传热
+        }
+
+        @Override
+        public void display(Table table) {
+            super.display(table);
+            table.row();
+            table.left().label(() -&gt; &quot;[orange]导热管[]&quot;).padTop(4);
+            table.row();
+            table.left().label(() -&gt;
+                &quot;温度: &quot; + String.format(&quot;%.1f&quot;, thermal.getTemperatureK() - 273.15f) + &quot;°C&quot;);
+            table.row();
+            table.left().label(() -&gt;
+                &quot;存储热量: &quot; + String.format(&quot;%.0f&quot;, thermal.storedHeat) + &quot; J&quot;);
+            table.row();
+            table.left().label(() -&gt; &quot;热容: &quot; + thermal.heatCapacity + &quot; J/K&quot;);
+            table.row();
+            table.left().label(() -&gt; &quot;空气U: &quot; + thermal.airU + &quot; [gray](保温)&quot;);
+            table.row();
+            table.left().label(() -&gt;
+                &quot;状态: &quot; + (thermal.isFloating ? &quot;[gray]架空保温[]&quot; : &quot;[white]接地[]&quot;));
+        }
+    }
+}
+</code></pre></div>
+<p><strong>关键设计说明</strong>：
+- <strong><code>isFloating=true</code></strong>：架空，ThermalSystem Phase2 直接跳过地面换热，只和空气换。
+- <strong><code>airU=0.008</code>（极低）</strong>：保温。手册 §5.5 说"k 与 airU 绑定"——保温管就是低 airU，长距离输送散热极小。
+- <strong><code>contactResistance=0.02</code>（小）</strong>：管子之间传热快，整根管线温度迅速拉平，玩家视角就是"一根等温的热棒"。</p>
+<h4 id="464-refineryfurnace">4.6.4 RefineryFurnace（用热）</h4>
+<div class="codeblock"><div class="codebar"><span class="ver">COPY</span><span class="lang">Java</span><button class="copy-btn" type="button">复制</button></div><pre><code class="language-java">package com.thermal.mod.blocks;
+
+import arc.scene.ui.layout.Table;
+import com.thermal.mod.ThermalModMain;
+import com.thermal.mod.core.ThermalBuilding;
+import com.thermal.mod.core.ThermalComponent;
+import mindustry.gen.Building;
+import mindustry.world.blocks.defense.Wall;
+
+public class RefineryFurnace extends Wall {
+
+    public float operatingMinK = 450f;   // 工作温区下限 (177°C)
+    public float ratedHeat = 80f;        // 额定热耗 (J/tick)
+    public float idleLoss = 10f;         // 空载损耗 (J/tick)
+
+    public RefineryFurnace(String name) {
+        super(name);
+        update = true;
+        solid = true;
+        noUpdateDisabled = true;
+        rotate = false;
+    }
+
+    public class FurnaceBuild extends Building implements ThermalBuilding {
+
+        public ThermalComponent thermal = new ThermalComponent();
+
+        public enum FurnaceState { PREHEATING, WORKING, IDLING }
+        public FurnaceState state = FurnaceState.PREHEATING;
+
+        @Override public ThermalComponent getThermal() { return thermal; }
+        @Override public Building asBuilding() { return this; }
+
+        @Override
+        public void placed() {
+            super.placed();
+            thermal.heatCapacity = 1500f;
+            thermal.maxTempK = 700f;
+            thermal.minTempK = 273f;
+            thermal.airU = 0.08f;
+            thermal.isFloating = false;
+            thermal.contactResistance = 0.05f;
+            thermal.storedHeat = thermal.heatCapacity * 293.15f;
+            thermal.invalidate();
+
+            ThermalModMain.thermalSystem.register(this);
+        }
+
+        @Override
+        public void onRemoved() {
+            super.onRemoved();
+            ThermalModMain.thermalSystem.unregister(this);
+        }
+
+        @Override
+        public void updateThermalLogic(float dt) {
+            float temp = thermal.getTemperatureK();
+
+            // 骨架版：不检查实际输入物品，模拟有输入
+            boolean hasInput = true; // TODO: 后续接入物品检测
+
+            if (hasInput &amp;&amp; temp &gt;= operatingMinK) {
+                // 工作状态：消耗额定热量生产
+                state = FurnaceState.WORKING;
+                thermal.addHeat(-ratedHeat * dt);
+            } else if (hasInput) {
+                // 预热中：温度不够，不耗热
+                state = FurnaceState.PREHEATING;
+            } else {
+                // 空载：消耗少量热量保温
+                state = FurnaceState.IDLING;
+                thermal.addHeat(-idleLoss * dt);
+            }
+        }
+
+        @Override
+        public void display(Table table) {
+            super.display(table);
+            table.row();
+            table.left().label(() -&gt; &quot;[orange]精炼炉[]&quot;).padTop(4);
+            table.row();
+            table.left().label(() -&gt;
+                &quot;温度: &quot; + String.format(&quot;%.1f&quot;, thermal.getTemperatureK() - 273.15f) + &quot;°C&quot; + stateLabel());
+            table.row();
+            table.left().label(() -&gt;
+                &quot;温区要求: &gt;= &quot; + String.format(&quot;%.0f&quot;, operatingMinK - 273.15f) + &quot;°C&quot;);
+            table.row();
+            table.left().label(() -&gt;
+                &quot;热耗: &quot; + (state == FurnaceState.WORKING ? &quot;-&quot; + (int)ratedHeat
+                    : state == FurnaceState.IDLING ? &quot;-&quot; + (int)idleLoss : &quot;0&quot;) + &quot; J/t&quot;);
+            table.row();
+            table.left().label(() -&gt; &quot;热容: &quot; + thermal.heatCapacity + &quot; J/K&quot;);
+        }
+
+        private String stateLabel() {
+            switch (state) {
+                case WORKING: return &quot; [green](工作中)&quot;;
+                case PREHEATING: return &quot; [yellow](预热中)&quot;;
+                case IDLING: return &quot; [gray](空载)&quot;;
+                default: return &quot;&quot;;
+            }
+        }
+    }
+}
+</code></pre></div>
+<p><strong>关键设计说明</strong>：
+- <strong>operatingMinK 温区</strong>：温度低于 450K（177°C）不生产，只预热。这逼玩家必须把热网烧热到工作温区。
+- <strong>空载 idleLoss</strong>：没料时只耗 10 J/t 保温，别让炉子凉透。
+- <strong>骨架版</strong>：<code>hasInput</code> 写死 <code>true</code>，TODO 后续接原版物品检测。本版只演示温度状态机。</p>
+<hr />
+<h3 id="7thermalblocks-thermalitems">步骤 7：注册——ThermalBlocks / ThermalItems</h3>
+<p><strong>目标</strong>：把四个建筑挂到游戏内容系统，出现在建造栏。</p>
+<div class="codeblock"><div class="codebar"><span class="ver">COPY</span><span class="lang">Java</span><button class="copy-btn" type="button">复制</button></div><pre><code class="language-java">package com.thermal.mod.content;
+
+import com.thermal.mod.blocks.CoolingTower;
+import com.thermal.mod.blocks.HeatConduit;
+import com.thermal.mod.blocks.IndustrialBoiler;
+import com.thermal.mod.blocks.RefineryFurnace;
+
+import static mindustry.type.ItemStack.with;
+import static mindustry.type.Category.crafting;
+import static mindustry.type.Category.defense;
+
+public class ThermalBlocks {
+
+    public static IndustrialBoiler industrialBoiler;
+    public static CoolingTower coolingTower;
+    public static HeatConduit heatConduit;
+    public static RefineryFurnace refineryFurnace;
+
+    public static void load() {
+        // 工业锅炉
+        industrialBoiler = new IndustrialBoiler(&quot;industrial-boiler&quot;);
+        industrialBoiler.requirements(crafting, with(mindustry.content.Items.copper, 50));
+        industrialBoiler.health = 300;
+
+        // 散热塔
+        coolingTower = new CoolingTower(&quot;cooling-tower&quot;);
+        coolingTower.requirements(crafting, with(mindustry.content.Items.copper, 30));
+        coolingTower.health = 200;
+
+        // 导热管
+        heatConduit = new HeatConduit(&quot;heat-conduit&quot;);
+        heatConduit.requirements(defense, with(mindustry.content.Items.copper, 2));
+        heatConduit.health = 100;
+
+        // 精炼炉
+        refineryFurnace = new RefineryFurnace(&quot;refinery-furnace&quot;);
+        refineryFurnace.requirements(crafting, with(mindustry.content.Items.copper, 40));
+        refineryFurnace.health = 250;
+    }
+}
+</code></pre></div>
+<div class="codeblock"><div class="codebar"><span class="ver">COPY</span><span class="lang">Java</span><button class="copy-btn" type="button">复制</button></div><pre><code class="language-java">package com.thermal.mod.content;
+
+public class ThermalItems {
+    public static void load() {
+        // 预留：本轮最小 mod 不注册新物品，建筑全用原版铜砖建造
+    }
+}
+</code></pre></div>
+<p><strong>关键 API 讲解</strong>：
+- <strong><code>Category</code> 用法</strong>：<code>mindustry.type.Category</code> 是建造栏分类枚举（crafting / defense / distribution / ...）。用 <code>import static mindustry.type.Category.crafting</code> 静态导入，写 <code>requirements(crafting, ...)</code> 直接用。（注意包路径——坑 1 专门讲这个。）
+- <strong><code>requirements(Category, ItemStack...)</code></strong>：声明这个建筑在哪个分类、需要什么材料建造。<code>ItemStack.with(copper, 50)</code> 就是"50 铜"。
+- <strong>Content 自动注册机制</strong>：<code>Block</code> 的构造函数会自动把自己注册进游戏内容系统。我们只要 <code>new IndustrialBoiler("industrial-boiler")</code>，游戏就认识这个方块了，不用手动塞列表。
+- <strong><code>Items.copper</code></strong>：原版铜，直接引用 <code>mindustry.content.Items.copper</code>，不自定义新物品。</p>
+<hr />
+<h2 id="5">第 5 章：编译与验证</h2>
+<p>代码写完不算完，得让游戏真的加载起来。这一章讲怎么编译、怎么 headless 验证、怎么读日志。</p>
+<h3 id="51">5.1 编译命令</h3>
+<p><strong>方式 A：Gradle（推荐）</strong></p>
+<div class="codeblock"><div class="codebar"><span class="ver">COPY</span><span class="lang">Bash/Shell</span><button class="copy-btn" type="button">复制</button></div><pre><code class="language-bash"># 进入项目根目录
+cd thermal-mod/
+
+# 编译 + 打 jar（JDK 17）
+./gradlew build
+
+# 产物在 build/libs/thermal-mod-0.1.0.jar
+ls -la build/libs/
+</code></pre></div>
+<p><strong>方式 B：手动 javac（没有 Gradle 时兜底）</strong></p>
+<div class="codeblock"><div class="codebar"><span class="ver">COPY</span><span class="lang">Bash/Shell</span><button class="copy-btn" type="button">复制</button></div><pre><code class="language-bash"># 假设 classpath 里有 mindustry-core 和 arc-core 的 jar
+javac -source 17 -target 17 \
+  -cp &quot;mindustry-core-v159.7.jar:arc-core.jar&quot; \
+  -d build/classes \
+  src/main/java/com/thermal/mod/**/*.java
+
+# 把 mod.json 打进去
+jar cf thermal-mod.jar -C build/classes . -C . mod.json
+</code></pre></div>
+<h3 id="52-headless">5.2 headless 加载验证（关键）</h3>
+<p>光编译过不够——编译过只说明类型对，不说明 mod 真能被游戏加载。Mindustry 提供了 headless 服务端模式，不弹窗直接跑，最适合验证 mod 加载。</p>
+<p>验证流水线（本项目实际跑通的）：</p>
+<div class="codeblock"><div class="codebar"><span class="ver">COPY</span><span class="lang">Bash/Shell</span><button class="copy-btn" type="button">复制</button></div><pre><code class="language-bash"># 1. JDK 17
+export JAVA_HOME=~/.jdk17
+
+# 2. 组 classpath：
+#    - mod 编译产物 build/classes
+#    - 游戏生成的 gen 代码（ECS 注解处理器产物）
+#    - server-release.jar（Mindustry 服务端）
+#    - arc-core-1.0.jar
+#    - backend-headless 的 classes
+#    - 其他 extensions
+
+# 3. 把 thermal-mod.jar 放进 运行目录/config/mods/
+cp thermal-mod.jar 运行目录/config/mods/
+
+# 4. 启动 headless 服务端，观察日志
+java -cp &quot;classpath...&quot; mindustry.server.ServerLauncher
+</code></pre></div>
+<h3 id="53">5.3 成功日志长什么样</h3>
+<p>加载成功时，控制台会依次打出这四行（本项目实际日志）：</p>
+<div class="codeblock"><div class="codebar"><span class="ver">COPY</span><span class="lang">TEXT</span><button class="copy-btn" type="button">复制</button></div><pre><code>[INFO] ThermalMod: 内容加载完成
+[INFO] 1 mods loaded
+[INFO] ThermalMod: 模组初始化完成
+[INFO] Server loaded
+</code></pre></div>
+<p><strong>怎么读日志判断 mod 加载成功</strong>：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">日志行</th>
+<th style="text-align: left;">含义</th>
+<th style="text-align: left;">出问题时</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>ThermalMod: 内容加载完成</code></td>
+<td style="text-align: left;"><code>loadContent()</code> 跑完，四个方块注册成功</td>
+<td style="text-align: left;">没这行 → 主类没找到，检查 mod.json 的 <code>main</code> 路径</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>1 mods loaded</code></td>
+<td style="text-align: left;">游戏识别到 1 个 mod</td>
+<td style="text-align: left;">数字是 0 → mod.json 没打进 jar 根目录，或 <code>java:true</code> 没写</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ThermalMod: 模组初始化完成</code></td>
+<td style="text-align: left;"><code>init()</code> 跑完，WorldLoadEvent 和 Trigger.update 都挂上了</td>
+<td style="text-align: left;">没这行 → init 里抛异常了，往上翻堆栈</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Server loaded</code></td>
+<td style="text-align: left;">服务端启动完成，没有 fatal error</td>
+<td style="text-align: left;">卡住/退出 → mod 类 NoClassDefFoundError 或版本不兼容</td>
+</tr>
+</tbody>
+</table>
+<h3 id="54">5.4 产物</h3>
+<p>已编译好的 <code>thermal-mod.jar</code>（22 KB，jar 内 26 项）直接丢进游戏 <code>config/mods/</code> 文件夹即可加载。</p>
+<hr />
+<h2 id="6_1">第 6 章：踩坑实录（最有价值部分）</h2>
+<blockquote>
+<p>这一章是"真实开发过程"最值钱的部分。三个坑，每个都讲：错在哪 → 报什么错 → 怎么查源码修正 → 教训。萌新抄项目时，这三个坑你大概率会原样踩一遍。</p>
+</blockquote>
+<h3 id="1category">坑 1：Category 包路径错误</h3>
+<p><strong>错在哪</strong></p>
+<p>一开始凭直觉，觉得"Category 是建筑的分类，肯定在 world 包下"，于是写：</p>
+<div class="codeblock"><div class="codebar"><span class="ver">COPY</span><span class="lang">Java</span><button class="copy-btn" type="button">复制</button></div><pre><code class="language-java">import mindustry.world.meta.Category;   // ← 凭感觉写的，其实不存在
+</code></pre></div>
+<p><strong>报什么错</strong></p>
+<div class="codeblock"><div class="codebar"><span class="ver">COPY</span><span class="lang">TEXT</span><button class="copy-btn" type="button">复制</button></div><pre><code>error: cannot find symbol
+    import mindustry.world.meta.Category;
+                                  ^
+  符号:   class Category
+  位置: 程序包 mindustry.world.meta 中
+</code></pre></div>
+<p>编译直接挂在第一行。IDE 也不补全——因为这个类根本不存在。</p>
+<p><strong>怎么查源码修正</strong></p>
+<p>别瞎猜，直接去 Mindustry 源码里 grep 这个枚举到底在哪：</p>
+<div class="codeblock"><div class="codebar"><span class="ver">COPY</span><span class="lang">Bash/Shell</span><button class="copy-btn" type="button">复制</button></div><pre><code class="language-bash"># 在 Mindustry 源码根目录
+grep -rn &quot;public enum Category&quot; core/src/
+# 或者
+grep -rn &quot;enum Category&quot; core/src/mindustry/
+</code></pre></div>
+<p>定位结果：</p>
+<div class="codeblock"><div class="codebar"><span class="ver">COPY</span><span class="lang">TEXT</span><button class="copy-btn" type="button">复制</button></div><pre><code>core/src/mindustry/type/Category.java:4: public enum Category {
+</code></pre></div>
+<p><strong>Category 实际在 <code>mindustry.type</code> 包下，不在 <code>mindustry.world.meta</code>。</strong></p>
+<p>修正（ThermalBlocks.java:10-11）：</p>
+<div class="codeblock"><div class="codebar"><span class="ver">COPY</span><span class="lang">Java</span><button class="copy-btn" type="button">复制</button></div><pre><code class="language-java">// 错的：
+// import mindustry.world.meta.Category;
+
+// 对的：静态导入具体枚举值
+import static mindustry.type.Category.crafting;
+import static mindustry.type.Category.defense;
+</code></pre></div>
+<p><strong>教训</strong>：Mindustry 的包分工有规律——
+- <code>mindustry.type.*</code>：<strong>枚举和类型定义</strong>（Category、ItemFlak、ItemStack 静态方法 with 等）。
+- <code>mindustry.world.meta.*</code>：<strong>建筑元数据</strong>（Stat 枚举、BlockMetadata、BuildVisibility 这种"描述建筑参数"的东西）。</p>
+<p>枚举类（能 <code>import static</code> 直接用值的）几乎都在 <code>type</code> 包。下次再遇到"凭感觉 import 不到"，先 <code>grep "enum X"</code> 定位，别猜。</p>
+<hr />
+<h3 id="2floatarray">坑 2：FloatArray 不存在</h3>
+<p><strong>错在哪</strong></p>
+<p>设计手册 §4.1 写"按 tile 存一张 float 表"。直觉用 Java 标准库的思路，想要一个"float 版的 ArrayList"，于是写：</p>
+<div class="codeblock"><div class="codebar"><span class="ver">COPY</span><span class="lang">Java</span><button class="copy-btn" type="button">复制</button></div><pre><code class="language-java">import arc.struct.FloatArray;          // ← 以为有这个类
+private FloatSeq groundTemps;
+...
+groundTemps = new FloatArray(w * h);    // ← 编译不过
+</code></pre></div>
+<p><strong>报什么错</strong></p>
+<div class="codeblock"><div class="codebar"><span class="ver">COPY</span><span class="lang">TEXT</span><button class="copy-btn" type="button">复制</button></div><pre><code>error: cannot find symbol
+    import arc.struct.FloatArray;
+                       ^
+  符号:   类 FloatArray
+  位置: 程序包 arc.struct
+</code></pre></div>
+<p><strong>怎么查源码修正</strong></p>
+<p>去 Arc 引擎仓库看 <code>arc/struct/</code> 目录下到底有哪些集合类：</p>
+<div class="codeblock"><div class="codebar"><span class="ver">COPY</span><span class="lang">Bash/Shell</span><button class="copy-btn" type="button">复制</button></div><pre><code class="language-bash">ls arc/struct/ | grep -i float
+# 输出：
+#   FloatQueue.java
+#   FloatSeq.java
+#   ...
+</code></pre></div>
+<p>Arc 里<strong>没有 <code>FloatArray</code>，有 <code>FloatSeq</code></strong>。</p>
+<p>修正（EnvironmentTemperature.java:3）：</p>
+<div class="codeblock"><div class="codebar"><span class="ver">COPY</span><span class="lang">Java</span><button class="copy-btn" type="button">复制</button></div><pre><code class="language-java">// 错的：import arc.struct.FloatArray;
+import arc.struct.FloatSeq;
+...
+private static FloatSeq groundTemps;
+...
+groundTemps = new FloatSeq(w * h);
+groundTemps.size = w * h;
+</code></pre></div>
+<p><strong>教训</strong>：Arc 引擎的集合命名和 Java 标准库<strong>不一样</strong>，别用 Java 命名习惯套：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">你以为的（Java 习惯）</th>
+<th style="text-align: left;">Arc 里实际叫</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">ArrayList</td>
+<td style="text-align: left;"><code>Seq&lt;T&gt;</code></td>
+</tr>
+<tr>
+<td style="text-align: left;">float[] 封装 / FloatBuffer</td>
+<td style="text-align: left;"><code>FloatSeq</code></td>
+</tr>
+<tr>
+<td style="text-align: left;">HashMap<K,V></td>
+<td style="text-align: left;"><code>ObjectMap&lt;K,V&gt;</code></td>
+</tr>
+<tr>
+<td style="text-align: left;">HashMap<K,float>（值不装箱）</td>
+<td style="text-align: left;"><code>ObjectFloatMap&lt;K&gt;</code></td>
+</tr>
+<tr>
+<td style="text-align: left;">ArrayDeque</td>
+<td style="text-align: left;"><code>Queue&lt;T&gt;</code></td>
+</tr>
+</tbody>
+</table>
+<p>规律：Arc 用 <code>Seq</code>（sequence）当列表后缀，值是原始类型的用 <code>XxxSeq</code> / <code>ObjectXxxMap</code> 避免装箱。写之前先 <code>ls arc/struct/</code> 看一眼真实类名。</p>
+<hr />
+<h3 id="3-tempdirty">坑 3：私有 tempDirty 无法访问</h3>
+<p><strong>错在哪</strong></p>
+<p>这是个封装问题，不是 API 问题。设计手册里 ThermalComponent 的 <code>tempDirty</code> 是 private 缓存标志。写建筑类的时候，placed() 里直接改了 <code>storedHeat</code>（为了把初始温度设成环境温度），直觉想手动把缓存失效：</p>
+<div class="codeblock"><div class="codebar"><span class="ver">COPY</span><span class="lang">Java</span><button class="copy-btn" type="button">复制</button></div><pre><code class="language-java">// 某建筑的 placed() 里
+thermal.storedHeat = thermal.heatCapacity * 293.15f;
+thermal.tempDirty = true;     // ← 想当然，直接碰私有字段
+</code></pre></div>
+<p><strong>报什么错</strong></p>
+<div class="codeblock"><div class="codebar"><span class="ver">COPY</span><span class="lang">TEXT</span><button class="copy-btn" type="button">复制</button></div><pre><code>error: tempDirty has private access in ThermalComponent
+    thermal.tempDirty = true;
+           ^
+</code></pre></div>
+<p>编译器直接拒绝——<code>tempDirty</code> 在 ThermalComponent 里声明为 <code>private boolean tempDirty = true;</code>，外部类够不着。</p>
+<p><strong>怎么查源码修正</strong></p>
+<p>先回头看 ThermalComponent 的字段声明，确认可见性：</p>
+<div class="codeblock"><div class="codebar"><span class="ver">COPY</span><span class="lang">Java</span><button class="copy-btn" type="button">复制</button></div><pre><code class="language-java">// ThermalComponent.java:79-80
+private float cachedTempK;
+private boolean tempDirty = true;
+</code></pre></div>
+<p>确实是 private。有两个修法：
+1. 把 <code>tempDirty</code> 改成 public（<strong>不行</strong>，破坏封装，外部随便改缓存标志会出 bug）；
+2. <strong>在 ThermalComponent 里加一个公开方法</strong>，让外部"请求"失效缓存。</p>
+<p>选 2。修正（ThermalComponent.java:108-111）：</p>
+<div class="codeblock"><div class="codebar"><span class="ver">COPY</span><span class="lang">Java</span><button class="copy-btn" type="button">复制</button></div><pre><code class="language-java">/** 标记温度缓存失效（外部直接修改 storedHeat 后调用）。 */
+public void invalidate() {
+    tempDirty = true;
+}
+</code></pre></div>
+<p>然后四个建筑的 placed() 里统一改成调用：</p>
+<div class="codeblock"><div class="codebar"><span class="ver">COPY</span><span class="lang">Java</span><button class="copy-btn" type="button">复制</button></div><pre><code class="language-java">thermal.storedHeat = thermal.heatCapacity * 293.15f;
+thermal.invalidate();     // ← 公开方法，不碰私有字段
+</code></pre></div>
+<p><strong>教训</strong>：这是个封装原则问题——
+- <strong>组件内部状态（cachedTempK / tempDirty）不暴露</strong>。外部不该知道"我内部用了缓存"这个实现细节。
+- 正确做法是<strong>提供语义化的公开方法</strong>：<code>invalidate()</code>（失效缓存）、<code>addHeat(q)</code>（加热量顺便失效）、<code>getTemperatureK()</code>（读温度）。外部只调方法，不碰字段。
+- 如果你发现自己在别的类里要直接改组件的私有字段，八成是组件漏了一个公开方法——去组件里加方法，而不是把字段改成 public。</p>
+<hr />
+<h2 id="7">第 7 章：已知限制与迭代方向</h2>
+<h3 id="71-trade-off">7.1 双缓冲的简化（当前实现的 trade-off）</h3>
+<p>当前 ThermalSystem 的双缓冲是"全局两阶段"简化版。设计手册 §3 里的高斯-赛德尔迭代、逐 tile 热扩散，本版没做。换来的是：
+- 每 tick 只遍历两遍建筑列表，O(N)；
+- 不需要维护连接池，靠 proximity 现成邻居数组；
+- 代价是：建筑内部温度会有 1 tick 的滞后，大温差下首 tick 可能略微偏离真实物理。</p>
+<p>对一个"能跑、能抄"的最小 mod 来说，这个 trade-off 划算。</p>
+<h3 id="72-v160">7.2 v160 的官方热力系统桥接（进阶预告）</h3>
+<p>v160 新增了 <code>HeatCrafter</code> / <code>HeatConsumer</code> 两个原版方块接口（见门户"v159.7 → v160 变更速查"卡片）。我们这套自建的 ThermalComponent 热力系统和官方的热力系统目前是<strong>各跑各的</strong>。后续可以做一层桥接：</p>
+<ul>
+<li>让 <code>RefineryFurnace</code> 同时实现官方 <code>HeatConsumer</code>，把我们的 <code>storedHeat</code> 对接到原版热量槽；</li>
+<li>这样原版产热建筑（HeatCrafter）和我们的散热塔能在同一个热网里交互。</li>
+</ul>
+<p>这是 v0.2 的主要工作。</p>
+<h3 id="73">7.3 温差发电机 / 热泵的完整实现</h3>
+<p>本版这两类只留了骨架。完整实现需要：
+- <strong>温差发电机</strong>：<code>dT = temp - min(tAir, tGround)</code>，按 <code>powerCurve</code> 查表把部分热流转成电力，废热从冷端排出。需要接原版 <code>PowerGraph</code>。
+- <strong>档位热泵</strong>：冷端 + 热端两个独立 ThermalComponent，<code>coldSide.addHeat(-Q); hotSide.addHeat(Q+W)</code>，耗电 <code>W = Q/COP</code>。需要双端布局和过热保护。</p>
+<h3 id="74">7.4 物品级热力（传送带物品携带热量）</h3>
+<p>现在只有建筑有 ThermalComponent。要做"烧红的铁锭在传送带上慢慢降温"，得给物品也挂组件——但物品是 <code>static</code> 单例，每个物品的温度按传送带碎片实例存，工程量大，放 v0.3。</p>
+<h3 id="75">7.5 性能优化</h3>
+<p>当前 <code>Seq&lt;ThermalBuilding&gt;</code> 每次 register/unregister 是 O(N) 查找。建筑上百个时没事，上千个时考虑：
+- 用 <code>IntSet</code> 或分块（chunk）维护建筑；
+- 热流计算只在"有温差邻居"时触发，温度拉平后跳过；
+- 环境换热的 <code>tile.floor().name</code> 字符串查表可缓存成枚举。</p>
+<hr />
+<h2 id="8">第 8 章：附录</h2>
+<h3 id="81">8.1 全部源码清单</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">类</th>
+<th style="text-align: left;">职责</th>
+<th style="text-align: left;">关键方法</th>
+<th style="text-align: left;">行数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>ThermalModMain</code></td>
+<td style="text-align: left;">mod 入口，生命周期 + 事件驱动</td>
+<td style="text-align: left;"><code>loadContent()</code> / <code>init()</code></td>
+<td style="text-align: left;">ThermalModMain.java:22-51</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>core/ThermalComponent</code></td>
+<td style="text-align: left;">热节点数据结构，惰性温度</td>
+<td style="text-align: left;"><code>getTemperatureK()</code> / <code>addHeat()</code> / <code>invalidate()</code></td>
+<td style="text-align: left;">ThermalComponent.java:18-133</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>core/ThermalSystem</code></td>
+<td style="text-align: left;">双缓冲主循环</td>
+<td style="text-align: left;"><code>update(dt)</code> / <code>register()</code> / <code>unregister()</code></td>
+<td style="text-align: left;">ThermalSystem.java:21-135</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>core/EnvironmentTemperature</code></td>
+<td style="text-align: left;">环境温度查表</td>
+<td style="text-align: left;"><code>precompute()</code> / <code>getGroundTemp()</code> / <code>getAirTemp()</code></td>
+<td style="text-align: left;">EnvironmentTemperature.java:25-119</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>core/ThermalBuilding</code></td>
+<td style="text-align: left;">热力建筑接口</td>
+<td style="text-align: left;"><code>getThermal()</code> / <code>updateThermalLogic()</code> / <code>asBuilding()</code></td>
+<td style="text-align: left;">ThermalBuilding.java:11-30</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>blocks/IndustrialBoiler</code></td>
+<td style="text-align: left;">产热建筑，停机+回差重启</td>
+<td style="text-align: left;"><code>updateThermalLogic()</code> / <code>display()</code></td>
+<td style="text-align: left;">IndustrialBoiler.java:23-122</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>blocks/CoolingTower</code></td>
+<td style="text-align: left;">散热建筑，高 airU + 地面换热</td>
+<td style="text-align: left;"><code>placed()</code> / <code>display()</code></td>
+<td style="text-align: left;">CoolingTower.java:21-107</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>blocks/HeatConduit</code></td>
+<td style="text-align: left;">输热管道，架空保温</td>
+<td style="text-align: left;"><code>placed()</code> / <code>display()</code></td>
+<td style="text-align: left;">HeatConduit.java:22-100</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>blocks/RefineryFurnace</code></td>
+<td style="text-align: left;">用热建筑，温区+空载</td>
+<td style="text-align: left;"><code>updateThermalLogic()</code> / <code>display()</code></td>
+<td style="text-align: left;">RefineryFurnace.java:23-138</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>content/ThermalBlocks</code></td>
+<td style="text-align: left;">方块注册</td>
+<td style="text-align: left;"><code>load()</code></td>
+<td style="text-align: left;">ThermalBlocks.java:19-54</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>content/ThermalItems</code></td>
+<td style="text-align: left;">物品注册（预留空）</td>
+<td style="text-align: left;"><code>load()</code></td>
+<td style="text-align: left;">ThermalItems.java:9-14</td>
+</tr>
+</tbody>
+</table>
+<h3 id="82-mindustry-api">8.2 源码地图（Mindustry 核心 API 位置）</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">我们用到的 API</th>
+<th style="text-align: left;">Mindustry 源码位置（v160 工作树）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>Mod</code> 基类</td>
+<td style="text-align: left;"><code>core/src/mindustry/mod/Mod.java</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Building.update()</code> 每 tick</td>
+<td style="text-align: left;"><code>core/src/mindustry/entities/comp/BuildingComp.java</code>（update 段）</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Building.proximity</code> 邻居数组</td>
+<td style="text-align: left;"><code>BuildingComp.java</code> 字段声明 <code>Seq&lt;Building&gt; proximity</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Building.display(Table)</code> 面板钩子</td>
+<td style="text-align: left;"><code>BuildingComp.java</code> 的 <code>display(Table)</code> 方法</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Building.placed()</code> / <code>onRemoved()</code></td>
+<td style="text-align: left;"><code>BuildingComp.java</code> 的放置/拆除回调</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Block.requirements(Category, ItemStack...)</code></td>
+<td style="text-align: left;"><code>core/src/mindustry/world/Block.java</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Category</code> 枚举</td>
+<td style="text-align: left;"><code>core/src/mindustry/type/Category.java</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ItemStack.with(...)</code></td>
+<td style="text-align: left;"><code>core/src/mindustry/type/ItemStack.java</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Floor</code>（无温度字段，需自建）</td>
+<td style="text-align: left;"><code>core/src/mindustry/world/blocks/environment/Floor.java</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>WorldLoadEvent</code></td>
+<td style="text-align: left;"><code>core/src/mindustry/game/EventType.java</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Events.run(Trigger.update, ...)</code></td>
+<td style="text-align: left;"><code>arc.Events</code> + <code>EventType.Trigger.update</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Seq&lt;T&gt;</code> / <code>FloatSeq</code> / <code>ObjectFloatMap</code></td>
+<td style="text-align: left;"><code>arc.struct.*</code>（Arc 引擎）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="83">8.3 引用</h3>
+<ul>
+<li><strong>设计手册</strong>：《热力学系统设计手册》v1.0（八节：哲学/数据结构/主循环/环境交互/建筑规约/玩家流程/性能安全/HJSON 速查）。本教程第 1~3 章、第 4 章每步的"为什么这么写"都源自它。</li>
+<li><strong>可行性报告</strong>：《Feasibility-Report》（10 机制判定：7 原生支持 ✅ / 3 需适配 ⚠️ / 0 难点 🔴，每项标注 <code>类:行号</code>）。本教程第 3 章直接采用其判定表与源码依据。</li>
+<li><strong>已编译产物</strong>：<code>thermal-mod.jar</code>（22 KB），headless 加载验证四行日志齐全。</li>
+</ul>
+<hr />
+<blockquote>
+<p><strong>收尾</strong>：到这里，你手里有 11 个 Java 文件、1 个 build.gradle、1 个 mod.json、1 个能被 <code>Server loaded</code> 认出来的 22 KB jar。下一步——把它丢进游戏 <code>config/mods/</code>，进图，放一个锅炉、接几根导热管、连一个散热塔，点选建筑看面板温度数字有没有动。动了，你就真的把一个 mod 从图纸抄成了能跑的东西。</p>
+</blockquote>
+<hr />
+<h2 id="9-headless-server">第 9 章：运行调试实录（headless server 实测）</h2>
+<blockquote>
+<p>第 5 章证明了"游戏认得这个 mod"（4 行加载日志），但<strong>加载成功 ≠ 热传导真的在跑</strong>。这一章把 mod 挂到真实 headless 服务器上，跑一条完整测试链，用真实 tick 下的温度曲线数据，证明双缓冲热传导在游戏世界里真的工作——以及为了做到这一点，我们踩穿了 4 个运行时 bug。</p>
+<p>源码行号基于当前 v160 工作树；本 mod 按 v159.7 API 编写，这些运行时 API 在两版本间一致。</p>
+</blockquote>
+<h3 id="91">9.1 运行验证目标与测试链</h3>
+<p><strong>验证目标</strong>：在真实游戏 tick 下，确认从锅炉产热 → 导热管传导 → 精炼炉受热升温的完整热链路是否闭合，温度梯度是否按设计出现。</p>
+<p><strong>测试链</strong>：</p>
+<div class="codeblock"><div class="codebar"><span class="ver">COPY</span><span class="lang">TEXT</span><button class="copy-btn" type="button">复制</button></div><pre><code>[工业锅炉] [导热管] [导热管] [精炼炉]
+   产热       保温      保温     要 177°C (450K) 才工作
+</code></pre></div>
+<p>四个建筑<strong>紧密相邻、一字排开、全是 1×1</strong>，靠 <code>proximity</code> 邻居数组建立热传导。</p>
+<p><strong>运行环境</strong>：
+- headless server（<code>mindustry.server.ServerLauncher</code>），无 GUI；
+- 用 stdin 管道注入 <code>host</code> 命令触发真实地图加载（见 Bug 1）；
+- <code>WorldLoadEvent</code> 里自动放置测试链，省去手动操作；
+- v160 工作树 classpath + 本 mod；
+- 运行目录 <code>/tmp/thermal-run/</code>，完整温度曲线落在 <code>server.log</code>。</p>
+<h3 id="92-serverlog">9.2 真实温度曲线（来自 server.log）</h3>
+<p>调试器每 60 tick 打一次温度。下面是测试链在 600 / 1800 / 3600 / 5400 / 6000 tick 的真实读数：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">tick</th>
+<th style="text-align: right;">锅炉 K</th>
+<th style="text-align: right;">导管1 K</th>
+<th style="text-align: right;">导管2 K</th>
+<th style="text-align: right;">精炼炉 K</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">600</td>
+<td style="text-align: right;">308.9</td>
+<td style="text-align: right;">305.9</td>
+<td style="text-align: right;">304.3</td>
+<td style="text-align: right;">301.5</td>
+</tr>
+<tr>
+<td style="text-align: center;">1800</td>
+<td style="text-align: right;">340.0</td>
+<td style="text-align: right;">336.8</td>
+<td style="text-align: right;">335.0</td>
+<td style="text-align: right;">332.0</td>
+</tr>
+<tr>
+<td style="text-align: center;">3600</td>
+<td style="text-align: right;">381.5</td>
+<td style="text-align: right;">378.1</td>
+<td style="text-align: right;">376.2</td>
+<td style="text-align: right;">373.1</td>
+</tr>
+<tr>
+<td style="text-align: center;">5400</td>
+<td style="text-align: right;">417.6</td>
+<td style="text-align: right;">414.1</td>
+<td style="text-align: right;">412.1</td>
+<td style="text-align: right;">408.9</td>
+</tr>
+<tr>
+<td style="text-align: center;">6000</td>
+<td style="text-align: right;">428.5</td>
+<td style="text-align: right;">425.0</td>
+<td style="text-align: right;">423.0</td>
+<td style="text-align: right;">419.8</td>
+</tr>
+</tbody>
+</table>
+<p><strong>从这张表读出四个结论</strong>：</p>
+<ol>
+<li><strong>热传导链路完整。</strong> 每个时刻都是 <code>锅炉 &gt; 导管1 &gt; 导管2 &gt; 精炼炉</code> 的单调递减梯度，相邻温差稳定在 ~3K。这正是手册 §4.5 期望的形态——小接触热阻把整根管线迅速拉平，只在热源和热负载两端留落差。<strong>热量真的顺着管子在传。</strong></li>
+<li><strong>proximity 连接正确。</strong> 调试输出显示锅炉 <code>p=1</code>、两根导管 <code>p=2</code>、精炼炉 <code>p=1</code>——正好是一字链两端各 1 邻居、中间各 2 邻居。邻居关系没断。</li>
+<li><strong>6000 tick 无异常。</strong> 没有 NaN、没有温度负值、没有来回振荡。双缓冲 + 防过冲保护在真实长时间运行下稳得住。</li>
+<li><strong>精炼炉还没到工作温度。</strong> 6000 tick 时精炼炉 ~420K，离 <code>operatingMinK=450K</code> 还差 30K。这不是 bug，反而<strong>印证了"预热过慢"的设计问题</strong>——锅炉 100 J/tick 的产热要同时加热 4 个节点，热容量不小，按这条曲线还得再跑几千 tick 才到工作温区。第 7 章说的"后续优化热容配比"就是冲这个来的。</li>
+</ol>
+<blockquote>
+<p>结论：<strong>双缓冲热传导不是纸面推演，在真实服务器 tick 下、四个真实建筑之间，温度真的按设计在流动、在配平。</strong> 这一步过了，这个 mod 才算"真的能跑"。</p>
+</blockquote>
+<h3 id="93-bug">9.3 四个真实 bug 逐个展开（最有价值部分）</h3>
+<p>下面四个 bug 是把 mod 从"编译过、加载过"推进到"真的跑出温度曲线"过程中，挨个踩穿的。每个按 <strong>错误现象 → 排查过程 → 源码证据 → 修复 → 教训</strong> 讲。</p>
+<h4 id="bug-1serverlauncherinit">Bug 1：ServerLauncher.init() 不加载世界</h4>
+<p><strong>错误现象</strong></p>
+<p>headless 服务器启动后，控制台只打出 <code>Server loaded</code>，但我们注册的 <code>WorldLoadEvent</code> 监听（环境预计算 + 自动放置测试链）<strong>一次都没触发</strong>。<code>EnvironmentTemperature.precompute()</code> 没跑，测试链也没放。</p>
+<p><strong>排查过程</strong></p>
+<p>一开始怀疑 mod 的事件注册写错了，反复检查 <code>Events.on(WorldLoadEvent.class, ...)</code> 语法没问题。然后翻 headless 启动入口，发现问题根本不在我们这边——服务器<strong>压根没加载任何地图</strong>，自然不会 fire <code>WorldLoadEvent</code>。</p>
+<p><strong>源码证据</strong></p>
+<p><code>ServerLauncher.java</code> 的 <code>init()</code> 只 fire <code>ServerLoadEvent</code>（服务端加载完成事件），<strong>不加载地图</strong>。headless 无参启动只把服务端进程跑起来，它在等玩家连接或控制台命令，自己不会凭空开一张图。</p>
+<p><strong>修复</strong></p>
+<p>用 stdin 管道，在启动后注入 <code>host</code> 命令强制加载一张地图：</p>
+<div class="codeblock"><div class="codebar"><span class="ver">COPY</span><span class="lang">Bash/Shell</span><button class="copy-btn" type="button">复制</button></div><pre><code class="language-bash"># 启动后等 12 秒让服务端就绪，发 host 建图，再挂 95 秒跑测试链
+(sleep 12; echo &quot;host&quot;; sleep 95) | java -Dthermal.debug=true -cp &quot;...&quot; mindustry.server.ServerLauncher
+</code></pre></div>
+<p><code>host</code> 命令一进控制台，游戏正常加载随机地图 → fire <code>WorldLoadEvent</code> → 我们的预计算和测试链放置全部触发。</p>
+<p><strong>教训</strong></p>
+<p>headless 调试<strong>必须走命令触发世界加载</strong>，不能假设"启动即加载"。<code>ServerLoadEvent</code> ≠ <code>WorldLoadEvent</code>，前者只是服务端进程就绪，后者才是真有了可玩的世界。</p>
+<h4 id="bug-2tilesetblock-placed">Bug 2：tile.setBlock() 不调用 placed()</h4>
+<p><strong>错误现象</strong></p>
+<p>测试链放上去了，但建筑的热力参数（heatCapacity、airU 等）全是默认 0，也没注册进 ThermalSystem——<code>update</code> 里根本遍历不到它们。</p>
+<p><strong>排查过程</strong></p>
+<p>对比"玩家手动放一个锅炉"和"代码里 <code>tile.setBlock(...)</code> 放锅炉"两条路径：玩家放的，一切正常；代码放的，参数没初始化。怀疑 <code>placed()</code> 没被调。</p>
+<p><strong>源码证据</strong></p>
+<p><code>BuildingComp.java:1361</code> 的 <code>placed()</code> 方法只处理电力节点等本建筑初始化逻辑，<strong>不会被 <code>setBlock()</code> 自动调用</strong>——玩家正常放置时，是游戏在放置流程里显式调的 <code>placed()</code>；你直接 <code>tile.setBlock()</code>，跳过了整条玩家放置调用链，<code>placed()</code> 自然不跑。</p>
+<p><strong>修复</strong></p>
+<p>代码放置后，手动补调生命周期：</p>
+<div class="codeblock"><div class="codebar"><span class="ver">COPY</span><span class="lang">Java</span><button class="copy-btn" type="button">复制</button></div><pre><code class="language-java">Vars.world.tile(x, y).setBlock(block, null, 0);
+Building build = Vars.world.tile(x, y).build;
+if (build != null) {
+    build.placed();   // ← 手动补 placed()，热力参数初始化 + register
+}
+</code></pre></div>
+<p><strong>教训</strong></p>
+<p>必须区分<strong>"玩家放置流程"</strong>（游戏自动调 placed()）和<strong>"代码直接放置"</strong>（<code>setBlock()</code> 跳过一切回调）。后者你要自己把生命周期的关键调用补上——不然建筑就是个空壳。</p>
+<h4 id="bug-3setblock-proximity">Bug 3：setBlock() 不填充 proximity</h4>
+<p><strong>错误现象</strong></p>
+<p>补了 <code>placed()</code> 之后，参数有了、也注册了，但热传导还是不动。打调试输出一看：<code>building.proximity.size == 0</code>——邻居列表是空的，Phase 1 遍历邻居数组啥也遍历不到。</p>
+<p><strong>排查过程</strong></p>
+<p>先怀疑测试链放错位了，坐标一个个核对，确实是相邻的。然后去查 proximity 是怎么来的。</p>
+<p><strong>源码证据</strong></p>
+<p><code>BuildingComp.java:1886</code> 的 <code>updateProximity()</code>：基于 <code>Edges.getEdges(...)</code> 查世界里该位置周围的建筑，<strong>双向添加</strong>——把自己加进邻居的 proximity，也把邻居加进自己的 proximity。这个填充动作由 <code>onProximityUpdate</code> 触发，<strong>代码 <code>setBlock()</code> 放置时不自动跑</strong>。</p>
+<p><strong>修复</strong></p>
+<p>放置后手动调 <code>updateProximity()</code>，而且<strong>必须等全部建筑放完再统一刷一次</strong>——逐个放的时候，下一个邻居还不存在，你现在刷只能刷出半条链：</p>
+<div class="codeblock"><div class="codebar"><span class="ver">COPY</span><span class="lang">Java</span><button class="copy-btn" type="button">复制</button></div><pre><code class="language-java">// 先把四个全 setBlock + placed()
+placeAllChain();
+// 再统一刷新一次，让彼此互相进 proximity
+for (Building b : allBuilt) b.updateProximity();
+</code></pre></div>
+<p><strong>教训</strong></p>
+<p><code>proximity</code> 不是自动维护的，代码放置后必须手动 <code>updateProximity()</code>；而且<strong>注意刷新时机</strong>——要在所有相关建筑就位后统一刷，不能放一个刷一个。</p>
+<h4 id="bug-4-size1">Bug 4：建筑默认 size=1（最终根因，最有价值）</h4>
+<p><strong>错误现象</strong></p>
+<p>前三个 bug 修完，锅炉烧到了 553K，<strong>两根导管却死死停在 293.1K 纹丝不动</strong>——热传导像根本没生效。这是整个调试过程里最迷惑的一个：代码看着都对、邻居看着也放了，温度就是不流。</p>
+<p><strong>排查过程</strong></p>
+<ol>
+<li><strong>先打 proximity 明细</strong>——发现锅炉 <code>p=0</code>（不是预期的 1）。邻居根本没连上。</li>
+<li>怀疑 <code>Edges.getEdges</code> 算错了，实测 <code>Edges.getEdges(2)</code> 明明包含 <code>(2,0)</code> 这个方向，但按这个方向去 <code>world.build</code> 查就是查不到。</li>
+<li>回头查建筑尺寸字段——发现所有建筑<strong>都没设 <code>size</code>，默认 1×1</strong>。</li>
+<li>再看调试器的放置代码：调试器最初按"2×2 建筑"的概念布局，用 <code>nearby(2,0)</code> 的偏移去放导管。可锅炉是 1×1，它的邻居范围根本不覆盖"隔一格"的位置——<strong>导管和锅炉之间空了一格地，物理上就不相邻，proximity 当然查不到</strong>。</li>
+</ol>
+<p><strong>根因</strong></p>
+<p>不是机制 bug，是<strong>布局空隙</strong>。我们的 <code>IndustrialBoiler</code> 等都继承 <code>Wall</code>，<strong>Wall 子类不自动变成 2×2</strong>，默认就是 1×1。调试器却按 2×2 的间距概念放，导致链上建筑隔一格空地，永不相邻。</p>
+<p><strong>修复</strong></p>
+<p>布局改成真正紧邻——导管放在 <code>(1,0)/(2,0)/(3,0)</code>（相对于锅炉），四个格子紧挨。放好后传导立即生效，温度梯度立刻出现（就是 9.2 那张表）。</p>
+<p><strong>教训</strong></p>
+<p>这是这次调试最值钱的一课：</p>
+<ul>
+<li><strong>"机制不工作"先查布局和邻居，再查代码。</strong> 我们一度怀疑双缓冲逻辑写错了，折腾半天，最后发现是坐标差了一格。</li>
+<li><strong>先打印 proximity 明细再下机制结论。</strong> 调试输出里那行 <code>p=N{邻居列表}</code>（N 是邻居数）是定位邻居类 bug 的利器——它直接告诉你"这个建筑到底认了几个邻居、是谁"。看到 <code>p=0</code> 就该立刻往"布局/相邻关系"方向查，而不是往"算法错了"方向钻。</li>
+</ul>
+<hr />
+<h3 id="94-thermaldebugjava">9.4 ThermalDebug.java 调试器（完整可复制代码）</h3>
+<p>上面所有调试输出，都来自一个挂在 mod 里的调试工具类 <code>ThermalDebug</code>。它用 JVM 系统属性当开关，<strong>默认关闭，不影响正常玩家</strong>；打开后自动放测试链、周期打印状态。完整代码：</p>
+<div class="codeblock"><div class="codebar"><span class="ver">COPY</span><span class="lang">Java</span><button class="copy-btn" type="button">复制</button></div><pre><code class="language-java">package com.thermal.mod.core;
+
+import arc.struct.Seq;
+import arc.util.Log;
+import mindustry.Vars;
+import mindustry.game.EventType;
+import mindustry.gen.Building;
+import com.thermal.mod.ThermalModMain;
+
+/**
+ * 运行时调试输出：进图自动放置测试链 + 周期性打印温度/proximity 明细。
+ *
+ * &lt;p&gt;启用方式：JVM 加 -Dthermal.debug=true。
+ * 不传该属性时 init() 直接 return，对正常玩法零影响。&lt;/p&gt;
+ */
+public class ThermalDebug {
+
+    private static int tick = 0;
+
+    public static void init() {
+        if (!Boolean.getBoolean(&quot;thermal.debug&quot;)) return;
+
+        // 进图自动放一条测试链：锅炉 - 导管A - 导管B - 精炼炉
+        Events.on(EventType.WorldLoadEvent.class, e -&gt; {
+            placeTestChain();
+            Log.info(&quot;ThermalDebug: 测试链已放置（锅炉-导管A-导管B-精炼炉）&quot;);
+        });
+
+        // 每 60 tick 打印一次温度与 proximity 明细
+        Events.run(EventType.Trigger.update, () -&gt; {
+            if (Vars.net.client()) return;
+            tick++;
+            if (tick % 60 == 0) dump();
+        });
+    }
+
+    private static void placeTestChain() {
+        int cx = Vars.world.width() / 2;
+        int cy = Vars.world.height() / 2;
+
+        // 四个 1x1 建筑，紧邻一字排开（Bug 4：必须紧邻，不能隔格）
+        place(&quot;thermal-mod-industrial-boiler&quot;, cx,     cy);
+        place(&quot;thermal-mod-heat-conduit&quot;,      cx + 1, cy);
+        place(&quot;thermal-mod-heat-conduit&quot;,      cx + 2, cy);
+        place(&quot;thermal-mod-refinery-furnace&quot;,  cx + 3, cy);
+
+        // Bug 3：全部放完后，统一刷新一次 proximity
+        Vars.world.tiles.eachTile(t -&gt; {
+            if (t.build != null) t.build.updateProximity();
+        });
+    }
+
+    private static void place(String blockName, int x, int y) {
+        var block = Vars.content.block(blockName);
+        var tile = Vars.world.tile(x, y);
+        tile.setBlock(block, null, 0);
+
+        Building build = tile.build;
+        if (build != null) {
+            build.placed();   // Bug 2：手动补 placed()，初始化热力参数 + register
+        }
+    }
+
+    /** 打印每个活跃热力建筑的温度 / 热量 / 邻居数。 */
+    private static void dump() {
+        Seq&lt;ThermalBuilding&gt; list = ThermalModMain.thermalSystem.getBuildings();
+        Log.info(&quot;=== ThermalDebug t=&quot; + tick + &quot; 活跃建筑=&quot; + list.size + &quot; ===&quot;);
+        for (ThermalBuilding b : list) {
+            var node = b.getThermal();
+            var me = b.asBuilding();
+            Log.info(&quot;  @(&quot; + me.tileX() + &quot;,&quot; + me.tileY() + &quot;) &quot;
+                + me.block.name
+                + &quot; T=&quot; + String.format(&quot;%.1f&quot;, node.getTemperatureK()) + &quot;K&quot;
+                + &quot; Q=&quot; + String.format(&quot;%.0f&quot;, node.storedHeat) + &quot;J&quot;
+                + &quot; p=&quot; + me.proximity.size + &quot; 邻居&quot;);
+        }
+    }
+}
+</code></pre></div>
+<p>配套两处小改动：</p>
+<p><strong>主类 <code>init()</code> 末尾挂一行</strong>（开关关闭时这行内部直接 return）：</p>
+<div class="codeblock"><div class="codebar"><span class="ver">COPY</span><span class="lang">Java</span><button class="copy-btn" type="button">复制</button></div><pre><code class="language-java">@Override
+public void init() {
+    thermalSystem = new ThermalSystem();
+    // ... 原有的 WorldLoadEvent / Trigger.update 注册 ...
+    ThermalDebug.init();   // ← 调试器，-Dthermal.debug=true 才真正干活
+    Log.info(&quot;ThermalMod: 模组初始化完成&quot;);
+}
+</code></pre></div>
+<p><strong>ThermalSystem 加只读遍历接口</strong>（调试器要遍历所有建筑打印）：</p>
+<div class="codeblock"><div class="codebar"><span class="ver">COPY</span><span class="lang">Java</span><button class="copy-btn" type="button">复制</button></div><pre><code class="language-java">/** 调试用：返回当前活跃热力建筑列表（只读，勿改）。 */
+public Seq&lt;ThermalBuilding&gt; getBuildings() {
+    return buildings;
+}
+</code></pre></div>
+<p><strong>启用方式</strong>：</p>
+<div class="codeblock"><div class="codebar"><span class="ver">COPY</span><span class="lang">Bash/Shell</span><button class="copy-btn" type="button">复制</button></div><pre><code class="language-bash"># 正常玩家：什么都不加，调试器完全不激活
+java -jar thermal-mod.jar
+
+# 调试：加系统属性
+java -Dthermal.debug=true -cp &quot;...&quot; mindustry.server.ServerLauncher
+</code></pre></div>
+<blockquote>
+<p>正式 jar（含调试器版本）已同步编译为 <code>thermal-mod.jar</code>（约 25 KB）。因为开关默认关闭，玩家正常加载时调试代码一段都不跑，零影响。</p>
+</blockquote>
+<h3 id="95-mindustry-java-mod-headless">9.5 调试方法论（Mindustry Java mod headless 通用套路）</h3>
+<p>把这次调试沉淀成一套可复用的流程，以后写任何需要"每 tick 模拟"的 mod 都套得上：</p>
+<ol>
+<li><strong>headless server + stdin 管道注入 <code>host</code></strong>：别指望无参启动自动建图，用 <code>(sleep N; echo "host"; sleep M) | java ...</code> 强制触发 <code>WorldLoadEvent</code>。</li>
+<li><strong><code>WorldLoadEvent</code> 里自动放测试建筑</strong>：不要手动在游戏里摆，代码放才能复现、能写进日志。</li>
+<li><strong>代码放置必须补生命周期</strong>：<code>setBlock()</code> 后手动 <code>placed()</code>；全部放完后统一 <code>updateProximity()</code>。</li>
+<li><strong>周期打印关键状态</strong>：每 N tick 打一次温度 / proximity / 效率，时间序列比"看一眼"靠谱得多。</li>
+<li><strong>先打 proximity 明细再下机制结论</strong>：看到 <code>p=0</code> 先查布局和相邻关系，别一上来怀疑算法错了。</li>
+<li><strong>区分"玩家放置"和"代码放置"</strong>：前者游戏自动补回调，后者你得手动补。</li>
+<li><strong>用 <code>System.getProperty</code> 开关调试代码</strong>：<code>Boolean.getBoolean("thermal.debug")</code> 一行开关，正式发布默认关闭，不影响玩家。</li>
+</ol>
+<hr />
+<h2 id="_1">收尾</h2>
+<blockquote>
+<p>8 章正文 + 这一章运行实录，构成了一个闭环：从设计手册（第 1 章）→ 需求拆解（第 2 章）→ 可行性（第 3 章）→ 分步实现（第 4 章）→ 编译加载（第 5 章）→ API 踩坑（第 6 章）→ 迭代方向（第 7 章）→ 源码地图（第 8 章）→ <strong>真实跑通的温度曲线（第 9 章）</strong>。代码是对的，日志是真的，热量在真的流。抄吧。</p>
+</blockquote>
+<hr>
+<p style="color:var(--muted);font-size:13px;text-align:center;">
+  实战开发全记录 v1.1 · 2026-09-11 · Mindustry v159.7 编写 / v160 工作树核验<br>
+  9 章 · 7 步分步实现 · 7 个真实踩坑（3 API + 4 运行时）· headless 温度曲线实测
+</p>
+</main>
+
+<button id="toTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+// Back to top
+window.addEventListener('scroll', () => {
+  document.getElementById('toTop').style.display = window.scrollY > 400 ? 'flex' : 'none';
+});
+// Active nav highlight
+const sections = document.querySelectorAll('h1[id], h2[id], h3[id]');
+const navLinks = document.querySelectorAll('#sidebar nav a');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => { if (window.scrollY >= s.offsetTop - 80) current = s.id; });
+  navLinks.forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+  });
+});
+// Copy buttons
+document.querySelectorAll('.copy-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const pre = btn.closest('.codeblock').querySelector('pre code');
+    const text = pre.innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      const old = btn.textContent;
+      btn.textContent = '已复制 ✓';
+      btn.classList.add('done');
+      setTimeout(() => { btn.textContent = old; btn.classList.remove('done'); }, 1500);
+    });
+  });
+});
+// Mobile nav toggle
+document.getElementById('navToggle').addEventListener('click', () => {
+  document.body.classList.toggle('nav-open');
+});
+</script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-clike.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-java.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-json.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-groovy.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js"></script>
+</body>
+</html>

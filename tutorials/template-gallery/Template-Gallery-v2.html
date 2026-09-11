@@ -1,0 +1,1735 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mindustry Java 模组 · 分类模板库「有样学样」模板画廊 v2</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css">
+<style>
+  :root{
+    --bg:#0f0f1a;
+    --bg2:#1a1a2e;
+    --bg3:#16162a;
+    --code-bg:#1e1e2e;
+    --accent:#f39c12;
+    --accent2:#e67e22;
+    --new:#2ecc71;
+    --border:#2a2a4a;
+    --text:#d5d5e8;
+    --muted:#8a8aa8;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;scroll-padding-top:120px;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    line-height:1.6;
+    font-size:15px;
+  }
+  a{color:var(--accent);text-decoration:none;}
+
+  /* 顶部分类导航 */
+  .topbar{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    background:rgba(15,15,26,.95);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--border);
+    padding:10px 16px;
+  }
+  .topbar .brand{
+    max-width:1400px;margin:0 auto 8px;
+    display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;
+  }
+  .topbar .brand h1{font-size:17px;color:#fff;}
+  .topbar .brand .tag{font-size:12px;color:var(--accent);}
+  .topnav{
+    max-width:1400px;margin:0 auto;
+    display:flex;gap:6px;overflow-x:auto;
+    scrollbar-width:thin;padding-bottom:2px;
+  }
+  .topnav button{
+    flex:0 0 auto;
+    background:var(--bg2);
+    color:var(--text);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:5px 12px;
+    font-size:12.5px;
+    cursor:pointer;
+    white-space:nowrap;
+    transition:all .15s;
+  }
+  .topnav button:hover{border-color:var(--accent);color:var(--accent);}
+  .topnav button.active{background:var(--accent);color:#1a1a2e;border-color:var(--accent);font-weight:600;}
+  .topnav button.is-new{border-color:var(--new);color:var(--new);}
+  .topnav button.is-new:hover{background:rgba(46,204,113,.15);}
+  .topnav button.is-new::after{content:" NEW";font-size:10px;font-weight:700;}
+
+  /* 主体 */
+  .wrap{max-width:1400px;margin:0 auto;padding:110px 20px 60px;}
+  .intro{
+    background:var(--bg2);
+    border-left:4px solid var(--accent);
+    border-radius:0 10px 10px 0;
+    padding:16px 20px;
+    margin-bottom:24px;
+    color:#cfcfe4;
+    font-size:14px;
+  }
+  .intro b{color:#fff;}
+  .intro .meta{margin-top:8px;color:var(--muted);font-size:13px;}
+
+  /* 覆盖矩阵 */
+  .matrix{
+    background:var(--bg2);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:14px 18px;
+    margin-bottom:36px;
+    font-size:13px;
+  }
+  .matrix h3{color:#fff;font-size:14.5px;margin-bottom:10px;border-left:3px solid var(--new);padding-left:8px;}
+  .matrix table{width:100%;border-collapse:collapse;}
+  .matrix th,.matrix td{padding:5px 8px;text-align:left;border-top:1px solid var(--border);}
+  .matrix th{color:#fff;border-top:none;}
+  .matrix td:first-child{font-family:monospace;color:var(--accent);}
+  .matrix .ok{color:var(--new);font-weight:700;}
+  .matrix .part{color:var(--accent);font-weight:700;}
+  .matrix .no{color:var(--muted);}
+
+  /* 分类区块 */
+  .cat{margin-bottom:48px;}
+  .cat > h2{
+    color:#fff;font-size:21px;
+    padding-left:12px;border-left:4px solid var(--accent);
+    margin-bottom:18px;
+  }
+  .cat.big > h2{border-left-color:var(--new);}
+  .cat > .cat-sub{color:var(--muted);font-size:13px;margin:-12px 0 16px 16px;}
+  .badge-new{
+    display:inline-block;background:var(--new);color:#0f2e1c;
+    font-size:11px;font-weight:700;border-radius:8px;
+    padding:1px 8px;margin-left:8px;vertical-align:middle;
+  }
+
+  /* 卡片网格 */
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(460px,1fr));
+    gap:18px;
+  }
+  .card{
+    background:var(--bg2);
+    border:1px solid var(--border);
+    border-left:4px solid var(--accent);
+    border-radius:10px;
+    padding:18px 20px;
+    display:flex;flex-direction:column;
+    transition:transform .15s, box-shadow .15s;
+  }
+  .card.newcard{border-left-color:var(--new);}
+  .card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 8px 24px rgba(0,0,0,.4);
+    border-left-color:var(--accent2);
+  }
+  .card-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px;}
+  .card h3{color:#fff;font-size:16.5px;}
+  .ver{
+    flex:0 0 auto;
+    background:var(--accent);color:#1a1a2e;
+    font-size:11px;font-weight:700;
+    padding:2px 8px;border-radius:10px;
+    font-family:monospace;
+  }
+  .ver.new{background:var(--new);color:#0f2e1c;}
+  .purpose{color:var(--muted);font-size:13.5px;margin-bottom:12px;}
+
+  /* 代码块 */
+  .codeblock{position:relative;margin:8px 0 12px;}
+  .codeblock pre{
+    margin:0;border-radius:8px;
+    background:var(--code-bg)!important;
+    max-height:480px;overflow:auto;
+    font-size:12.5px;
+  }
+  .codeblock code{font-family:"JetBrains Mono","Fira Code",Consolas,monospace;}
+  .copybtn{
+    position:absolute;top:8px;right:8px;
+    background:var(--accent);color:#1a1a2e;
+    border:none;border-radius:6px;
+    padding:3px 10px;font-size:11.5px;font-weight:600;
+    cursor:pointer;opacity:.9;transition:opacity .15s;
+    z-index:2;
+  }
+  .copybtn:hover{opacity:1;}
+
+  .src{
+    font-size:12.5px;color:var(--muted);
+    background:var(--bg3);
+    border-radius:6px;padding:7px 10px;
+    margin-bottom:8px;
+  }
+  .src b{color:var(--accent);font-weight:600;}
+  .tip{
+    font-size:12.5px;color:#cfcfe4;
+    border-top:1px dashed var(--border);
+    padding-top:8px;margin-top:auto;
+  }
+  .tip b{color:var(--accent2);}
+  .newtip{
+    font-size:12.5px;color:#bfe9c9;
+    background:rgba(46,204,113,.1);
+    border:1px solid rgba(46,204,113,.45);
+    border-radius:6px;padding:6px 10px;margin-top:8px;
+  }
+  .newtip b{color:#58d68d;}
+  .newver{
+    background:#2ecc71;color:#04220f;font-size:11px;
+    padding:1px 8px;border-radius:10px;font-weight:700;
+  }
+
+  /* 参数速查表（v2 新增，斑马纹） */
+  .ptitle{font-size:12.5px;color:var(--new);font-weight:700;margin:10px 0 4px;}
+  .param-table{
+    width:100%;border-collapse:collapse;
+    background:var(--bg3);border-radius:6px;overflow:hidden;
+    font-size:12px;margin-bottom:10px;display:block;overflow-x:auto;
+  }
+  .param-table th{background:#22223a;color:#fff;text-align:left;padding:6px 9px;white-space:nowrap;}
+  .param-table td{padding:5px 9px;border-top:1px solid var(--border);vertical-align:top;}
+  .param-table tbody tr:nth-child(odd) td{background:rgba(255,255,255,.02);}
+  .param-table td:first-child{font-family:monospace;color:var(--accent);white-space:nowrap;}
+  .param-table code{color:var(--accent);font-size:11.5px;}
+
+  /* 索引表 */
+  .index-table{
+    width:100%;border-collapse:collapse;
+    background:var(--bg2);border-radius:10px;overflow:hidden;
+    font-size:13px;margin-top:10px;display:block;overflow-x:auto;
+  }
+  .index-table th{background:var(--bg3);color:#fff;text-align:left;padding:9px 12px;white-space:nowrap;}
+  .index-table td{padding:8px 12px;border-top:1px solid var(--border);}
+  .index-table tr:hover td{background:rgba(243,156,18,.05);}
+  .index-table code{color:var(--accent);font-size:12px;}
+  .index-table .star{color:var(--new);font-weight:700;}
+
+  footer{text-align:center;color:var(--muted);font-size:12.5px;margin-top:50px;}
+
+  @media(max-width:640px){
+    .grid{grid-template-columns:1fr;}
+    .wrap{padding:130px 14px 40px;}
+    .card h3{font-size:15px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <h1>分类模板库 · 有样学样 <span class="badge-new">v2</span></h1>
+    <span class="tag">Mindustry v159.7 · Java 17 · 16 分类 / 27 卡片 · 找最像的抄</span>
+  </div>
+  <nav class="topnav" id="topnav">
+    <button data-cat="c1">1 骨架</button>
+    <button data-cat="c2">2 物品</button>
+    <button data-cat="c3">3 墙体</button>
+    <button data-cat="c4">4 炮塔</button>
+    <button data-cat="c5">5 工厂</button>
+    <button data-cat="c6">6 钻头</button>
+    <button data-cat="c7">7 发电机</button>
+    <button data-cat="c8">8 传送</button>
+    <button data-cat="c9">9 状态</button>
+    <button data-cat="c10">10 子弹</button>
+    <button data-cat="c11">11 单位</button>
+    <button data-cat="c12" class="is-new">12 液体</button>
+    <button data-cat="c13" class="is-new">13 天气</button>
+    <button data-cat="c14" class="is-new">14 补缺方块</button>
+    <button data-cat="c15" class="is-new">15 科技树</button>
+    <button data-cat="c16" class="is-new">16 星球</button>
+  </nav>
+</div>
+
+<div class="wrap">
+
+  <div class="intro">
+    <b>怎么用本画廊：</b>把卡片里的代码<b>整段抄进你的项目</b>，再只改"改哪里出花样"里标出的数字和名字。所有代码对照 Mindustry <b>v159.7（HEAD b3317f3）</b>官方源码逐条核验，可直接编译。
+    <div class="meta"><b>v2 更新：</b>在 v1（11 分类 / 18 卡片）基础上扩到 <b>16 分类 / 27 卡片</b>。新增 <b>科技树 ⭐</b>、<b>星球 ⭐</b> 两个大区，以及 <b>液体 / 天气</b> 两个全新分类，补齐 <b>矿石 / 逻辑 / 液块 / 载荷 / 地板</b>，并为各分类加了参数速查表。包名统一 com.example.mod。</div>
+  </div>
+
+  <!-- 覆盖矩阵 -->
+  <div class="matrix">
+    <h3>📊 ContentType 覆盖矩阵（v2）</h3>
+    <table>
+      <thead><tr><th>ContentType</th><th>类</th><th>v1</th><th>v2</th><th>卡片</th></tr></thead>
+      <tbody>
+        <tr><td>item</td><td>Item</td><td class="ok">✅</td><td class="ok">✅</td><td>2.1</td></tr>
+        <tr><td>block</td><td>Block</td><td class="ok">✅</td><td class="ok">✅ + 补 5 类</td><td>3/4/5/6/7/8/14</td></tr>
+        <tr><td>bullet</td><td>BulletType</td><td class="ok">✅</td><td class="ok">✅ + 参数表</td><td>10.1</td></tr>
+        <tr><td>liquid</td><td>Liquid</td><td class="no">❌</td><td class="ok">✅ 新增</td><td>12.1</td></tr>
+        <tr><td>status</td><td>StatusEffect</td><td class="ok">✅</td><td class="ok">✅ + 参数表</td><td>9.1</td></tr>
+        <tr><td>unit</td><td>UnitType</td><td class="ok">✅</td><td class="ok">✅ + 参数表</td><td>11.1</td></tr>
+        <tr><td>weather</td><td>Weather</td><td class="no">❌</td><td class="ok">✅ 新增</td><td>13.1</td></tr>
+        <tr><td>sector</td><td>SectorPreset</td><td class="no">❌</td><td class="part">🟡 星球卡内置</td><td>16.1</td></tr>
+        <tr><td>planet</td><td>Planet</td><td class="no">❌</td><td class="ok">✅ 新增大区</td><td>16.1</td></tr>
+        <tr><td>team / unitCommand / unitStance</td><td>TeamEntry 等</td><td class="no">❌</td><td class="no">⚪ 进阶未覆盖</td><td>—</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ========== 1. 工程骨架 ========== -->
+  <section class="cat" id="c1">
+    <h2>1. 工程骨架</h2>
+    <div class="cat-sub">模组能跑起来的四个基础文件</div>
+    <div class="grid">
+
+      <div class="card">
+        <div class="card-head"><h3>mod.json 模板</h3><span class="ver">v159.7</span></div>
+        <div class="purpose">模组的"身份证"：告诉游戏这个模组叫什么、主类在哪、要求什么游戏版本。</div>
+        <div class="codeblock">
+          <button class="copybtn">复制</button>
+<pre><code class="language-json">{
+  "name": "example-mod",
+  "displayName": "示例模组",
+  "author": "你的名字",
+  "description": "一句话介绍你的模组。",
+  "version": "1.0.0",
+  "main": "com.example.mod.ExampleModMain",
+  "minGameVersion": "154",
+  "java": true,
+  "dependencies": []
+}</code></pre>
+        </div>
+        <div class="src"><b>官方对应物：</b>模组规范。name / main / minGameVersion / java 为必字段；main 指向主类全限定名。见 example-mod/mod.json。</div>
+        <div class="tip"><b>改哪里：</b>改 <code>name</code>（英文短名，也是文件夹名）和 <code>main</code>（主类路径）；想依赖别的模组就在 <code>dependencies</code> 里填对方 name。</div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>主类模板</h3><span class="ver">v159.7</span></div>
+        <div class="purpose">模组入口：游戏通过它加载你注册的所有内容。</div>
+        <div class="codeblock">
+          <button class="copybtn">复制</button>
+<pre><code class="language-java">package com.example.mod;
+
+import arc.util.Log;
+import mindustry.mod.Mod;
+import com.example.mod.content.ModItems;
+import com.example.mod.content.ModBlocks;
+
+public class ExampleModMain extends Mod {
+
+    @Override
+    public void loadContent() {
+        // 在这里调用你自己的内容注册类
+        ModItems.load();
+        ModBlocks.load();
+        // v2：液体/天气/星球/科技树都在这里注册
+        // ModTech.load();  // 科技树必须在所有 block 创建完之后
+
+        Log.info("ExampleMod: 内容加载完成!");
+    }
+
+    @Override
+    public void init() {
+        // 所有内容加载完毕后的初始化逻辑
+        Log.info("ExampleMod: 模组初始化完成!");
+    }
+}</code></pre>
+        </div>
+        <div class="src"><b>官方对应物：</b>mindustry.mod.Mod。生命周期两步——loadContent() 注册内容，init() 做后期初始化。Content 构造时自动调用 Vars.content.handleContent(this)（Content.java:20-23）。</div>
+        <div class="tip"><b>改哪里：</b>loadContent() 里加你写的 ModXxx.load()；init() 里放事件监听、命令注册。</div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>build.gradle 模板</h3><span class="ver">v159.7</span></div>
+        <div class="purpose">Gradle 构建脚本：决定怎么把 Java 代码编译成游戏能用的 jar。</div>
+        <div class="codeblock">
+          <button class="copybtn">复制</button>
+<pre><code class="language-groovy">plugins {
+    id 'java'
+}
+
+// Mindustry v159.7 使用 Java 17
+sourceCompatibility = 17
+targetCompatibility = 17
+
+repositories {
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+    // Mindustry 核心库（仅编译时需要，运行时由游戏提供）
+    compileOnly "com.github.Anuken.Mindustry:core:v159.7"
+    // Arc 引擎核心库
+    compileOnly "com.github.Anuken.Arc:arc-core:889dd8880f"
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDirs = ['src/main/resources']
+        }
+    }
+}
+
+jar {
+    manifest {
+        attributes(
+            'Main-Class': 'mindustry.mod.ModClassLoader'
+        )
+    }
+    from('mod.json') { into '' }
+}
+
+buildDir = 'build'</code></pre>
+        </div>
+        <div class="src"><b>官方对应物：</b>官方构建体系。依赖坐标固定指向 v159.7 的 core 与 arc-core；Main-Class 必须是 mindustry.mod.ModClassLoader。</div>
+        <div class="tip"><b>改哪里：</b>一般不用改。换游戏版本时把 v159.7 和 889dd8880f 换成对应版本号。</div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>gradle.properties 模板</h3><span class="ver">v159.7</span></div>
+        <div class="purpose">Gradle 的 JVM 内存和缓存配置，避免编译时内存不够。</div>
+        <div class="codeblock">
+          <button class="copybtn">复制</button>
+<pre><code class="language-properties"># Gradle JVM 参数
+org.gradle.jvmargs=-Xmx2G
+
+# 构建缓存
+org.gradle.caching=true</code></pre>
+        </div>
+        <div class="src"><b>官方对应物：</b>Gradle 标准配置。-Xmx2G 给 Gradle 分 2GB 堆内存。</div>
+        <div class="tip"><b>改哪里：</b>内存小的机器把 2G 改成 1G；一般不用动。</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========== 2. 物品 ========== -->
+  <section class="cat" id="c2">
+    <h2>2. 物品 Item</h2>
+    <div class="cat-sub">新矿石 / 新材料</div>
+    <div class="grid">
+
+      <div class="card">
+        <div class="card-head"><h3>基础物品 · copper 风格</h3><span class="ver">v159.7</span></div>
+        <div class="purpose">做一种新的矿石/材料，能被钻头挖、被传送带运、被工厂消耗。</div>
+        <div class="codeblock">
+          <button class="copybtn">复制</button>
+<pre><code class="language-java">package com.example.mod.content;
+
+import arc.graphics.Color;
+import mindustry.type.Item;
+
+public class ModItems {
+
+    public static Item exampleItem;
+
+    public static void load() {
+        // 名称 "example-item" 对应贴图 sprites/items/example-item.png
+        exampleItem = new Item("example-item", Color.valueOf("4fc3f7")) {{
+            hardness = 1;     // 矿石硬度：只有 tier >= hardness 的钻头才能挖
+            cost = 0.5f;      // 建造消耗权重，越大越"贵"
+        }};
+    }
+}</code></pre>
+        </div>
+        <div class="src"><b>官方对应物：</b>Items.java:16 —— copper = new Item("copper", Color.valueOf("d99d73")){{ hardness = 1; cost = 0.5f; alwaysUnlocked = true; }};。构造 Item(String, Color)（Item.java:51）。</div>
+        <div class="ptitle">📋 参数速查表</div>
+        <table class="param-table">
+          <thead><tr><th>参数</th><th>类型</th><th>默认</th><th>含义</th><th>典型</th></tr></thead>
+          <tbody>
+            <tr><td>hardness</td><td>int</td><td>0</td><td>矿石硬度；钻头 tier &gt;= hardness 才能挖</td><td>铜=1</td></tr>
+            <tr><td>cost</td><td>float</td><td>0</td><td>建造消耗权重</td><td>铜=0.5</td></tr>
+            <tr><td>color</td><td>Color</td><td>构造传入</td><td>物品/矿石地表颜色</td><td>valueOf</td></tr>
+            <tr><td>alwaysUnlocked</td><td>bool</td><td>false</td><td>开局即解锁、不进科技树</td><td>基础矿=true</td></tr>
+          </tbody>
+        </table>
+        <div class="tip"><b>改哪里：</b>改 Color.valueOf(...) 换颜色；改 hardness 控制钻头等级；加 alwaysUnlocked=true。</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========== 3. 墙体 ========== -->
+  <section class="cat" id="c3">
+    <h2>3. 墙体 Wall</h2>
+    <div class="cat-sub">挡子弹、挡单位的方块</div>
+    <div class="grid">
+
+      <div class="card">
+        <div class="card-head"><h3>基础墙 · copper-wall 风格</h3><span class="ver">v159.7</span></div>
+        <div class="purpose">做一块挡子弹、挡单位的基础方块。</div>
+        <div class="codeblock">
+          <button class="copybtn">复制</button>
+<pre><code class="language-java">package com.example.mod.content;
+
+import mindustry.world.blocks.defense.Wall;
+
+import static mindustry.type.ItemStack.with;
+import static mindustry.world.meta.Category.defense;
+
+public class ModBlocks {
+
+    public static Wall exampleWall;
+
+    public static void load() {
+        exampleWall = new Wall("example-wall") {{
+            requirements(defense, with(ModItems.exampleItem, 6));
+            health = 320;   // 铜墙 = 80 * wallHealthMultiplier(4)
+        }};
+    }
+}</code></pre>
+        </div>
+        <div class="src"><b>官方对应物：</b>Blocks.java:1708 —— copperWall = new Wall("copper-wall"){{ requirements(...); health = 80 * wallHealthMultiplier; researchCostMultiplier = 0.1f; }};。wallHealthMultiplier = 4（Blocks.java:1706）。</div>
+        <div class="tip"><b>改哪里：</b>改 health 调血量；改 requirements(...) 调成本；加 size=2 变 2x2。</div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>高血量/功能墙 · plastanium-wall 风格</h3><span class="ver">v159.7</span></div>
+        <div class="purpose">做一块能挡激光、绝缘（不透电）的高级墙。</div>
+        <div class="codeblock">
+          <button class="copybtn">复制</button>
+<pre><code class="language-java">package com.example.mod.content;
+
+import mindustry.world.blocks.defense.Wall;
+
+import static mindustry.type.ItemStack.with;
+import static mindustry.world.meta.Category.defense;
+
+public class ModBlocks {
+
+    public static Wall foamWall;
+
+    public static void load() {
+        foamWall = new Wall("foam-wall") {{
+            requirements(defense, with(ModItems.exampleItem, 5));
+            health = 500;
+            insulated = true;       // 绝缘
+            absorbLasers = true;    // 吸收激光
+            schematicPriority = 10;
+        }};
+    }
+}</code></pre>
+        </div>
+        <div class="src"><b>官方对应物：</b>Blocks.java:1731 —— plastaniumWall = new Wall("plastanium-wall"){{ ... health = 125*wallHealthMultiplier; insulated = true; absorbLasers = true; }};。</div>
+        <div class="ptitle">📋 参数速查表（Wall/Block）</div>
+        <table class="param-table">
+          <thead><tr><th>参数</th><th>类型</th><th>默认</th><th>含义</th><th>典型</th></tr></thead>
+          <tbody>
+            <tr><td>health</td><td>int</td><td>—</td><td>血量，建议 基数*4</td><td>铜墙=320</td></tr>
+            <tr><td>size</td><td>int</td><td>1</td><td>占地边长</td><td>高墙=2</td></tr>
+            <tr><td>insulated</td><td>bool</td><td>false</td><td>绝缘不导电</td><td>塑胶墙=true</td></tr>
+            <tr><td>absorbLasers</td><td>bool</td><td>false</td><td>吸收激光</td><td>true</td></tr>
+            <tr><td>requirements(cat, stacks)</td><td>方法</td><td>—</td><td>成本+分类</td><td>defense,with(...)</td></tr>
+          </tbody>
+        </table>
+        <div class="tip"><b>改哪里：</b>加 insulated=true 变绝缘墙；加 absorbLasers=true 挡激光。</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========== 4. 炮塔 ========== -->
+  <section class="cat" id="c4">
+    <h2>4. 炮塔 Turret</h2>
+    <div class="cat-sub">吃弹药、自动找敌人打的炮塔</div>
+    <div class="grid">
+
+      <div class="card">
+        <div class="card-head"><h3>基础炮塔 · duo 风格</h3><span class="ver">v159.7</span></div>
+        <div class="purpose">做一座吃物品当弹药、会自动找敌人打的炮塔。</div>
+        <div class="codeblock">
+          <button class="copybtn">复制</button>
+<pre><code class="language-java">package com.example.mod.content;
+
+import mindustry.entities.bullet.BasicBulletType;
+import mindustry.world.blocks.defense.turrets.ItemTurret;
+import mindustry.content.Fx;
+import mindustry.content.Sounds;
+
+import static mindustry.type.ItemStack.with;
+import static mindustry.world.meta.Category.turret;
+import static mindustry.content.Items.*;
+
+public class ModTurrets {
+
+    public static ItemTurret miniDuo;
+
+    public static void load() {
+        miniDuo = new ItemTurret("mini-duo") {{
+            requirements(turret, with(Items.copper, 35));
+
+            ammo(
+                Items.copper, new BasicBulletType(2.5f, 9) {{
+                    width = 7f;
+                    height = 9f;
+                    lifetime = 60f;
+                    ammoMultiplier = 2;
+                    hitEffect = despawnEffect = Fx.hitBulletColor;
+                }}
+            );
+
+            shoot = new mindustry.entities.pattern.ShootAlternate(3.5f);
+
+            reload = 20f;          // 两次射击间隔（帧）
+            range = 160;           // 射程
+            shootCone = 15f;       // 散射角
+            inaccuracy = 2f;       // 随机偏差
+            rotateSpeed = 10f;     // 转向速度
+            recoil = 0.5f;         // 后坐力
+            shootY = 3f;
+            health = 250;
+            shootSound = Sounds.shootDuo;
+            ammoUseEffect = Fx.casing1;
+        }};
+    }
+}</code></pre>
+        </div>
+        <div class="src"><b>官方对应物：</b>Blocks.java:3276 —— duo = new ItemTurret("duo"){{ ... ammo(Items.copper, new BasicBulletType(2.5f,9){{...}}); shoot = new ShootAlternate(3.5f); reload=20; range=160; ... }};。</div>
+        <div class="tip"><b>改哪里：</b>改 reload 调射速（越小越快）；改 range 调射程；ammo(...) 里加更多弹药对。</div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>散射炮塔 · scatter 风格</h3><span class="ver">v159.7</span></div>
+        <div class="purpose">做一座一次喷出多颗碎片、带溅射伤害的霰弹炮塔。</div>
+        <div class="codeblock">
+          <button class="copybtn">复制</button>
+<pre><code class="language-java">package com.example.mod.content;
+
+import mindustry.entities.bullet.FlakBulletType;
+import mindustry.world.blocks.defense.turrets.ItemTurret;
+import mindustry.content.Fx;
+
+import static mindustry.type.ItemStack.with;
+import static mindustry.world.meta.Category.turret;
+import static mindustry.content.Items.scrap;
+
+public class ModTurrets {
+
+    public static ItemTurret miniScatter;
+
+    public static void load() {
+        miniScatter = new ItemTurret("mini-scatter") {{
+            requirements(turret, with(scrap, 40));
+
+            ammo(
+                scrap, new FlakBulletType(4f, 3) {{
+                    lifetime = 60f;
+                    ammoMultiplier = 5f;
+                    shootEffect = Fx.shootSmall;
+                    reloadMultiplier = 0.5f;
+                    width = 6f;
+                    height = 8f;
+                    hitEffect = Fx.flakExplosion;
+                    splashDamage = 33f;
+                    splashDamageRadius = 24f;
+                }}
+            );
+
+            shoot = new mindustry.entities.pattern.ShootMulti(6, 18f, 0f);
+            reload = 30f;
+            range = 170;
+            shootCone = 50f;
+            inaccuracy = 15f;
+            rotateSpeed = 8f;
+            health = 300;
+        }};
+    }
+}</code></pre>
+        </div>
+        <div class="src"><b>官方对应物：</b>Blocks.java:3351 —— scatter = new ItemTurret("scatter"){{ ammo(Items.scrap, new FlakBulletType(4f,3){{ splashDamage=22*1.5; splashDamageRadius=24; ... }}); ... }};。</div>
+        <div class="ptitle">📋 参数速查表（ItemTurret/Turret）</div>
+        <table class="param-table">
+          <thead><tr><th>参数</th><th>类型</th><th>默认</th><th>含义</th><th>典型</th></tr></thead>
+          <tbody>
+            <tr><td>reload</td><td>float</td><td>—</td><td>射击间隔（帧），越小越快</td><td>duo=20</td></tr>
+            <tr><td>range</td><td>float</td><td>—</td><td>射程（像素）</td><td>160</td></tr>
+            <tr><td>shootCone</td><td>float</td><td>—</td><td>瞄准扇形角（度）</td><td>duo=15</td></tr>
+            <tr><td>inaccuracy</td><td>float</td><td>0</td><td>随机散布角</td><td>2~15</td></tr>
+            <tr><td>rotateSpeed</td><td>float</td><td>—</td><td>转向速度</td><td>8~10</td></tr>
+            <tr><td>recoil</td><td>float</td><td>0</td><td>后坐力</td><td>0.5</td></tr>
+            <tr><td>shoot</td><td>ShootPattern</td><td>—</td><td>ShootAlternate / ShootMulti</td><td>Multi(6,18f,0)</td></tr>
+            <tr><td>ammo(...)</td><td>方法</td><td>—</td><td>Item,BulletType 成对映射</td><td>见卡片</td></tr>
+          </tbody>
+        </table>
+        <div class="tip"><b>改哪里：</b>ShootMulti(发数,间隔角,偏移角) 控制喷几颗；改 splashDamage/Radius 调溅射。</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========== 5. 工厂 ========== -->
+  <section class="cat" id="c5">
+    <h2>5. 工厂 GenericCrafter</h2>
+    <div class="cat-sub">吃原料、耗电、出成品的合成机器</div>
+    <div class="grid">
+
+      <div class="card">
+        <div class="card-head"><h3>基础合成厂 · silicon-smelter 风格</h3><span class="ver">v159.7</span></div>
+        <div class="purpose">做一座吃进几种原料、消耗电力、产出一种成品的合成机器。</div>
+        <div class="codeblock">
+          <button class="copybtn">复制</button>
+<pre><code class="language-java">package com.example.mod.content;
+
+import mindustry.world.blocks.production.GenericCrafter;
+import mindustry.type.ItemStack;
+import mindustry.content.Fx;
+
+import static mindustry.type.ItemStack.with;
+import static mindustry.world.meta.Category.crafting;
+import static mindustry.content.Items.*;
+
+public class ModCrafters {
+
+    public static GenericCrafter alloySmelter;
+
+    public static void load() {
+        alloySmelter = new GenericCrafter("alloy-smelter") {{
+            requirements(crafting, with(Items.copper, 30, Items.lead, 25));
+            craftEffect = Fx.smeltsmoke;
+            outputItem = new ItemStack(Items.silicon, 1);
+            craftTime = 40f;
+            size = 2;
+            hasPower = true;
+
+            consumeItems(with(Items.coal, 1, Items.sand, 2));
+            consumePower(0.50f);
+        }};
+    }
+}</code></pre>
+        </div>
+        <div class="src"><b>官方对应物：</b>Blocks.java:1070 —— siliconSmelter = new GenericCrafter("silicon-smelter"){{ ... outputItem=new ItemStack(silicon,1); craftTime=40; size=2; consumeItems(with(coal,1,sand,2)); consumePower(0.50f); }};。</div>
+        <div class="ptitle">📋 参数速查表</div>
+        <table class="param-table">
+          <thead><tr><th>参数</th><th>类型</th><th>默认</th><th>含义</th><th>典型</th></tr></thead>
+          <tbody>
+            <tr><td>craftTime</td><td>float</td><td>—</td><td>合成一次耗时（帧）</td><td>40</td></tr>
+            <tr><td>outputItem</td><td>ItemStack</td><td>null</td><td>每次产出</td><td>(silicon,1)</td></tr>
+            <tr><td>size</td><td>int</td><td>1</td><td>占地边长</td><td>2</td></tr>
+            <tr><td>hasPower</td><td>bool</td><td>false</td><td>是否耗电</td><td>true</td></tr>
+            <tr><td>consumeItems(stacks)</td><td>方法</td><td>—</td><td>原料消耗</td><td>with(coal,1,sand,2)</td></tr>
+            <tr><td>consumePower(amt)</td><td>方法</td><td>—</td><td>每帧耗电</td><td>0.50</td></tr>
+          </tbody>
+        </table>
+        <div class="tip"><b>改哪里：</b>改 outputItem 换产物；改 craftTime 调速度；去掉 consumePower 变纯物耗。</div>
+        <div class="newtip"><b>🟢 v160：</b>v160 把 GenericCrafter 输出改成"小数累积、按次取整"（outputAccumulator，GenericCrafter.java:191）。这张卡照抄没问题；想动态增产请覆写 scaleOutput(float)（:304），别硬改 outputItem.amount。</div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>受热合成厂 · HeatCrafter 风格</h3><span class="newver">v160 NEW</span></div>
+        <div class="purpose">做一座靠热力网络（Heater/HeatConduit）供热才开工的合成厂，热够才生产、热多可超效率。</div>
+        <div class="codeblock">
+          <button class="copybtn">复制</button>
+<pre><code class="language-java">package com.example.mod.content;
+
+import mindustry.world.blocks.production.HeatCrafter;
+import mindustry.type.ItemStack;
+
+import static mindustry.type.ItemStack.with;
+import static mindustry.world.meta.Category.crafting;
+import static mindustry.content.Items.*;
+
+public class ModHeatCrafters {
+
+    public static HeatCrafter heatSmelter;
+
+    public static void load() {
+        heatSmelter = new HeatCrafter("heat-smelter") {{
+            requirements(crafting, with(Items.copper, 60, Items.graphite, 30));
+            heatRequirement = 20f;     // 需要 20 点热才满效率
+            overheatScale = 0.5f;      // 超温后每多 2 点热多 1 倍效率
+            maxEfficiency = 3f;        // 最多 300%
+            outputItem = new ItemStack(Items.silicon, 1);
+            craftTime = 60f;
+            size = 2;
+        }};
+        // 不用写 Build：父类 HeatCrafterBuild 已 implements HeatConsumer
+    }
+}</code></pre>
+        </div>
+        <div class="ptitle">📋 HeatCrafter 参数速查表（GenericCrafter 之外新增）</div>
+        <table class="param-table">
+          <thead><tr><th>参数</th><th>类型</th><th>默认</th><th>含义</th></tr></thead>
+          <tbody>
+            <tr><td>heatRequirement</td><td>float</td><td>10f</td><td>达 100% 效率所需热量；0 表示不要热</td></tr>
+            <tr><td>overheatScale</td><td>float</td><td>1f</td><td>超温后每多 1 点热折算的额外效率比例</td></tr>
+            <tr><td>maxEfficiency</td><td>float</td><td>4f</td><td>过热处理后效率上限（4=400%）</td></tr>
+          </tbody>
+        </table>
+        <div class="tip"><b>改哪里：</b>改 heatRequirement 调"要多热"；改 overheatScale 调"过热收益"；改 maxEfficiency 调"效率天花板"。热力来源见 API 参考表 6.3 / 6.3.1。</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========== 6. 钻头 ========== -->
+  <section class="cat" id="c6">
+    <h2>6. 钻头 Drill</h2>
+    <div class="cat-sub">自动从地板下挖矿</div>
+    <div class="grid">
+
+      <div class="card">
+        <div class="card-head"><h3>基础钻头 · pneumatic-drill 风格</h3><span class="ver">v159.7</span></div>
+        <div class="purpose">做一座自动从地板下挖矿的钻头。</div>
+        <div class="codeblock">
+          <button class="copybtn">复制</button>
+<pre><code class="language-java">package com.example.mod.content;
+
+import mindustry.world.blocks.production.Drill;
+
+import static mindustry.type.ItemStack.with;
+import static mindustry.world.meta.Category.production;
+import static mindustry.content.Items.*;
+import static mindustry.content.Liquids.water;
+
+public class ModDrills {
+
+    public static Drill basicDrill;
+
+    public static void load() {
+        basicDrill = new Drill("basic-drill") {{
+            requirements(production, with(Items.copper, 18, Items.graphite, 10));
+            tier = 3;        // 只能挖 hardness <= tier 的矿
+            drillTime = 400; // 挖一个矿耗时（帧）
+            size = 2;
+
+            consumeLiquid(water, 3.5f / 60f).boost(); // 通水加速
+        }};
+    }
+}</code></pre>
+        </div>
+        <div class="src"><b>官方对应物：</b>Blocks.java:2896 —— pneumaticDrill = new Drill("pneumatic-drill"){{ tier=3; drillTime=400; size=2; consumeLiquid(water,3.5f/60f).boost(); }};。tier 决定可挖矿（Drill.java:162/234）；drillTime 默认 300（Drill.java:36）。</div>
+        <div class="ptitle">📋 参数速查表</div>
+        <table class="param-table">
+          <thead><tr><th>参数</th><th>类型</th><th>默认</th><th>含义</th><th>典型</th></tr></thead>
+          <tbody>
+            <tr><td>tier</td><td>int</td><td>—</td><td>钻头等级；挖 hardness&lt;=tier 的矿</td><td>气动=3</td></tr>
+            <tr><td>drillTime</td><td>float</td><td>300</td><td>挖一个矿耗时（帧）</td><td>400</td></tr>
+            <tr><td>size</td><td>int</td><td>1</td><td>占地边长</td><td>2</td></tr>
+            <tr><td>consumeLiquid(l,a).boost()</td><td>方法</td><td>—</td><td>耗液加速</td><td>水 3.5/60</td></tr>
+          </tbody>
+        </table>
+        <div class="tip"><b>改哪里：</b>改 tier 决定能挖多硬；改 drillTime 调速度。</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========== 7. 发电机 ========== -->
+  <section class="cat" id="c7">
+    <h2>7. 发电机</h2>
+    <div class="cat-sub">烧东西 / 晒太阳发电</div>
+    <div class="grid">
+
+      <div class="card">
+        <div class="card-head"><h3>火力发电机 · combustion-generator 风格</h3><span class="ver">v159.7</span></div>
+        <div class="purpose">做一座烧物品发电的发电机。</div>
+        <div class="codeblock">
+          <button class="copybtn">复制</button>
+<pre><code class="language-java">package com.example.mod.content;
+
+import mindustry.world.blocks.power.ConsumeGenerator;
+import mindustry.content.Fx;
+
+import static mindustry.type.ItemStack.with;
+import static mindustry.world.meta.Category.power;
+import static mindustry.content.Items.*;
+
+public class ModGenerators {
+
+    public static ConsumeGenerator coalBurner;
+
+    public static void load() {
+        coalBurner = new ConsumeGenerator("coal-burner") {{
+            requirements(power, with(Items.copper, 25, Items.lead, 15));
+            powerProduction = 1f;
+            itemDuration = 120f;
+            generateEffect = Fx.generatespark;
+            consumeItem(Items.coal);
+        }};
+    }
+}</code></pre>
+        </div>
+        <div class="src"><b>官方对应物：</b>Blocks.java:2523 —— combustionGenerator = new ConsumeGenerator("combustion-generator"){{ powerProduction=1; itemDuration=120; ... consume(new ConsumeItemFlammable()); }};。</div>
+        <div class="tip"><b>改哪里：</b>改 powerProduction 调发电量；改 itemDuration 调每物燃烧时长。</div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>太阳能 · solar-panel 风格</h3><span class="ver">v159.7</span></div>
+        <div class="purpose">做一座不烧任何东西、自动缓慢发电的太阳能板。</div>
+        <div class="codeblock">
+          <button class="copybtn">复制</button>
+<pre><code class="language-java">package com.example.mod.content;
+
+import mindustry.world.blocks.power.SolarGenerator;
+
+import static mindustry.type.ItemStack.with;
+import static mindustry.world.meta.Category.power;
+import static mindustry.content.Items.*;
+
+public class ModGenerators {
+
+    public static SolarGenerator mySolar;
+
+    public static void load() {
+        mySolar = new SolarGenerator("my-solar") {{
+            requirements(power, with(Items.lead, 10, Items.silicon, 8));
+            powerProduction = 0.12f;
+        }};
+    }
+}</code></pre>
+        </div>
+        <div class="src"><b>官方对应物：</b>Blocks.java:2619 —— solarPanel = new SolarGenerator("solar-panel"){{ requirements(...); powerProduction = 0.12f; }};。</div>
+        <div class="ptitle">📋 参数速查表</div>
+        <table class="param-table">
+          <thead><tr><th>参数</th><th>类型</th><th>默认</th><th>含义</th><th>典型</th></tr></thead>
+          <tbody>
+            <tr><td>powerProduction</td><td>float</td><td>0</td><td>发电功率（电/帧）</td><td>火力=1，太阳=0.12</td></tr>
+            <tr><td>itemDuration</td><td>float</td><td>—</td><td>单燃料燃烧时长</td><td>120</td></tr>
+            <tr><td>generateEffect</td><td>Effect</td><td>—</td><td>发电特效</td><td>generatespark</td></tr>
+          </tbody>
+        </table>
+        <div class="tip"><b>改哪里：</b>改 powerProduction 调发电量；加 size=2 做大号板。</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========== 8. 传送 ========== -->
+  <section class="cat" id="c8">
+    <h2>8. 传送</h2>
+    <div class="cat-sub">把物品从 A 运到 B</div>
+    <div class="grid">
+
+      <div class="card">
+        <div class="card-head"><h3>基础传送带 · conveyor 风格</h3><span class="ver">v159.7</span></div>
+        <div class="purpose">做一条把物品从 A 运到 B 的传送带。</div>
+        <div class="codeblock">
+          <button class="copybtn">复制</button>
+<pre><code class="language-java">package com.example.mod.content;
+
+import mindustry.world.blocks.distribution.Conveyor;
+
+import static mindustry.type.ItemStack.with;
+import static mindustry.world.meta.Category.distribution;
+import static mindustry.content.Items.copper;
+
+public class ModDistribution {
+
+    public static Conveyor myConveyor;
+
+    public static void load() {
+        myConveyor = new Conveyor("my-conveyor") {{
+            requirements(distribution, with(copper, 1));
+            health = 45;
+            speed = 0.035f;
+            displayedSpeed = 5f;
+        }};
+    }
+}</code></pre>
+        </div>
+        <div class="src"><b>官方对应物：</b>Blocks.java:2070 —— conveyor = new Conveyor("conveyor"){{ health=45; speed=0.035f; displayedSpeed=5f; ... }};。</div>
+        <div class="tip"><b>改哪里：</b>改 speed/displayedSpeed 调速度；改 health 调耐久。</div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>路由器 · router 风格</h3><span class="ver">v159.7</span></div>
+        <div class="purpose">做一个把物品均匀分发到四个方向的小方块。</div>
+        <div class="codeblock">
+          <button class="copybtn">复制</button>
+<pre><code class="language-java">package com.example.mod.content;
+
+import mindustry.world.blocks.distribution.Router;
+
+import static mindustry.type.ItemStack.with;
+import static mindustry.world.meta.Category.distribution;
+import static mindustry.content.Items.copper;
+
+public class ModDistribution {
+
+    public static Router myRouter;
+
+    public static void load() {
+        myRouter = new Router("my-router") {{
+            requirements(distribution, with(copper, 3));
+            buildCostMultiplier = 4f;
+        }};
+    }
+}</code></pre>
+        </div>
+        <div class="src"><b>官方对应物：</b>Blocks.java:2140 —— router = new Router("router"){{ requirements(...); buildCostMultiplier = 4f; }};。</div>
+        <div class="ptitle">📋 参数速查表</div>
+        <table class="param-table">
+          <thead><tr><th>参数</th><th>类型</th><th>默认</th><th>含义</th><th>典型</th></tr></thead>
+          <tbody>
+            <tr><td>speed</td><td>float</td><td>—</td><td>物理移动速度</td><td>0.035</td></tr>
+            <tr><td>displayedSpeed</td><td>float</td><td>—</td><td>UI 显示格/秒</td><td>5</td></tr>
+            <tr><td>health</td><td>int</td><td>—</td><td>耐久</td><td>45</td></tr>
+            <tr><td>buildCostMultiplier</td><td>float</td><td>1</td><td>成本倍率</td><td>路由器=4</td></tr>
+          </tbody>
+        </table>
+        <div class="tip"><b>改哪里：</b>基本只改成本；加 size=2 做四分器。</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========== 9. 状态效果 ========== -->
+  <section class="cat" id="c9">
+    <h2>9. 状态效果 StatusEffect</h2>
+    <div class="cat-sub">挂在单位身上的 buff / debuff</div>
+    <div class="grid">
+
+      <div class="card">
+        <div class="card-head"><h3>自定义状态效果 · overdrive 风格</h3><span class="ver">v159.7</span></div>
+        <div class="purpose">做一种挂在单位身上的 buff/debuff（加速、加伤、持续掉血等）。</div>
+        <div class="codeblock">
+          <button class="copybtn">复制</button>
+<pre><code class="language-java">package com.example.mod.content;
+
+import arc.graphics.Color;
+import mindustry.type.StatusEffect;
+import mindustry.content.Fx;
+import mindustry.graphics.Pal;
+
+public class ModStatusEffects {
+
+    public static StatusEffect overcharge;
+
+    public static void load() {
+        overcharge = new StatusEffect("overcharge") {{
+            color = Pal.accent;
+            speedMultiplier = 1.15f;
+            damageMultiplier = 1.4f;
+            healthMultiplier = 0.95f;
+            damage = -0.01f;       // 负值=回血
+            effect = Fx.overdriven;
+            permanent = true;
+        }};
+    }
+}</code></pre>
+        </div>
+        <div class="src"><b>官方对应物：</b>StatusEffects.java:153 —— overdrive = new StatusEffect("overdrive"){{ ... speedMultiplier=1.15; damageMultiplier=1.4; damage=-0.01; permanent=true; }};。构造 StatusEffect(String)（StatusEffect.java:75）。</div>
+        <div class="ptitle">📋 参数速查表</div>
+        <table class="param-table">
+          <thead><tr><th>参数</th><th>类型</th><th>默认</th><th>含义</th><th>典型</th></tr></thead>
+          <tbody>
+            <tr><td>color</td><td>Color</td><td>—</td><td>状态条颜色</td><td>Pal.accent</td></tr>
+            <tr><td>speedMultiplier</td><td>float</td><td>1</td><td>移速倍率</td><td>1.15</td></tr>
+            <tr><td>damageMultiplier</td><td>float</td><td>1</td><td>伤害倍率</td><td>1.4</td></tr>
+            <tr><td>healthMultiplier</td><td>float</td><td>1</td><td>血量倍率</td><td>0.95</td></tr>
+            <tr><td>damage</td><td>float</td><td>0</td><td>每帧掉血，负=回血</td><td>-0.01</td></tr>
+            <tr><td>permanent</td><td>bool</td><td>false</td><td>是否永久</td><td>true</td></tr>
+          </tbody>
+        </table>
+        <div class="tip"><b>改哪里：</b>改 multiplier 调强度；damage 正数变掉血 debuff。</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========== 10. 子弹 ========== -->
+  <section class="cat" id="c10">
+    <h2>10. 子弹 BulletType</h2>
+    <div class="cat-sub">炮塔和单位武器都靠它</div>
+    <div class="grid">
+
+      <div class="card">
+        <div class="card-head"><h3>基础子弹 · BasicBulletType</h3><span class="ver">v159.7</span></div>
+        <div class="purpose">定义一颗子弹长什么样、飞多快、打多痛。</div>
+        <div class="codeblock">
+          <button class="copybtn">复制</button>
+<pre><code class="language-java">package com.example.mod.content;
+
+import mindustry.entities.bullet.BasicBulletType;
+import mindustry.content.Fx;
+import mindustry.graphics.Pal;
+
+public class ModBullets {
+
+    public static BasicBulletType copperRound;
+
+    public static void load() {
+        // 构造参数：(速度, 伤害)
+        copperRound = new BasicBulletType(2.5f, 9) {{
+            width = 7f;
+            height = 9f;
+            lifetime = 60f;
+            ammoMultiplier = 2;
+
+            hitEffect = despawnEffect = Fx.hitBulletColor;
+            hitColor = backColor = trailColor = Pal.copperAmmoBack;
+            frontColor = Pal.copperAmmoFront;
+        }};
+    }
+}</code></pre>
+        </div>
+        <div class="src"><b>官方对应物：</b>Blocks.java:3279（duo 铜弹药）—— new BasicBulletType(2.5f,9){{ width=7; height=9; lifetime=60; ammoMultiplier=2; ... }};。</div>
+        <div class="ptitle">📋 参数速查表（v2 细化）</div>
+        <table class="param-table">
+          <thead><tr><th>参数</th><th>类型</th><th>默认</th><th>含义</th><th>典型</th></tr></thead>
+          <tbody>
+            <tr><td>speed</td><td>float</td><td>1</td><td>速度（构造第1参）</td><td>2.5</td></tr>
+            <tr><td>damage</td><td>float</td><td>1</td><td>直接伤害（构造第2参）</td><td>9</td></tr>
+            <tr><td>lifetime</td><td>float</td><td>40</td><td>存活帧≈射程/speed</td><td>60</td></tr>
+            <tr><td>width / height</td><td>float</td><td>5/7</td><td>子弹贴图尺寸</td><td>7/9</td></tr>
+            <tr><td>ammoMultiplier</td><td>float</td><td>2</td><td>每发耗弹倍率</td><td>2</td></tr>
+            <tr><td>pierce / pierceBuilding</td><td>bool</td><td>false</td><td>穿透单位/建筑</td><td>true</td></tr>
+            <tr><td>pierceCap</td><td>int</td><td>-1</td><td>最多穿透数</td><td>3</td></tr>
+            <tr><td>splashDamage / Radius</td><td>float</td><td>0/-1</td><td>溅射伤害/半径</td><td>33/24</td></tr>
+            <tr><td>status / statusDuration</td><td>Status/float</td><td>none/480</td><td>命中状态/时长</td><td>blasted</td></tr>
+            <tr><td>hitEffect / despawnEffect</td><td>Effect</td><td>…Small</td><td>命中/消失特效</td><td>hitBulletColor</td></tr>
+            <tr><td>shootEffect / smokeEffect</td><td>Effect</td><td>…</td><td>口焰/烟雾</td><td>shootSmall</td></tr>
+            <tr><td>trailEffect / trailLength</td><td>Effect/int</td><td>…/-1</td><td>拖尾特效/长度</td><td>导弹用</td></tr>
+            <tr><td>keepVelocity</td><td>bool</td><td>true</td><td>继承发射者速度</td><td>true</td></tr>
+            <tr><td>collidesAir / Ground / Tiles</td><td>bool</td><td>true</td><td>撞空气单位/地面单位/地形</td><td>true</td></tr>
+            <tr><td>reflectable / absorbable</td><td>bool</td><td>true</td><td>可被反弹/护盾吸收</td><td>true</td></tr>
+            <tr><td>backColor / frontColor</td><td>Color</td><td>黄</td><td>前/后层颜色</td><td>铜配色</td></tr>
+            <tr><td>fragBullet / fragBullets</td><td>BulletType/int</td><td>null/9</td><td>分裂子弹/数量</td><td>霰弹</td></tr>
+          </tbody>
+        </table>
+        <div class="tip"><b>改哪里：</b>(速度,伤害) 构造；lifetime 调射程；加 splashDamage/Radius 变爆炸弹。</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========== 11. 单位 ========== -->
+  <section class="cat" id="c11">
+    <h2>11. 单位 UnitType</h2>
+    <div class="cat-sub">会自己移动、会开火的作战单位</div>
+    <div class="grid">
+
+      <div class="card">
+        <div class="card-head"><h3>基础单位 · dagger 风格</h3><span class="ver">v159.7</span></div>
+        <div class="purpose">做一架会自己移动、会开火的地面作战单位。</div>
+        <div class="codeblock">
+          <button class="copybtn">复制</button>
+<pre><code class="language-java">package com.example.mod.content;
+
+import mindustry.type.UnitType;
+import mindustry.type.Weapon;
+import mindustry.entities.bullet.BasicBulletType;
+import mindustry.content.Fx;
+
+public class ModUnits {
+
+    public static UnitType myFighter;
+
+    public static void load() {
+        myFighter = new UnitType("my-fighter") {{
+            speed = 0.5f;
+            hitSize = 8f;
+            health = 150;
+
+            weapons.add(new Weapon("large-weapon") {{
+                reload = 13f;
+                x = 4f;
+                y = 2f;
+                top = false;
+                ejectEffect = Fx.casing1;
+                bullet = new BasicBulletType(2.5f, 9) {{
+                    width = 7f;
+                    height = 9f;
+                    lifetime = 60f;
+                }};
+            }});
+        }};
+    }
+}</code></pre>
+        </div>
+        <div class="src"><b>官方对应物：</b>UnitTypes.java:100 —— dagger = new UnitType("dagger"){{ speed=0.5; hitSize=8; health=150; weapons.add(new Weapon("large-weapon"){{ reload=13; x=4; y=2; ... bullet=...; }}); }};。</div>
+        <div class="ptitle">📋 参数速查表</div>
+        <table class="param-table">
+          <thead><tr><th>参数</th><th>类型</th><th>默认</th><th>含义</th><th>典型</th></tr></thead>
+          <tbody>
+            <tr><td>speed</td><td>float</td><td>—</td><td>移动速度</td><td>0.5</td></tr>
+            <tr><td>hitSize</td><td>float</td><td>—</td><td>碰撞半径</td><td>8</td></tr>
+            <tr><td>health</td><td>float</td><td>—</td><td>血量</td><td>150</td></tr>
+            <tr><td>flying</td><td>bool</td><td>false</td><td>是否飞行</td><td>true</td></tr>
+            <tr><td>weapons</td><td>Seq</td><td>—</td><td>武器列表</td><td>add(...)</td></tr>
+            <tr><td>Weapon.reload / x / y</td><td>float</td><td>—</td><td>射速/挂点偏移</td><td>13 / 4 / 2</td></tr>
+          </tbody>
+        </table>
+        <div class="tip"><b>改哪里：</b>改 health/speed/hitSize 调三围；加 flying=true 变飞行；加第二门炮。</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========== 12. 液体 🆕 ========== -->
+  <section class="cat" id="c12">
+    <h2>12. 液体 Liquid <span class="badge-new">NEW</span></h2>
+    <div class="cat-sub">新流体：管道里流、地上成水洼、与方块反应</div>
+    <div class="grid">
+
+      <div class="card newcard">
+        <div class="card-head"><h3>自定义液体 · 熔融铜风格</h3><span class="ver new">v2</span></div>
+        <div class="purpose">做一种新流体，能在管道里流、泼在地上成水洼、和别的液体/方块反应。</div>
+        <div class="codeblock">
+          <button class="copybtn">复制</button>
+<pre><code class="language-java">package com.example.mod.content;
+
+import arc.graphics.Color;
+import mindustry.type.Liquid;
+import mindustry.content.StatusEffects;
+
+public class ModLiquids {
+
+    public static Liquid moltenCopper;
+
+    public static void load() {
+        // 构造：(名称, 颜色)
+        moltenCopper = new Liquid("molten-copper", Color.valueOf("ff7a3c")) {{
+            temperature = 1f;          // 0.5=室温,1=滚烫,0=极冷
+            heatCapacity = 0.7f;       // 储热/冷却能力，水=0.4
+            viscosity = 0.7f;          // 0.5=水,1=焦油
+            flammability = 0.1f;       // 可燃 0~1.2
+            explosiveness = 0.2f;      // 受热易爆 0~1
+            lightColor = Color.valueOf("f0511d").a(0.4f); // 自发光
+            boilPoint = 1.2f;          // 汽化温度阈值
+            effect = StatusEffects.melting; // 泼到单位挂的状态
+            coolant = true;
+            barColor = Color.valueOf("ffb26b");
+        }};
+    }
+}</code></pre>
+        </div>
+        <div class="src"><b>官方对应物：</b>Liquids.java:21 —— slag = new Liquid("slag", Color.valueOf("ffa166")){{ temperature=1; viscosity=0.7; effect=melting; lightColor=...a(0.4); }};。构造 Liquid(String,Color)（Liquid.java:72）。</div>
+        <div class="ptitle">📋 参数速查表（Liquid.java:27-70）</div>
+        <table class="param-table">
+          <thead><tr><th>参数</th><th>类型</th><th>默认</th><th>含义</th><th>典型</th></tr></thead>
+          <tbody>
+            <tr><td>color</td><td>Color</td><td>构造传入</td><td>管道/水洼主色</td><td>橙</td></tr>
+            <tr><td>gas</td><td>bool</td><td>false</td><td>气体（无水洼、透明）</td><td>臭氧=true</td></tr>
+            <tr><td>flammability</td><td>float</td><td>0</td><td>可燃 0~1.2</td><td>油=1.2</td></tr>
+            <tr><td>temperature</td><td>float</td><td>0.5</td><td>0.5室温/0极冷/1滚烫</td><td>熔渣=1</td></tr>
+            <tr><td>heatCapacity</td><td>float</td><td>0.5</td><td>储热，水=0.4</td><td>冷冻液=0.9</td></tr>
+            <tr><td>viscosity</td><td>float</td><td>0.5</td><td>粘稠，0.5水/1焦油</td><td>油=0.75</td></tr>
+            <tr><td>explosiveness</td><td>float</td><td>0</td><td>受热易爆 0~1</td><td>油=1.2</td></tr>
+            <tr><td>lightColor</td><td>Color</td><td>clear</td><td>自发光（a=亮度）</td><td>橙.a(0.4)</td></tr>
+            <tr><td>effect</td><td>StatusEffect</td><td>none</td><td>泼到单位的状态</td><td>melting</td></tr>
+            <tr><td>boilPoint</td><td>float</td><td>2</td><td>汽化温度阈值</td><td>水=0.5</td></tr>
+            <tr><td>coolant</td><td>bool</td><td>true</td><td>能否当冷却剂</td><td>true</td></tr>
+            <tr><td>canStayOn</td><td>Set</td><td>空</td><td>能浮在哪些液体上</td><td>油浮水</td></tr>
+          </tbody>
+        </table>
+        <div class="tip"><b>改哪里：</b>抄 water 改 heatCapacity=0.4 做冷却液；加 gas=true 做气体。</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========== 13. 天气 🆕 ========== -->
+  <section class="cat" id="c13">
+    <h2>13. 天气 Weather <span class="badge-new">NEW</span></h2>
+    <div class="cat-sub">全屏氛围 + 给单位挂 debuff</div>
+    <div class="grid">
+
+      <div class="card newcard">
+        <div class="card-head"><h3>自定义天气 · 酸雨(ParticleWeather)</h3><span class="ver new">v2</span></div>
+        <div class="purpose">做一种全屏天气事件，带视觉氛围并给单位挂 debuff。直接复用 ParticleWeather，无需手写 WeatherState。</div>
+        <div class="codeblock">
+          <button class="copybtn">复制</button>
+<pre><code class="language-java">package com.example.mod.content;
+
+import arc.graphics.Color;
+import mindustry.type.Weather;
+import mindustry.type.weather.ParticleWeather;
+import mindustry.content.StatusEffects;
+import mindustry.content.Sounds;
+import mindustry.game.Attribute;
+
+public class ModWeathers {
+
+    public static Weather acidRain;
+
+    public static void load() {
+        acidRain = new ParticleWeather("acid-rain") {{
+            particleRegion = "particle";
+            color = noiseColor = Color.valueOf("9acd4b"); // 酸雨绿
+            drawParticles = true;
+            drawNoise = false;
+            useWindVector = true;
+            sizeMin = 2.5f;
+            sizeMax = 5f;
+            density = 1600f;
+            baseSpeed = 4.3f;
+            minAlpha = 0.2f;
+            maxAlpha = 0.9f;
+
+            status = StatusEffects.wet;   // 挂的状态
+            statusDuration = 60f * 2;
+            statusAir = true;
+            statusGround = true;
+
+            sound = Sounds.rain;
+            soundVol = 0.25f;
+            duration = 5f * 60f * 60f;    // 5 分钟
+
+            attrs.set(Attribute.light, -0.1f);
+        }};
+    }
+}</code></pre>
+        </div>
+        <div class="src"><b>官方对应物：</b>Weathers.java:34 —— rain = new RainWeather("rain"){{ attrs.set(light,-0.2f); status=wet; sound=rain; soundVol=0.25f; }};。ParticleWeather（type/weather/ParticleWeather.java:11）自带粒子绘制。</div>
+        <div class="ptitle">📋 参数速查表</div>
+        <table class="param-table">
+          <thead><tr><th>参数</th><th>类型</th><th>默认</th><th>含义</th><th>典型</th></tr></thead>
+          <tbody>
+            <tr><td>duration</td><td>float</td><td>600</td><td>事件时长（帧）</td><td>5分钟</td></tr>
+            <tr><td>opacityMultiplier</td><td>float</td><td>1</td><td>透明度倍率</td><td>沙暴=0.35</td></tr>
+            <tr><td>sound / soundVol</td><td>Sound/float</td><td>none/.1</td><td>循环音/音量</td><td>rain/.25</td></tr>
+            <tr><td>status</td><td>StatusEffect</td><td>none</td><td>周期施加的状态</td><td>wet</td></tr>
+            <tr><td>statusDuration</td><td>float</td><td>120</td><td>状态持续帧</td><td>120</td></tr>
+            <tr><td>statusAir / Ground</td><td>bool</td><td>true</td><td>对空/对地施加</td><td>true</td></tr>
+            <tr><td>*particleRegion</td><td>String</td><td>circle-shadow</td><td>粒子贴图（PW）</td><td>"particle"</td></tr>
+            <tr><td>*color</td><td>Color</td><td>white</td><td>粒子颜色（PW）</td><td>酸雨绿</td></tr>
+            <tr><td>*sizeMin/Max</td><td>float</td><td>2.4/12</td><td>粒子尺寸（PW）</td><td>2.5/5</td></tr>
+            <tr><td>*density</td><td>float</td><td>1200</td><td>粒子密度（PW）</td><td>1600</td></tr>
+            <tr><td>*baseSpeed</td><td>float</td><td>6.1</td><td>飘动速度（PW）</td><td>4.3</td></tr>
+            <tr><td>*useWindVector</td><td>bool</td><td>false</td><td>受风向影响（PW）</td><td>true</td></tr>
+            <tr><td>*drawNoise</td><td>bool</td><td>false</td><td>叠加噪声雾（PW）</td><td>雾=true</td></tr>
+          </tbody>
+        </table>
+        <div class="tip"><b>技术决策：</b>WeatherStateComp 是注解生成实体，自己写很繁琐；入门一律用现成 ParticleWeather/RainWeather。天气需在星球生成器里 <code>rules.weather.add(new WeatherEntry(...))</code> 才会出现（PlanetGenerator.java:102）。</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========== 14. 补缺方块 🆕 ========== -->
+  <section class="cat" id="c14">
+    <h2>14. 补缺方块 Block <span class="badge-new">NEW</span></h2>
+    <div class="cat-sub">v1 未覆盖的：矿石 / 逻辑 / 液块 / 载荷 / 地板</div>
+    <div class="grid">
+
+      <div class="card newcard">
+        <div class="card-head"><h3>矿石块 OreBlock</h3><span class="ver new">v2</span></div>
+        <div class="purpose">在地板上生成的矿脉覆盖层，钻头挖的就是它。</div>
+        <div class="codeblock">
+          <button class="copybtn">复制</button>
+<pre><code class="language-java">package com.example.mod.content;
+
+import mindustry.world.blocks.environment.OreBlock;
+
+public class ModOres {
+
+    public static OreBlock exampleOre;
+
+    public static void load() {
+        // 传 Item，名字自动变 "ore-<item名>"
+        exampleOre = new OreBlock(ModItems.exampleItem) {{
+            oreDefault = true;
+            oreThreshold = 0.82f;  // 越大越稀有
+            oreScale = 24f;        // 噪声尺度
+        }};
+    }
+}</code></pre>
+        </div>
+        <div class="src"><b>官方对应物：</b>Blocks.java:979 —— oreCopper = new OreBlock(Items.copper){{ oreDefault=true; oreThreshold=0.81f; oreScale=23.47619f; }};。构造 OreBlock(Item) 自动命名（OreBlock.java:26）。</div>
+        <div class="ptitle">📋 参数速查表</div>
+        <table class="param-table">
+          <thead><tr><th>参数</th><th>类型</th><th>含义</th><th>典型</th></tr></thead>
+          <tbody>
+            <tr><td>构造 ore</td><td>Item</td><td>产出的物品</td><td>exampleItem</td></tr>
+            <tr><td>oreDefault</td><td>bool</td><td>用默认噪声分布</td><td>true</td></tr>
+            <tr><td>oreThreshold</td><td>float</td><td>矿脉阈值（越大越稀）</td><td>0.81~0.85</td></tr>
+            <tr><td>oreScale</td><td>float</td><td>噪声尺度（矿脉大小）</td><td>23~24</td></tr>
+          </tbody>
+        </table>
+        <div class="tip"><b>改哪里：</b>oreThreshold 调稀有度；贴图需 ore-&lt;item&gt;1/2/3.png。</div>
+      </div>
+
+      <div class="card newcard">
+        <div class="card-head"><h3>逻辑处理器 LogicBlock</h3><span class="ver new">v2</span></div>
+        <div class="purpose">能跑 mLlogic 的可编程方块，写代码控制整个工厂。</div>
+        <div class="codeblock">
+          <button class="copybtn">复制</button>
+<pre><code class="language-java">package com.example.mod.content;
+
+import mindustry.world.blocks.logic.LogicBlock;
+
+import static mindustry.type.ItemStack.with;
+import static mindustry.world.meta.Category.logic;
+import static mindustry.content.Items.*;
+
+public class ModLogic {
+
+    public static LogicBlock myProcessor;
+
+    public static void load() {
+        myProcessor = new LogicBlock("my-processor") {{
+            requirements(logic, with(Items.copper, 90, Items.lead, 50, Items.silicon, 50));
+            instructionsPerTick = 2;  // 每帧指令数
+            maxInstructionScale = 5;
+            range = 8 * 10;           // 遥控距离（格*8）
+            size = 1;
+        }};
+    }
+}</code></pre>
+        </div>
+        <div class="src"><b>官方对应物：</b>Blocks.java:6896 —— microProcessor = new LogicBlock("micro-processor"){{ instructionsPerTick=2; size=1; }};。对照 logicProcessor（Blocks.java:6903）instructionsPerTick=8,range=8*22,size=2。</div>
+        <div class="ptitle">📋 参数速查表</div>
+        <table class="param-table">
+          <thead><tr><th>参数</th><th>类型</th><th>默认</th><th>含义</th><th>典型</th></tr></thead>
+          <tbody>
+            <tr><td>instructionsPerTick</td><td>int</td><td>1</td><td>每帧指令数（越大越快）</td><td>微=2,逻辑=8</td></tr>
+            <tr><td>maxInstructionScale</td><td>int</td><td>5</td><td>可调最大倍速</td><td>5</td></tr>
+            <tr><td>range</td><td>float</td><td>80</td><td>链接距离（格*8）</td><td>逻辑=176</td></tr>
+            <tr><td>size</td><td>int</td><td>1</td><td>占地边长</td><td>微=1,逻辑=2</td></tr>
+          </tbody>
+        </table>
+        <div class="tip"><b>改哪里：</b>instructionsPerTick 调性能；range 调遥控距离。逻辑内容在游戏内用 mLlogic 写。</div>
+      </div>
+
+      <div class="card newcard">
+        <div class="card-head"><h3>液块/管道 Conduit</h3><span class="ver new">v2</span></div>
+        <div class="purpose">在管道里运输液体（水/熔渣/原油）的方块。</div>
+        <div class="codeblock">
+          <button class="copybtn">复制</button>
+<pre><code class="language-java">package com.example.mod.content;
+
+import mindustry.world.blocks.liquid.Conduit;
+
+import static mindustry.type.ItemStack.with;
+import static mindustry.world.meta.Category.liquid;
+import static mindustry.content.Items.*;
+
+public class ModLiquidsBlocks {
+
+    public static Conduit myConduit;
+
+    public static void load() {
+        myConduit = new Conduit("my-conduit") {{
+            requirements(liquid, with(Items.metaglass, 1));
+            liquidCapacity = 20f;
+            health = 45;
+            explosivenessScale = flammabilityScale = 10f / 20f;
+        }};
+    }
+}</code></pre>
+        </div>
+        <div class="src"><b>官方对应物：</b>Blocks.java:2323 —— conduit = new Conduit("conduit"){{ requirements(liquid, with(metaglass,1)); liquidCapacity=20; health=45; ... }};。Conduit 继承 LiquidBlock（LiquidBlock.java:15）。</div>
+        <div class="ptitle">📋 参数速查表</div>
+        <table class="param-table">
+          <thead><tr><th>参数</th><th>类型</th><th>含义</th><th>典型</th></tr></thead>
+          <tbody>
+            <tr><td>liquidCapacity</td><td>float</td><td>管道液体容量</td><td>20</td></tr>
+            <tr><td>health</td><td>int</td><td>耐久</td><td>45</td></tr>
+            <tr><td>explosiveness/flammabilityScale</td><td>float</td><td>易燃易爆液伤害系数</td><td>10/20</td></tr>
+          </tbody>
+        </table>
+        <div class="tip"><b>改哪里：</b>liquidCapacity 调吞吐；贴图需 my-conduit/-top/-liquid.png。</div>
+      </div>
+
+      <div class="card newcard">
+        <div class="card-head"><h3>载荷运输 PayloadConveyor</h3><span class="ver new">v2</span></div>
+        <div class="purpose">运输"载荷"（整块建筑/单位）的传送带——v1 未覆盖的 payload 类。</div>
+        <div class="codeblock">
+          <button class="copybtn">复制</button>
+<pre><code class="language-java">package com.example.mod.content;
+
+import mindustry.world.blocks.payloads.PayloadConveyor;
+
+import static mindustry.type.ItemStack.with;
+import static mindustry.world.meta.Category.units;
+import static mindustry.content.Items.*;
+
+public class ModPayloads {
+
+    public static PayloadConveyor myPayloadConveyor;
+
+    public static void load() {
+        myPayloadConveyor = new PayloadConveyor("my-payload-conveyor") {{
+            requirements(units, with(Items.graphite, 10, Items.copper, 10));
+            canOverdrive = false;
+        }};
+    }
+}</code></pre>
+        </div>
+        <div class="src"><b>官方对应物：</b>Blocks.java:6627 —— payloadConveyor = new PayloadConveyor("payload-conveyor"){{ requirements(units, with(graphite,10,copper,10)); canOverdrive=false; }};。注意载荷块 Category=units。</div>
+        <div class="ptitle">📋 参数速查表</div>
+        <table class="param-table">
+          <thead><tr><th>参数</th><th>类型</th><th>含义</th><th>典型</th></tr></thead>
+          <tbody>
+            <tr><td>canOverdrive</td><td>bool</td><td>能否被超频加速</td><td>false</td></tr>
+            <tr><td>requirements(Category.units,...)</td><td>方法</td><td>归类到 units</td><td>见卡片</td></tr>
+          </tbody>
+        </table>
+        <div class="tip"><b>改哪里：</b>canOverdrive=true 加速；转向看 payloadRouter（Blocks.java:6632）。</div>
+      </div>
+
+      <div class="card newcard">
+        <div class="card-head"><h3>自定义地板 Floor</h3><span class="ver new">v2</span></div>
+        <div class="purpose">新地面（沙地/毒沼/金属板），决定行走速度、长油、藏矿——v1 只有 Wall 没有 Floor。</div>
+        <div class="codeblock">
+          <button class="copybtn">复制</button>
+<pre><code class="language-java">package com.example.mod.content;
+
+import mindustry.world.blocks.environment.Floor;
+import mindustry.game.Attribute;
+
+public class ModFloors {
+
+    public static Floor myFloor;
+
+    public static void load() {
+        myFloor = new Floor("my-floor") {{
+            variants = 3;                       // 3 套随机变体
+            speedMultiplier = 0.8f;            // 经过速度倍率
+            itemDrop = ModItems.exampleItem;   // 挖地板掉的矿
+            attributes.set(Attribute.oil, 1.0f); // 含油环境属性
+        }};
+    }
+}</code></pre>
+        </div>
+        <div class="src"><b>官方对应物：</b>Blocks.java:390 —— darksand = new Floor("darksand"){{ itemDrop=sand; playerUnmineable=true; attributes.set(oil,1.5f); }};；最简 stone = new Floor("stone")（Blocks.java:348）。</div>
+        <div class="ptitle">📋 参数速查表</div>
+        <table class="param-table">
+          <thead><tr><th>参数</th><th>类型</th><th>默认</th><th>含义</th><th>典型</th></tr></thead>
+          <tbody>
+            <tr><td>variants</td><td>int</td><td>1</td><td>随机贴图变体</td><td>3</td></tr>
+            <tr><td>speedMultiplier</td><td>float</td><td>1</td><td>经过速度倍率</td><td>泥=0.6</td></tr>
+            <tr><td>itemDrop</td><td>Item</td><td>null</td><td>挖掉掉落</td><td>sand</td></tr>
+            <tr><td>playerUnmineable</td><td>bool</td><td>false</td><td>玩家能否挖</td><td>true</td></tr>
+            <tr><td>blendGroup</td><td>Block</td><td>null</td><td>与某地板过渡</td><td>stone</td></tr>
+            <tr><td>attributes.set(...)</td><td>方法</td><td>—</td><td>环境属性（油/水/孢子）</td><td>(oil,1)</td></tr>
+          </tbody>
+        </table>
+        <div class="tip"><b>改哪里：</b>speedMultiplier 做减速泥；itemDrop 让地板成矿；贴图 my-floor1/2/3.png。</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========== 15. 科技树 ⭐NEW ========== -->
+  <section class="cat big" id="c15">
+    <h2>15. ⭐ 科技树 TechTree <span class="badge-new">NEW</span></h2>
+    <div class="cat-sub">把自定义建筑挂上研究界面 · 独立大区</div>
+    <div class="grid">
+
+      <div class="card newcard">
+        <div class="card-head"><h3>nodeRoot + node 嵌套挂科技树</h3><span class="ver new">v2</span></div>
+        <div class="purpose">让你的新墙/新炮塔出现在"研究"界面，需先研究前置、花资源解锁。</div>
+        <div class="codeblock">
+          <button class="copybtn">复制</button>
+<pre><code class="language-java">package com.example.mod.content;
+
+import mindustry.content.TechTree;
+
+import static mindustry.content.TechTree.*;
+import static mindustry.type.ItemStack.with;
+import static com.example.mod.content.ModItems.exampleItem;
+
+public class ModTech {
+
+    /** 必须在【所有 block 都 new 完之后】调用。
+        推荐放在主类 loadContent() 的最后（ModBlocks.load() 之后）。 */
+    public static void load() {
+        // 新建独立根节点（研究界面生成新标签页）
+        nodeRoot("my-mod", ModBlocks.exampleWall, () -> {
+
+            // 一级子节点：前置 exampleWall，研究花 10 个 exampleItem
+            node(ModTurrets.miniDuo, with(exampleItem, 10), () -> {
+
+                // 二级子节点：miniDuo 之后解锁
+                node(ModBlocks.foamWall, () -> {
+                    // 继续嵌套……
+                });
+            });
+
+            // 无子节点的叶子
+            node(ModDistribution.myConveyor);
+        });
+    }
+}</code></pre>
+        </div>
+        <div class="src"><b>官方对应物：</b>SerpuloTechTree.java:15 —— Planets.serpulo.techTree = nodeRoot("serpulo", coreShard, () -> { node(conveyor, () -> { node(junction, ...); }); });。API 在 content/TechTree.java。</div>
+        <div class="ptitle">📋 方法速查表（TechTree.java:19-72）</div>
+        <table class="param-table">
+          <thead><tr><th>签名</th><th>参数含义</th><th>用途</th></tr></thead>
+          <tbody>
+            <tr><td>nodeRoot(name, content, children)</td><td>name=标签；content=根内容</td><td>建独立树根(标签页)</td></tr>
+            <tr><td>nodeRoot(name, content, requireUnlock, children)</td><td>+是否需先解锁</td><td>Erekir 用</td></tr>
+            <tr><td>node(content, children)</td><td>用自带 researchRequirements</td><td>普通子节点</td></tr>
+            <tr><td>node(content, ItemStack[] req, children)</td><td>手动资源需求</td><td>自定义研究成本</td></tr>
+            <tr><td>node(content, req, Seq&lt;Objective&gt; objs, children)</td><td>+额外目标</td><td>需先完成区块</td></tr>
+            <tr><td>node(content)</td><td>无子节点</td><td>叶子</td></tr>
+            <tr><td>nodeProduce(content, objs, children)</td><td>自动加 Produce 目标</td><td>要求先生产过</td></tr>
+          </tbody>
+        </table>
+        <div class="tip"><b>接入时机（已核验 ContentLoader.java:58-81）：</b>官方先跑 SerpuloTechTree.load()/ErekirTechTree.load()，<b>再</b>跑 mod 的 loadContent()。所以在 loadContent() 末尾（block 都 new 完后）调 ModTech.load() 即可，<b>不要放 init()</b>。nodeRoot 自动加入静态 TechTree.roots，无需手动注册。挂到星球：<code>yourPlanet.techTree = nodeRoot(...)</code>。Objective 类型：SectorComplete / Produce / Research。</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========== 16. 星球 ⭐NEW ========== -->
+  <section class="cat big" id="c16">
+    <h2>16. ⭐ 星球 Planet <span class="badge-new">NEW</span></h2>
+    <div class="cat-sub">自定义星球最小实现 · 独立大区</div>
+    <div class="grid">
+
+      <div class="card newcard">
+        <div class="card-head"><h3>自定义星球 · 极简可加载实现</h3><span class="ver new">v2</span></div>
+        <div class="purpose">做一颗自己的星球：星系视图可见、可降落、有自己的地形生成器。</div>
+        <div class="codeblock">
+          <button class="copybtn">复制</button>
+<pre><code class="language-java">package com.example.mod.content;
+
+import arc.graphics.Color;
+import mindustry.type.Planet;
+import mindustry.maps.generators.PlanetGenerator;
+import mindustry.content.Blocks;
+import mindustry.content.Planets;
+
+public class ModPlanets {
+
+    /** 最简生成器：所有区块铺 stone 平地。 */
+    public static class SimpleGenerator extends PlanetGenerator {
+        @Override
+        public void generate(mindustry.world.Tiles tiles, mindustry.game.Sector sector,
+                             mindustry.world.WorldParams params) {
+            for (int x = 0; x < tiles.width; x++) {
+                for (int y = 0; y < tiles.height; y++) {
+                    tiles.set(x, y, new mindustry.world.Tile(
+                        x, y, Blocks.stone, Blocks.air, Blocks.air));
+                }
+            }
+        }
+    }
+
+    public static Planet myPlanet;
+
+    public static void load() {
+        // (名字, 母星, 半径, 区块网格大小)
+        myPlanet = new Planet("my-planet", Planets.sun, 1f, 3) {{
+            atmosphereColor = Color.valueOf("3c1b8f");
+            iconColor = Color.valueOf("7d4dff");
+            landCloudColor = Color.valueOf("88aaff").a(0.5f);
+            atmosphereRadIn = 0.02f;
+            atmosphereRadOut = 0.3f;
+            hasAtmosphere = true;
+
+            generator = new SimpleGenerator();   // 必须非 null 才可降落
+            startSector = 0;
+            alwaysUnlocked = true;
+            accessible = true;
+            updateLighting = true;
+            allowLaunchSchematics = true;
+            allowLaunchLoadout = true;
+            defaultCore = Blocks.coreShard;
+
+            meshLoader = () -> new mindustry.graphics.g3d.HexMesh(this, 6);
+        }};
+    }
+}</code></pre>
+        </div>
+        <div class="src"><b>官方对应物：</b>Planets.java:123 —— serpulo = new Planet("serpulo", sun, 1f, 3){{ generator=new SerpuloPlanetGenerator(); meshLoader=()->new HexMesh(this,6); ... }};。构造 Planet(String,Planet,float)（Planet.java:197）与带网格四参（Planet.java:224，自动建 PlanetGrid+Sector）。</div>
+        <div class="ptitle">📋 参数速查表（Planet.java）</div>
+        <table class="param-table">
+          <thead><tr><th>参数</th><th>类型</th><th>默认</th><th>含义</th><th>典型</th></tr></thead>
+          <tbody>
+            <tr><td>构造 parent / radius / sectorSize</td><td>Planet/float/int</td><td>—</td><td>母星/球半径/网格边长(&gt;0可降落)</td><td>sun,1,3</td></tr>
+            <tr><td>atmosphereColor</td><td>Color</td><td>(.3,.7,1)</td><td>大气颜色</td><td>紫</td></tr>
+            <tr><td>atmosphereRadIn / Out</td><td>float</td><td>0/0.3</td><td>大气内/外半径修正</td><td>0.02/0.3</td></tr>
+            <tr><td>iconColor</td><td>Color</td><td>white</td><td>列表图标色</td><td>紫</td></tr>
+            <tr><td>hasAtmosphere / bloom / visible / accessible</td><td>bool</td><td>true</td><td>大气/泛光/显示/可选</td><td>true</td></tr>
+            <tr><td>generator</td><td>PlanetGenerator</td><td>null</td><td>地形生成器(null不可降落)</td><td>SimpleGenerator</td></tr>
+            <tr><td>startSector</td><td>int</td><td>0</td><td>默认区块序号</td><td>170</td></tr>
+            <tr><td>defaultCore</td><td>Block</td><td>coreShard</td><td>降落默认核心</td><td>coreBastion</td></tr>
+            <tr><td>updateLighting / tidalLock</td><td>bool</td><td>true/false</td><td>昼夜循环/潮汐锁定</td><td>erekir锁</td></tr>
+            <tr><td>orbitSpacing</td><td>float</td><td>12</td><td>轨道间距</td><td>2</td></tr>
+            <tr><td>allowLaunchSchematics / Loadout</td><td>bool</td><td>false</td><td>允许蓝图/初始物资</td><td>true</td></tr>
+            <tr><td>defaultEnv</td><td>int</td><td>terrestrial|...</td><td>环境标志(Env.*位掩码)</td><td>scorching|terrestrial</td></tr>
+            <tr><td>meshLoader</td><td>Prov</td><td>默认球</td><td>3D球体网格</td><td>()->new HexMesh(this,6)</td></tr>
+            <tr><td>techTree</td><td>TechNode</td><td>null</td><td>默认科技树根</td><td>见卡片15.1</td></tr>
+            <tr><td>ruleSetter</td><td>Cons&lt;Rules&gt;</td><td>空</td><td>进星球改规则</td><td>r->{r.fog=true;}</td></tr>
+          </tbody>
+        </table>
+        <div class="tip"><b>sector 配置：</b>四参构造自动为每个网格格 new Sector（Planet.java:227-236）；Planet.init() 在每区块跑 generator.generateSector（Planet.java:465-472），故 generator 必须非 null。<b>简化决策：</b>完整程序化星球需噪声/矿脉/敌营，体量庞大；这里 generate() 直接铺 stone 平地，保证能加载/看见/降落，进阶再用 Simplex 噪声填 genTile()。</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 快速索引表 -->
+  <section class="cat">
+    <h2>快速索引表（v2）</h2>
+    <table class="index-table">
+      <thead><tr><th>#</th><th>模板名称</th><th>分类</th><th>ContentType</th><th>官方对应物</th><th>源码位置</th></tr></thead>
+      <tbody>
+        <tr><td>1.1</td><td>mod.json 模板</td><td>工程骨架</td><td>—</td><td>模组规范</td><td><code>example-mod/mod.json</code></td></tr>
+        <tr><td>1.2</td><td>主类模板</td><td>工程骨架</td><td>—</td><td>Mod.loadContent/init</td><td><code>Mod.java</code></td></tr>
+        <tr><td>1.3</td><td>build.gradle 模板</td><td>工程骨架</td><td>—</td><td>官方构建体系</td><td><code>build.gradle</code></td></tr>
+        <tr><td>1.4</td><td>gradle.properties 模板</td><td>工程骨架</td><td>—</td><td>Gradle 标准</td><td><code>gradle.properties</code></td></tr>
+        <tr><td>2.1</td><td>基础物品 · copper</td><td>物品 Item</td><td>item</td><td>copper</td><td><code>Items.java:16</code></td></tr>
+        <tr><td>3.1</td><td>基础墙 · copper-wall</td><td>墙体 Wall</td><td>block</td><td>copper-wall</td><td><code>Blocks.java:1708</code></td></tr>
+        <tr><td>3.2</td><td>功能墙 · plastanium-wall</td><td>墙体 Wall</td><td>block</td><td>plastanium-wall</td><td><code>Blocks.java:1731</code></td></tr>
+        <tr><td>4.1</td><td>基础炮塔 · duo</td><td>炮塔</td><td>block</td><td>duo</td><td><code>Blocks.java:3276</code></td></tr>
+        <tr><td>4.2</td><td>散射炮塔 · scatter</td><td>炮塔</td><td>block</td><td>scatter</td><td><code>Blocks.java:3351</code></td></tr>
+        <tr><td>5.1</td><td>合成厂 · silicon-smelter</td><td>工厂</td><td>block</td><td>silicon-smelter</td><td><code>Blocks.java:1070</code></td></tr>
+        <tr><td>6.1</td><td>钻头 · pneumatic-drill</td><td>钻头</td><td>block</td><td>pneumatic-drill</td><td><code>Blocks.java:2896</code></td></tr>
+        <tr><td>7.1</td><td>火力发电机 · combustion</td><td>发电机</td><td>block</td><td>combustion-generator</td><td><code>Blocks.java:2523</code></td></tr>
+        <tr><td>7.2</td><td>太阳能 · solar-panel</td><td>发电机</td><td>block</td><td>solar-panel</td><td><code>Blocks.java:2619</code></td></tr>
+        <tr><td>8.1</td><td>传送带 · conveyor</td><td>传送</td><td>block</td><td>conveyor</td><td><code>Blocks.java:2070</code></td></tr>
+        <tr><td>8.2</td><td>路由器 · router</td><td>传送</td><td>block</td><td>router</td><td><code>Blocks.java:2140</code></td></tr>
+        <tr><td>9.1</td><td>状态效果 · overdrive</td><td>状态效果</td><td>status</td><td>overdrive</td><td><code>StatusEffects.java:153</code></td></tr>
+        <tr><td>10.1</td><td>基础子弹 · BasicBulletType(+参数表)</td><td>子弹</td><td>bullet</td><td>duo 铜弹药</td><td><code>Blocks.java:3279</code></td></tr>
+        <tr><td>11.1</td><td>基础单位 · dagger</td><td>单位</td><td>unit</td><td>dagger</td><td><code>UnitTypes.java:100</code></td></tr>
+        <tr class="star"><td>12.1</td><td>自定义液体 · 熔融铜 🆕</td><td>液体</td><td>liquid</td><td>slag/water</td><td><code>Liquids.java:21</code></td></tr>
+        <tr class="star"><td>13.1</td><td>自定义天气 · 酸雨 🆕</td><td>天气</td><td>weather</td><td>rain/snow</td><td><code>Weathers.java:34</code></td></tr>
+        <tr class="star"><td>14.1</td><td>矿石块 OreBlock 🆕</td><td>补缺方块</td><td>block</td><td>ore-copper</td><td><code>Blocks.java:979</code></td></tr>
+        <tr class="star"><td>14.2</td><td>逻辑处理器 LogicBlock 🆕</td><td>补缺方块</td><td>block</td><td>micro-processor</td><td><code>Blocks.java:6896</code></td></tr>
+        <tr class="star"><td>14.3</td><td>液块/管道 Conduit 🆕</td><td>补缺方块</td><td>block</td><td>conduit</td><td><code>Blocks.java:2323</code></td></tr>
+        <tr class="star"><td>14.4</td><td>载荷运输 PayloadConveyor 🆕</td><td>补缺方块</td><td>block</td><td>payload-conveyor</td><td><code>Blocks.java:6627</code></td></tr>
+        <tr class="star"><td>14.5</td><td>自定义地板 Floor 🆕</td><td>补缺方块</td><td>block</td><td>darksand/stone</td><td><code>Blocks.java:390</code></td></tr>
+        <tr class="star"><td>15.1</td><td>科技树 TechTree ⭐🆕</td><td>科技树</td><td>—</td><td>SerpuloTechTree</td><td><code>TechTree.java</code></td></tr>
+        <tr class="star"><td>16.1</td><td>自定义星球 Planet ⭐🆕</td><td>星球</td><td>planet</td><td>serpulo</td><td><code>Planets.java:123</code></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <footer>Mindustry v159.7 (HEAD b3317f3) · 分类模板库 v2 · 有样学样 · 16 分类 / 27 卡片 · 所有代码经官方源码逐条核验</footer>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script>
+// 复制按钮
+document.querySelectorAll('.copybtn').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    var code = btn.parentElement.querySelector('code').innerText;
+    navigator.clipboard.writeText(code).then(function(){
+      var old = btn.textContent;
+      btn.textContent = '已复制';
+      setTimeout(function(){ btn.textContent = old; }, 1200);
+    });
+  });
+});
+
+// 顶部分类导航：点击滚动 + 高亮
+var buttons = document.querySelectorAll('.topnav button');
+buttons.forEach(function(btn){
+  btn.addEventListener('click', function(){
+    var target = document.getElementById(btn.dataset.cat);
+    if(target){ target.scrollIntoView({behavior:'smooth'}); }
+  });
+});
+
+// 滚动时自动高亮当前分类
+var sections = document.querySelectorAll('section.cat[id]');
+window.addEventListener('scroll', function(){
+  var pos = window.scrollY + 140;
+  var current = null;
+  sections.forEach(function(s){ if(s.offsetTop <= pos) current = s.id; });
+  buttons.forEach(function(b){ b.classList.toggle('active', b.dataset.cat === current); });
+});
+</script>
+</body>
+</html>

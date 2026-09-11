@@ -1,0 +1,11 @@
+{
+  "name": "Example Java Mod",
+  "displayName": "示例 Java 模组",
+  "author": "Tutorial Author",
+  "description": "一个用于学习 Mindustry Java 模组开发的示例模组",
+  "version": "1.0.0",
+  "main": "com.example.mod.ExampleModMain",
+  "minGameVersion": "154",
+  "java": true,
+  "dependencies": []
+}

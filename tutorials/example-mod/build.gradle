@@ -1,0 +1,49 @@
+plugins {
+    id 'java'
+}
+
+// Mindustry v159.7 使用 Java 17
+sourceCompatibility = 17
+targetCompatibility = 17
+
+repositories {
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+    // Mindustry 核心库（仅编译时需要，运行时由游戏提供）
+    compileOnly "com.github.Anuken.Mindustry:core:v159.7"
+    // Arc 引擎核心库
+    compileOnly "com.github.Anuken.Arc:arc-core:889dd8880f"
+}
+
+// 将 mod.json 包含在最终 jar 中
+sourceSets {
+    main {
+        resources {
+            srcDirs = ['src/main/resources']
+        }
+    }
+}
+
+// 配置 jar 任务：将 mod.json 打入 jar 根目录
+jar {
+    manifest {
+        attributes(
+            'Main-Class': 'mindustry.mod.ModClassLoader'
+        )
+    }
+    // 将 mod.json 复制到 jar 根目录
+    from('mod.json') {
+        into ''
+    }
+}
+
+// 构建产物输出目录
+buildDir = 'build'
+
+// 使用说明:
+//   构建模组:  ./gradlew jar
+//   产物位置:  build/libs/example-java-mod-1.0.0.jar
+//   安装方式:  将生成的 jar 文件复制到 Mindustry 的 mods 文件夹中

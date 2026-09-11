@@ -1,0 +1,93 @@
+<html style="margin:0;padding:0;">
+<meta charset="utf-8">
+<div style="width:100%;box-sizing:border-box;background:#f6f8fa;font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;padding:24px 18px;color:#1f2937;">
+  <div style="font-size:20px;font-weight:700;margin-bottom:4px;">Mindustry 数据目录演进史（2018–2026）</div>
+  <div style="font-size:13px;color:#6b7280;margin-bottom:20px;">依据 Mindustry / Arc / UCore 仓库 git 历史核验 · 默认数据目录 = 存档、模组、地图所在目录</div>
+
+  <!-- 时间轴 -->
+  <div style="position:relative;margin:0 0 22px 8px;padding-left:20px;border-left:3px solid #2563eb;">
+    <div style="position:absolute;left:-7px;top:2px;width:11px;height:11px;border-radius:50%;background:#2563eb;"></div>
+    <div style="font-size:14px;font-weight:600;">2018-03 · v33（最早 tag）</div>
+    <div style="font-size:13px;color:#6b7280;">ucore 框架时代开启，全平台默认路径自此确定</div>
+  </div>
+  <div style="position:relative;margin:0 0 22px 8px;padding-left:20px;border-left:3px solid #2563eb;">
+    <div style="position:absolute;left:-7px;top:2px;width:11px;height:11px;border-radius:50%;background:#2563eb;"></div>
+    <div style="font-size:14px;font-weight:600;">2019-09 · v93</div>
+    <div style="font-size:13px;color:#6b7280;">Steam 版数据目录单独改为游戏目录下 saves/</div>
+  </div>
+  <div style="position:relative;margin:0 0 22px 8px;padding-left:20px;border-left:3px solid #16a34a;">
+    <div style="position:absolute;left:-7px;top:2px;width:11px;height:11px;border-radius:50%;background:#16a34a;"></div>
+    <div style="font-size:14px;font-weight:600;">2020-02 · v104（v7 时代）</div>
+    <div style="font-size:13px;color:#6b7280;">Linux 默认路径从 ~/.mindustry 改为 XDG 标准目录</div>
+  </div>
+  <div style="position:relative;margin:0 0 22px 8px;padding-left:20px;border-left:3px solid #16a34a;">
+    <div style="position:absolute;left:-7px;top:2px;width:11px;height:11px;border-radius:50%;background:#16a34a;"></div>
+    <div style="font-size:14px;font-weight:600;">2021-03 · v126</div>
+    <div style="font-size:13px;color:#6b7280;">新增环境变量 MINDUSTRY_DATA_DIR 可在启动时指定目录</div>
+  </div>
+  <div style="position:relative;margin:0 0 22px 8px;padding-left:20px;border-left:3px solid #16a34a;">
+    <div style="position:absolute;left:-7px;top:2px;width:11px;height:11px;border-radius:50%;background:#16a34a;"></div>
+    <div style="font-size:14px;font-weight:600;">2024-11（v147 起）</div>
+    <div style="font-size:13px;color:#6b7280;">新增 JVM 参数 -Dmindustry.data.dir，优先级高于环境变量（现行方式）</div>
+  </div>
+
+  <!-- 阶段卡片 -->
+  <div style="font-size:15px;font-weight:700;margin:26px 0 10px;">默认路径演变</div>
+
+  <div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:14px 16px;margin-bottom:12px;">
+    <div style="font-size:14px;font-weight:700;margin-bottom:8px;">阶段 1：v33–v100（2018-03 ~ 2019-11，ucore → arc 早期）</div>
+    <table style="width:100%;border-collapse:collapse;font-size:13px;">
+      <tr style="background:#f3f4f6;"><th style="text-align:left;padding:5px 8px;border:1px solid #e5e7eb;width:22%;">平台</th><th style="text-align:left;padding:5px 8px;border:1px solid #e5e7eb;">默认数据目录</th></tr>
+      <tr><td style="padding:5px 8px;border:1px solid #e5e7eb;font-weight:600;">Windows</td><td style="padding:5px 8px;border:1px solid #e5e7eb;"><code style="background:#f3f4f6;padding:1px 6px;border-radius:4px;font-size:12px;">%AppData%\Mindustry\</code>（即 C:\Users\&lt;你&gt;\AppData\Roaming\Mindustry\）</td></tr>
+      <tr><td style="padding:5px 8px;border:1px solid #e5e7eb;font-weight:600;">Linux</td><td style="padding:5px 8px;border:1px solid #e5e7eb;"><code style="background:#f3f4f6;padding:1px 6px;border-radius:4px;font-size:12px;">~/.mindustry/</code></td></tr>
+      <tr><td style="padding:5px 8px;border:1px solid #e5e7eb;font-weight:600;">macOS</td><td style="padding:5px 8px;border:1px solid #e5e7eb;"><code style="background:#f3f4f6;padding:1px 6px;border-radius:4px;font-size:12px;">~/Library/Application Support/Mindustry/</code></td></tr>
+    </table>
+    <div style="font-size:12px;color:#6b7280;margin-top:6px;">设置方式：无任何启动参数，需改源码或直接移动/链接目录。</div>
+  </div>
+
+  <div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:14px 16px;margin-bottom:12px;">
+    <div style="font-size:14px;font-weight:700;margin-bottom:8px;">阶段 2：v93 起（2019-09，Steam 版特例）</div>
+    <div style="font-size:13px;line-height:1.7;">Steam 版（<code style="background:#f3f4f6;padding:1px 6px;border-radius:4px;font-size:12px;">steam || Version.isSteam</code>）数据目录改为 <code style="background:#f3f4f6;padding:1px 6px;border-radius:4px;font-size:12px;">游戏安装目录/saves/</code>，与普通版分离。</div>
+  </div>
+
+  <div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:14px 16px;margin-bottom:12px;">
+    <div style="font-size:14px;font-weight:700;margin-bottom:8px;">阶段 3：v104 起（2020-02，v7 正式版，现行默认）</div>
+    <table style="width:100%;border-collapse:collapse;font-size:13px;">
+      <tr style="background:#f3f4f6;"><th style="text-align:left;padding:5px 8px;border:1px solid #e5e7eb;width:22%;">平台</th><th style="text-align:left;padding:5px 8px;border:1px solid #e5e7eb;">默认数据目录</th></tr>
+      <tr><td style="padding:5px 8px;border:1px solid #e5e7eb;font-weight:600;">Windows</td><td style="padding:5px 8px;border:1px solid #e5e7eb;"><code style="background:#f3f4f6;padding:1px 6px;border-radius:4px;font-size:12px;">%AppData%\Mindustry\</code>（不变）</td></tr>
+      <tr><td style="padding:5px 8px;border:1px solid #e5e7eb;font-weight:600;">Linux</td><td style="padding:5px 8px;border:1px solid #e5e7eb;"><code style="background:#f3f4f6;padding:1px 6px;border-radius:4px;font-size:12px;">$XDG_DATA_HOME/Mindustry/</code>，未设置时 <code style="background:#f3f4f6;padding:1px 6px;border-radius:4px;font-size:12px;">~/.local/share/Mindustry/</code></td></tr>
+      <tr><td style="padding:5px 8px;border:1px solid #e5e7eb;font-weight:600;">macOS</td><td style="padding:5px 8px;border:1px solid #e5e7eb;"><code style="background:#f3f4f6;padding:1px 6px;border-radius:4px;font-size:12px;">~/Library/Application Support/Mindustry/</code>（不变）</td></tr>
+    </table>
+  </div>
+
+  <div style="font-size:15px;font-weight:700;margin:26px 0 10px;">启动时修改方式演变（ClientLauncher.setup 源码）</div>
+
+  <div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:14px 16px;margin-bottom:12px;">
+    <div style="font-size:14px;font-weight:700;margin-bottom:6px;">v126 起（2021-03）：环境变量</div>
+    <div style="background:#f3f4f6;border-radius:6px;padding:8px 12px;font-family:monospace;font-size:12px;line-height:1.8;white-space:pre-wrap;">MINDUSTRY_DATA_DIR=/自定义/路径 java -jar Mindustry.jar</div>
+    <div style="font-size:12px;color:#6b7280;margin-top:6px;">源码：<code style="background:#eef2ff;padding:1px 6px;border-radius:4px;font-size:12px;">String dataDir = OS.env("MINDUSTRY_DATA_DIR");</code></div>
+  </div>
+
+  <div style="background:#fff;border:2px solid #2563eb;border-radius:10px;padding:14px 16px;margin-bottom:12px;">
+    <div style="font-size:14px;font-weight:700;margin-bottom:6px;">v147 起（2024-11，现行）：JVM 参数（优先）</div>
+    <div style="background:#f3f4f6;border-radius:6px;padding:8px 12px;font-family:monospace;font-size:12px;line-height:1.8;white-space:pre-wrap;">java -Dmindustry.data.dir=/自定义/路径 -jar Mindustry.jar</div>
+    <div style="font-size:12px;color:#6b7280;margin-top:6px;">源码（当前 master v159.7-479）：<code style="background:#eef2ff;padding:1px 6px;border-radius:4px;font-size:12px;">String dataDir = System.getProperty("mindustry.data.dir", OS.env("MINDUSTRY_DATA_DIR"));</code><br/>优先级：<b>-D 参数 &gt; 环境变量</b>，均未设置时用上表默认路径。</div>
+  </div>
+
+  <div style="font-size:15px;font-weight:700;margin:26px 0 10px;">通用隐式覆盖方式（无需官方参数，v126 之前也能用）</div>
+
+  <div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:14px 16px;margin-bottom:12px;">
+    <div style="font-size:13px;line-height:1.7;margin-bottom:8px;">路径实现基于环境变量/系统属性的平台，直接覆盖底层变量即可改目录。优先级：官方参数（-Dmindustry.data.dir / MINDUSTRY_DATA_DIR）&gt; 本表隐式覆盖 &gt; 系统默认。</div>
+    <table style="width:100%;border-collapse:collapse;font-size:13px;">
+      <tr style="background:#f3f4f6;"><th style="text-align:left;padding:5px 8px;border:1px solid #e5e7eb;width:24%;">平台</th><th style="text-align:left;padding:5px 8px;border:1px solid #e5e7eb;width:36%;">覆盖方式</th><th style="text-align:left;padding:5px 8px;border:1px solid #e5e7eb;">结果路径</th></tr>
+      <tr><td style="padding:5px 8px;border:1px solid #e5e7eb;font-weight:600;">Windows（全版本）</td><td style="padding:5px 8px;border:1px solid #e5e7eb;"><code style="background:#f3f4f6;padding:1px 6px;border-radius:4px;font-size:12px;">set AppData=D:\自定义</code>（v88 实测有效）</td><td style="padding:5px 8px;border:1px solid #e5e7eb;"><code style="background:#f3f4f6;padding:1px 6px;border-radius:4px;font-size:12px;">D:\自定义\Mindustry</code>（被套一层）</td></tr>
+      <tr><td style="padding:5px 8px;border:1px solid #e5e7eb;font-weight:600;">Linux v104+</td><td style="padding:5px 8px;border:1px solid #e5e7eb;"><code style="background:#f3f4f6;padding:1px 6px;border-radius:4px;font-size:12px;">XDG_DATA_HOME=/自定义</code></td><td style="padding:5px 8px;border:1px solid #e5e7eb;"><code style="background:#f3f4f6;padding:1px 6px;border-radius:4px;font-size:12px;">/自定义/Mindustry</code></td></tr>
+      <tr><td style="padding:5px 8px;border:1px solid #e5e7eb;font-weight:600;">Linux v104 前</td><td style="padding:5px 8px;border:1px solid #e5e7eb;"><code style="background:#f3f4f6;padding:1px 6px;border-radius:4px;font-size:12px;">-Duser.home=/自定义</code></td><td style="padding:5px 8px;border:1px solid #e5e7eb;"><code style="background:#f3f4f6;padding:1px 6px;border-radius:4px;font-size:12px;">/自定义/.mindustry</code></td></tr>
+      <tr><td style="padding:5px 8px;border:1px solid #e5e7eb;font-weight:600;">macOS</td><td style="padding:5px 8px;border:1px solid #e5e7eb;"><code style="background:#f3f4f6;padding:1px 6px;border-radius:4px;font-size:12px;">-Duser.home=/自定义</code></td><td style="padding:5px 8px;border:1px solid #e5e7eb;"><code style="background:#f3f4f6;padding:1px 6px;border-radius:4px;font-size:12px;">/自定义/Library/Application Support/Mindustry</code></td></tr>
+    </table>
+    <div style="font-size:12px;color:#6b7280;margin-top:6px;">源码：Windows 读 <code style="background:#eef2ff;padding:1px 6px;border-radius:4px;font-size:12px;">env("AppData")</code>；Linux 读 <code style="background:#eef2ff;padding:1px 6px;border-radius:4px;font-size:12px;">XDG_DATA_HOME</code> 或 <code style="background:#eef2ff;padding:1px 6px;border-radius:4px;font-size:12px;">user.home</code>；macOS 读 <code style="background:#eef2ff;padding:1px 6px;border-radius:4px;font-size:12px;">user.home</code>。注意 -Duser.home 会影响所有基于家目录的路径，副作用较大。</div>
+  </div>
+
+  <div style="font-size:12px;color:#9ca3af;margin-top:14px;line-height:1.7;">核验依据：Mindustry@master b3317f3（ClientLauncher.setup）、Vars.loadSettings；Arc@master 889dd888（OS.getAppDataDirectoryString）；Arc 历史提交 fb10d061（2019-12-25 Linux 路径改为 XDG）；Mindustry 历史提交 efa5c5db7b（v126，环境变量）、d65f226b3a（v147，-D 参数）、f7eea51066（v93，Steam saves/）；UCore OS.java（早期 ~/.mindustry）。</div>
+</div>
+</html>

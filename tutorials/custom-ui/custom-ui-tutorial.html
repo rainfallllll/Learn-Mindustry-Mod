@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>自建 UI（信息类）教程 — Mindustry Java 模组</title>
+<link href="https://cdn.jsdelivr.net/npm/prism-themes@1.9.0/themes/prism-one-dark.css" rel="stylesheet" />
+<style>
+:root{
+  --bg:#0f0f1a;
+  --bg2:#1a1a2e;
+  --code-bg:#1e1e2e;
+  --accent:#f39c12;
+  --text:#e6e6f0;
+  --muted:#9a9ab0;
+  --border:#2a2a40;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:"Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  line-height:1.7;
+  font-size:15.5px;
+}
+.layout{display:flex;min-height:100vh;}
+/* sidebar */
+nav#toc{
+  width:280px;flex:0 0 280px;
+  background:var(--bg2);
+  border-right:1px solid var(--border);
+  padding:24px 18px;
+  position:sticky;top:0;height:100vh;overflow-y:auto;
+}
+nav#toc h1{font-size:16px;color:var(--accent);margin:0 0 4px;}
+nav#toc .sub{font-size:12px;color:var(--muted);margin-bottom:18px;}
+nav#toc a{
+  display:block;color:#cfcfe0;text-decoration:none;
+  padding:5px 8px;border-radius:6px;font-size:13.5px;
+  border-left:2px solid transparent;
+}
+nav#toc a:hover{background:#23233a;color:#fff;}
+nav#toc a.lvl2{padding-left:22px;font-size:12.5px;color:var(--muted);}
+nav#toc a.active{border-left-color:var(--accent);color:var(--accent);background:#23233a;}
+main{flex:1;padding:40px 56px;max-width:980px;}
+h2{color:var(--accent);border-bottom:1px solid var(--border);padding-bottom:8px;margin-top:48px;}
+h3{color:#ffd27f;margin-top:30px;}
+h4{color:#b8b8e0;margin-top:22px;}
+a{color:var(--accent);}
+code{
+  background:var(--code-bg);color:#ffd27f;
+  padding:1px 5px;border-radius:4px;font-size:13.5px;
+  font-family:"JetBrains Mono",Consolas,monospace;
+}
+pre{
+  background:var(--code-bg)!important;border:1px solid var(--border);
+  border-radius:8px;padding:14px 16px;overflow:auto;position:relative;
+}
+pre code{background:none;padding:0;color:#e6e6f0;font-size:13px;line-height:1.55;}
+table{border-collapse:collapse;width:100%;margin:16px 0;font-size:13.5px;}
+th,td{border:1px solid var(--border);padding:7px 10px;text-align:left;}
+th{background:var(--bg2);color:var(--accent);}
+tr:nth-child(even) td{background:#15152a;}
+blockquote{
+  border-left:3px solid var(--accent);background:#1a1a2e;
+  margin:16px 0;padding:10px 16px;color:#cfcfe0;border-radius:0 6px 6px 0;
+}
+.tip{background:#1d2a1d;border-left:3px solid #58b368;}
+.newbox{
+  border:1px solid rgba(46,204,113,.55);
+  background:rgba(46,204,113,.07);
+  border-radius:8px;padding:14px 18px;margin:24px 0;
+}
+.newbox h3{color:#58d68d;}
+.newbadge{
+  display:inline-block;background:#2ecc71;color:#04220f;font-size:11px;
+  padding:1px 8px;border-radius:10px;font-weight:700;vertical-align:middle;
+}
+.copy-btn{
+  position:absolute;top:8px;right:8px;
+  background:#2d2d44;color:#cfcfe0;border:1px solid var(--border);
+  border-radius:5px;padding:3px 10px;font-size:11.5px;cursor:pointer;
+}
+.copy-btn:hover{background:var(--accent);color:#000;}
+.badge{display:inline-block;background:var(--accent);color:#000;font-size:11px;
+  padding:1px 7px;border-radius:10px;font-weight:600;}
+@media(max-width:860px){
+  .layout{flex-direction:column;}
+  nav#toc{width:100%;height:auto;position:static;flex:none;}
+  main{padding:20px;}
+}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav id="toc">
+  <h1>自建 UI（信息类）教程</h1>
+  <div class="sub">Mindustry v159.7 · Java 模组 · 任务驱动</div>
+  <a href="#intro">0. 分层总览</a>
+  <a href="#block1">第一块：建筑状态条</a>
+  <a class="lvl2" href="#b1-api">API</a>
+  <a class="lvl2" href="#b1-pit">坑</a>
+  <a href="#block2">第二块：信息面板</a>
+  <a class="lvl2" href="#b2-api">API</a>
+  <a class="lvl2" href="#b2-pit">坑</a>
+  <a href="#block3">第三块：数据库统计</a>
+  <a class="lvl2" href="#b3-api">API</a>
+  <a class="lvl2" href="#b3-pit">坑</a>
+  <a href="#block4">第四块：自定义窗口</a>
+  <a class="lvl2" href="#b4-api">API</a>
+  <a class="lvl2" href="#b4-pit">坑</a>
+  <a href="#case">综合案例：热力学 mod</a>
+  <a href="#appendix-a">附录 A：源码地图</a>
+  <a href="#appendix-b">附录 B：架构</a>
+</nav>
+<main>
+
+<h2 id="intro">0. 先搞懂 Mindustry 的信息 UI 是怎么分层的</h2>
+<p>在动手前，记住这张调用链，后面四块全是它的局部扩展：</p>
+<pre><code class="language-none">玩家点了一个建筑
+  └─ BuildingComp.display(Table)            ← 第二块要覆写的就是它
+       ├─ 顶部：建筑图标 + 名字
+       ├─ displayBars(Table)                 ← 第一块的状态条从这里被画出来
+       │     └─ 遍历 Block.listBars()
+       │            └─ 每个 Bar 来自 Block.addBar(...)   ← 第一块注册
+       └─ displayConsumption(...)           ← 默认的电/液/物品消耗
+
+游戏内数据库（图鉴）里看一个建筑
+  └─ Block.setStats()                        ← 第三块要覆写的就是它
+       └─ stats.add(Stat, StatValue)         ← 用 StatValues.* 造值
+
+玩家想看全局数据
+  └─ 你 new 一个 Dialog                       ← 第四块
+       └─ dialog.cont 里摆 Table</code></pre>
+<p>一句话：<strong>状态条走 <code>addBar</code>，点建筑弹窗走 <code>display</code>，图鉴走 <code>setStats</code>，独立大窗口走 <code>Dialog</code>。</strong></p>
+
+<h2 id="block1">第一块：建筑状态条自定义（温度条 / 热量条 / 效率条）</h2>
+<h3>目标</h3>
+<p>给建筑脚下/信息面板里加一条<strong>自己的进度条</strong>。我们要做一条"温度条"：红色填充，按 <code>0 ~ maxTempK</code> 映射成 <code>0~1</code>。</p>
+
+<h4>完整可复制代码</h4>
+<pre><code class="language-java">package com.example.blocks;
+
+import arc.graphics.Color;
+import arc.math.Mathf;
+import mindustry.world.Block;
+import mindustry.world.meta.StatUnit;
+
+public class ExampleBlock extends Block {
+
+    /** 温度上限（K），0~1 映射的分母 */
+    public float maxTempK = 800f;
+
+    public ExampleBlock(String name) {
+        super(name);
+        // 不要在这里 addBar！原因见"坑"。
+    }
+
+    // ★ 关键：覆写 setBars()，先调 super 再加自己的条
+    @Override
+    public void setBars() {
+        super.setBars();   // 必须先调，否则血条/电条/物品条全没了
+
+        addBar("temperature", (ExampleBuild entity) -> new Bar(
+            () -> "温度",                 // 条上的名字
+            () -> Color.red,              // 条颜色（可随温度变）
+            // ★ fraction 必须返回 0~1！
+            () -> Mathf.clamp(entity.curTempK / entity.block.maxTempK)
+        ));
+    }
+
+    public class ExampleBuild extends Building {
+        public float curTempK;
+    }
+}</code></pre>
+
+<h3 id="b1-api">只讲 2~3 个新 API</h3>
+<p><strong>① <code>Block.addBar(String name, Func&lt;T, Bar&gt; sup)</code> —— <code>Block.java:677</code></strong></p>
+<pre><code class="language-java">public &lt;T extends Building&gt; void addBar(String name, Func&lt;T, Bar&gt; sup){
+    barMap.put(name, (Func&lt;Building, Bar&gt;)sup);
+}</code></pre>
+<ul>
+<li>泛型 <code>&lt;T extends Building&gt;</code>，lambda 里直接写成 <code>(YourBuild entity) -&gt; ...</code>，强转在方法内部 <code>:678</code> 完成。</li>
+<li>第二个参数是<strong>懒求值工厂</strong>：每帧画条时才调一次，返回 <code>Bar</code>；返回 <code>null</code> 就不画。</li>
+</ul>
+<p><strong>② <code>Bar</code> 两个构造函数 —— <code>Bar.java:23</code> 与 <code>:31</code></strong></p>
+<pre><code class="language-java">// 静态版：名字/颜色不变
+public Bar(String name, Color color, Floatp fraction)            // :23
+// 动态版：名字/颜色每帧可变（做温度变色用这个）
+public Bar(Prov&lt;CharSequence&gt; name, Prov&lt;Color&gt; color, Floatp fraction)  // :31</code></pre>
+<ul>
+<li>第三个参数 <code>Floatp</code> 即 <code>() -&gt; float</code>，<strong>必须返回 0~1</strong>。</li>
+<li>链式：<code>blink(Color)</code>(<code>Bar.java:71</code>，返回 Bar)、<code>snap()</code>(<code>:57</code>，void)、<code>outline(Color,float)</code>(<code>:61</code>)。</li>
+</ul>
+<p><strong>③ <code>BuildingComp.displayBars(Table)</code> —— <code>BuildingComp.java:1667</code></strong>。一般不用覆写，它在 <code>display()</code> 内部 <code>:1577</code> 被调用，你 <code>addBar</code> 注册的条会自动按顺序画出来。</p>
+
+<h3 id="b1-pit">坑（萌新必踩）</h3>
+<blockquote class="tip">
+<ol>
+<li><strong>不要在构造函数里 <code>addBar</code>！</strong>正确位置是覆写 <code>setBars()</code> 并先 <code>super.setBars()</code>。因为 <code>afterPatch()</code> 在 <code>Block.java:769</code> 会先 <code>barMap.clear()</code> 再 <code>setBars()</code>(<code>:770</code>)；构造函数里加的会被清掉。</li>
+<li><code>fraction</code> 必须 <strong>0~1</strong>，不是物理量本身。</li>
+<li>泛型 <code>T</code> 要匹配你的 Build 子类。</li>
+<li>字段名是 <code>barMap</code>(<code>Block.java:422</code>)，不是 <code>bars</code>。</li>
+</ol>
+</blockquote>
+<p>深入：官方血条 <code>Block.java:707</code>、电条 <code>:713</code>、物品条 <code>:722</code>、液体条 <code>:690/:699</code>；<code>Bar</code> 全部方法见 <code>Bar.java</code>。</p>
+
+<h2 id="block2">第二块：建筑信息面板自定义</h2>
+<h3>目标</h3>
+<p>点击建筑，在默认信息后<strong>追加</strong>两行：<code>温度: XXX K</code>、<code>热流: XXX J/t</code>。</p>
+<h4>完整可复制代码</h4>
+<pre><code class="language-java">// 放在 Build 内部类里
+@Override
+public void display(Table table) {
+    super.display(table);          // ★ 必须先调，否则默认信息全丢
+
+    table.row();
+    table.left().label(() ->
+        "温度: " + String.format("%.1f K", thermal.getTemperatureK())
+    );
+
+    table.row();
+    table.left().label(() ->
+        "热流: " + String.format("%.1f J/t", thermal.pendingDeltaQ)
+    );
+}</code></pre>
+<h3 id="b2-api">只讲 2~3 个新 API</h3>
+<p><strong>① <code>BuildingComp.display(Table)</code> —— <code>BuildingComp.java:1561</code></strong>，点建筑后信息面板的绘制入口。你在它末尾接着画。</p>
+<p><strong>② Table 四件套：</strong><code>add()</code> 塞元素、<code>row()</code> 换行、<code>left()</code>/<code>right()</code>(<code>Table.java:786/:800</code>) 对齐、<code>label(Prov&lt;CharSequence&gt;)</code>(<code>Table.java:285</code>) 动态文字每帧刷新。文字支持 <code>[颜色]...[]</code> 富文本。</p>
+<h3 id="b2-pit">坑</h3>
+<blockquote class="tip">
+<ol>
+<li>必须 <code>super.display(table);</code> 放第一行，否则图标/名字/状态条/消耗全消失。</li>
+<li>新加一行先 <code>table.row()</code> 再 <code>add/label</code>。</li>
+<li>刷新用 <code>label(() -&gt; ...)</code>，不要 <code>add("固定串")</code>。</li>
+<li>覆写的是 <strong>Build 内部类</strong>的 <code>display</code>，不是 Block。</li>
+</ol>
+</blockquote>
+
+<h2 id="block3">第三块：数据库信息呈现自定义（图鉴）</h2>
+<h3>目标</h3>
+<p>在图鉴点开建筑时，除默认信息外显示 <code>热容 C</code>、<code>airU</code>、<code>maxHeatRate</code> 等自定义静态条目。</p>
+<h4>完整可复制代码</h4>
+<pre><code class="language-java">import mindustry.world.meta.Stat;
+import mindustry.world.meta.StatUnit;
+import mindustry.world.meta.StatValues;
+
+public class ExampleBlock extends Block {
+
+    // ★ 自定义 Stat（类，不是枚举）。new 出来就自动注册
+    public static final Stat heatCapacityStat = new Stat("thermalHeatCapacity");
+    public static final Stat airUStat          = new Stat("thermalAirU");
+    public static final Stat maxHeatRateStat   = new Stat("thermalMaxHeatRate");
+
+    // 块级常量：图鉴在还没造建筑时就要显示
+    public float heatCapacity = 2000f;
+    public float airU = 0.05f;
+    public float maxHeatRate = 50f;
+
+    @Override
+    public void setStats() {
+        super.setStats();   // 必须先调
+
+        stats.add(heatCapacityStat, "%.0f J/K", heatCapacity);
+        stats.add(airUStat, "%.3f J/(t·格·K)", airU);
+        stats.add(maxHeatRateStat, StatValues.number(maxHeatRate, StatUnit.none));
+    }
+}</code></pre>
+<blockquote>中文名：<code>Stat.localized()</code>(<code>Stat.java:126</code>) 去 bundle 找 <code>"stat."+name</code>（转小写）。在 <code>bundle.properties</code> 加 <code>stat.thermalheatcapacity=热容 C</code> 等即可。</blockquote>
+<h3 id="b3-api">只讲 2~3 个新 API</h3>
+<p><strong>① <code>Block.setStats()</code> —— <code>Block.java:641</code></strong>，内容加载时只跑一次。</p>
+<p><strong>② <code>Stat</code> —— <code>Stat.java</code>（是类不是枚举）。</strong>构造 <code>Stat(String,StatCat)</code>(<code>:115</code>) / <code>Stat(String)</code>(<code>:122</code>)，构造即自动注册进 <code>Stat.all</code>。</p>
+<p><strong>③ <code>StatValues</code> 工厂 —— <code>StatValues.java</code>：</strong><code>string():35</code>、<code>bool():40</code>、<code>number():69</code>、<code>liquid():115</code>、<code>squared():48</code>。往 <code>stats</code> 加值：<code>stats.add(Stat,fmt,args)</code>(<code>Stats.java:93</code>) 或 <code>stats.add(Stat,StatValue)</code>(<code>Stats.java:104</code>)。</p>
+<h3 id="b3-pit">坑</h3>
+<blockquote class="tip">
+<ol>
+<li><code>setStats()</code> 内容加载时跑一次，<strong>不能读运行时实例温度</strong>，只能放块级常量。</li>
+<li>要显示的常量必须在 Block 上，不能在 Build 里。</li>
+<li><code>Stat</code> 是类不是枚举，<code>new Stat("xxx")</code> 即可，别找 <code>Stat.values()</code>。</li>
+<li>先 <code>super.setStats();</code>。</li>
+</ol>
+</blockquote>
+
+<div class="newbox">
+<h3 id="b3-v160">🟢 v160 新增：数据库统计这一层有三处变化 <span class="newbadge">v160 NEW</span></h3>
+<p>原版第三块基于 v159.7。以下为 v160 新增/修改，详见《v159.7 → v160 变更速查》。</p>
+<p><strong>变化一：<code>useCategories</code> 现在自动开启，别再手写。</strong> v159.7 里手写的 <code>stats.useCategories = true;</code>（旧 <code>Block.java:1467</code>，在 <code>afterPatch()</code>）已挪进 <code>Block.setStats()</code>（<code>Block.java:644</code>）。覆写 <code>setStats()</code> 只要 <code>super.setStats();</code> 即可，<strong>不要再在自己的 <code>afterPatch()</code> 里设它</strong>。</p>
+<p><strong>变化二：<code>Stat</code> 新增两个枚举可直接复用：</strong></p>
+<table>
+<tr><th>新枚举</th><th>位置</th><th>分类</th><th>用法</th></tr>
+<tr><td><code>Stat.meltdownTime</code></td><td><code>Stat.java:64</code></td><td><code>StatCat.power</code></td><td><code>stats.add(Stat.meltdownTime, 10f, StatUnit.seconds);</code></td></tr>
+<tr><td><code>Stat.status</code></td><td><code>Stat.java:93</code></td><td><code>StatCat.function</code></td><td><code>stats.add(Stat.status, StatValues.string("就绪"));</code></td></tr>
+</table>
+<p>连同 <code>StatUnit</code> 新增 <code>worldUnits</code>(<code>:17</code>)、<code>items</code>(<code>:40</code>)、<code>instant</code>(<code>:41</code>)。</p>
+<p><strong>变化三：<code>StatValues</code> 新增方法：</strong></p>
+<table>
+<tr><th>新方法</th><th>行号</th><th>用法示例</th></tr>
+<tr><td><code>statusText(StatusEffect, float dur, float chance)</code></td><td><code>:229</code></td><td>把状态效果拼成本地化文本</td></tr>
+<tr><td><code>displayItem(Item, float amount, float period, boolean showName)</code></td><td><code>:317</code></td><td>显示小数产出（带 /秒）</td></tr>
+<tr><td><code>blocks(Attribute, boolean, float sEff, float sAmt, Seq&lt;ItemStack&gt; out, float period, boolean startZero)</code></td><td><code>:350/:399</code></td><td>按地形属性列缩放产出+效率</td></tr>
+</table>
+<pre><code class="language-java">// v160 新写法示例
+@Override
+public void setStats(){
+    super.setStats();   // ← useCategories 已自动开，不用手写
+    stats.add(Stat.output, StatValues.displayItem(Items.copper, 0.5f, 90f, true)); // 小数产出
+    stats.add(Stat.meltdownTime, 10f, StatUnit.seconds);
+}</code></pre>
+<p>背后原因：v160 的 <code>GenericCrafter</code> 输出改成"小数累积、按次取整"，<code>StatValues</code> 必须支持 <code>float</code> 数量。</p>
+</div>
+
+<h2 id="block4">第四块：自定义窗口 / 悬浮面板</h2>
+<h3>目标</h3>
+<p>弹出独立大窗口"热网总览"，列出场上所有热力建筑温度/状态。</p>
+<h4>完整可复制代码</h4>
+<pre><code class="language-java">package com.thermal.mod.ui;
+
+import arc.scene.ui.Dialog;
+import arc.scene.ui.layout.Table;
+import com.thermal.mod.ThermalModMain;
+import com.thermal.mod.core.ThermalBuilding;
+import mindustry.gen.Building;
+
+public class ThermalOverviewDialog extends Dialog {
+
+    public ThermalOverviewDialog() {
+        super("热网总览");          // Dialog(String) —— Dialog.java:65
+        cont.pad(14f);              // ★ 正文加在 cont，不是 this！
+
+        Table list = new Table();
+        list.left();
+        cont.top();
+        cont.defaults().width(340f);
+        cont.add(list).growX();
+        cont.row();
+
+        Runnable rebuild = () -> {
+            list.clearChildren();
+            list.left();
+            var all = ThermalModMain.thermalSystem.allBuildings();
+            if (all.isEmpty()) { list.add("[lightgray]场上还没有热力建筑。"); return; }
+            for (ThermalBuilding tb : all) {
+                Building b = tb.asBuilding();
+                float t = tb.getThermal().getTemperatureK();
+                list.left().add(b.block.localizedName).padRight(10);
+                list.left().label(() -> String.format("%.1f K", t));
+                list.row();
+            }
+        };
+        cont.update(rebuild);       // 每帧刷新
+
+        buttons.defaults().size(140f, 60f);
+        buttons.button("关闭", () -> hide());
+    }
+    // 调用：new ThermalOverviewDialog().show();
+}</code></pre>
+<p>配套给 <code>ThermalSystem</code> 加访问器：<code>public Seq&lt;ThermalBuilding&gt; allBuildings(){ return buildings; }</code></p>
+<p>唤出方式（把某建筑设为可配置）：</p>
+<pre><code class="language-java">// Block 构造函数
+configurable = true;             // Block.java:258
+// Build 内部类
+@Override public void buildConfiguration(Table table) {
+    table.button("热网总览", () -> new ThermalOverviewDialog().show()).size(160f, 60f);
+}</code></pre>
+<h3 id="b4-api">只讲 2~3 个新 API</h3>
+<p><strong>① <code>arc.scene.ui.Dialog</code> —— <code>Dialog.java:29</code>，extends Table。</strong>自带 <code>public final Table cont, buttons;</code>(<code>:57</code>)——正文加 <code>cont</code>，底部按钮加 <code>buttons</code>。显示 <code>show()</code>(<code>:514</code>)、关闭 <code>hide()</code>(<code>:551</code>)。</p>
+<p><strong>② <code>Styles</code> —— <code>Styles.java</code>：</strong>面板 <code>grayPanel</code>(<code>:27</code>)、文本按钮 <code>flatT</code>(<code>:32</code>)、标签 <code>outlineLabel</code>(<code>:97</code>)。</p>
+<h3 id="b4-pit">坑</h3>
+<blockquote class="tip">
+<ol>
+<li>正文必须加在 <code>this.cont</code>，按钮加在 <code>this.buttons</code>。</li>
+<li><code>show()</code> 无参自动挂到当前 scene；<code>hide()</code> 关闭。</li>
+<li>UI 必须在<strong>主线程</strong>；后台线程刷 UI 用 <code>Core.app.post(() -&gt; ...)</code>。</li>
+<li>动态列表要 <code>clearChildren()</code> 重建，否则会叠加。</li>
+<li>别忘了 <code>configurable = true</code>，否则 <code>buildConfiguration</code> 不被调。</li>
+</ol>
+</blockquote>
+
+<h2 id="case">综合案例：热力学 mod 四建筑完整信息 UI</h2>
+<p>基于 <code>thermal-mod</code> 的 <code>IndustrialBoiler</code>/<code>CoolingTower</code>/<code>HeatConduit</code>/<code>RefineryFurnace</code>，均实现 <code>ThermalBuilding</code>。</p>
+
+<h4>改造 0 / 1：访问器 + 公共 Stat</h4>
+<pre><code class="language-java">// ThermalSystem.java
+public arc.struct.Seq&lt;ThermalBuilding&gt; allBuildings() { return buildings; }
+
+// core/ThermalStats.java（新建）
+package com.thermal.mod.core;
+import mindustry.world.meta.Stat;
+public class ThermalStats {
+    public static final Stat heatCapacity = new Stat("thermalHeatCapacity");
+    public static final Stat airU         = new Stat("thermalAirU");
+    public static final Stat maxHeatRate  = new Stat("thermalMaxHeatRate");
+}</code></pre>
+
+<h4>改造 2：统一温度条（以 IndustrialBoiler 为例）</h4>
+<pre><code class="language-java">import arc.graphics.Color;
+import arc.math.Mathf;
+import static com.thermal.mod.core.ThermalStats.*;
+
+@Override
+public void setBars() {
+    super.setBars();
+    addBar("thermal-temp", (BoilerBuild entity) -> new Bar(
+        () -> "温度",
+        () -> {
+            float f = Mathf.clamp(
+                (entity.thermal.getTemperatureK() - entity.thermal.minTempK)
+                / (entity.thermal.maxTempK - entity.thermal.minTempK));
+            return Color.royal.cpy().lerp(Color.scarlet, f);
+        },
+        () -> Mathf.clamp(
+            (entity.thermal.getTemperatureK() - entity.thermal.minTempK)
+            / (entity.thermal.maxTempK - entity.thermal.minTempK))
+    ));
+}</code></pre>
+<table>
+<tr><th>建筑</th><th>泛型 Build 类型</th><th>上限来源</th></tr>
+<tr><td>IndustrialBoiler</td><td>BoilerBuild</td><td>thermal.maxTempK</td></tr>
+<tr><td>CoolingTower</td><td>TowerBuild</td><td>thermal.maxTempK</td></tr>
+<tr><td>HeatConduit</td><td>ConduitBuild</td><td>thermal.maxTempK</td></tr>
+<tr><td>RefineryFurnace</td><td>FurnaceBuild</td><td>thermal.maxTempK</td></tr>
+</table>
+
+<h4>改造 3：统一图鉴条目</h4>
+<pre><code class="language-java">@Override
+public void setStats() {
+    super.setStats();
+    stats.add(heatCapacity, "%.0f J/K", 2000f);
+    stats.add(airU,         "%.3f",      0.05f);
+    stats.add(maxHeatRate,  StatValues.number(ratedPower, StatUnit.none));
+}</code></pre>
+<table>
+<tr><th>建筑</th><th>热容 C</th><th>airU</th><th>maxHeatRate</th></tr>
+<tr><td>IndustrialBoiler</td><td>2000</td><td>0.05</td><td>ratedPower(100)</td></tr>
+<tr><td>CoolingTower</td><td>500</td><td>0.31</td><td>airU</td></tr>
+<tr><td>HeatConduit</td><td>50</td><td>0.008</td><td>airU</td></tr>
+<tr><td>RefineryFurnace</td><td>1500</td><td>0.08</td><td>ratedHeat(80)</td></tr>
+</table>
+
+<h4>改造 4 / 5：信息面板补热流行 + 总览窗口入口</h4>
+<pre><code class="language-java">// RefineryFurnace.display() 内追加：
+table.row();
+table.left().label(() -> "热流: " + String.format("%+.1f J/t", thermal.pendingDeltaQ));
+
+// HeatConduit 构造函数：configurable = true;
+// HeatConduit.ConduitBuild：
+@Override public void buildConfiguration(Table table) {
+    table.button("热网总览", () -> new ThermalOverviewDialog().show()).size(160f, 60f);
+}</code></pre>
+
+<h4>改动文件清单</h4>
+<table>
+<tr><th>文件</th><th>改动</th></tr>
+<tr><td>core/ThermalSystem.java</td><td>新增 allBuildings()</td></tr>
+<tr><td>core/ThermalStats.java</td><td>新建 3 个自定义 Stat</td></tr>
+<tr><td>blocks/IndustrialBoiler.java</td><td>setBars() + setStats()</td></tr>
+<tr><td>blocks/CoolingTower.java</td><td>setBars() + setStats()</td></tr>
+<tr><td>blocks/HeatConduit.java</td><td>setBars() + setStats() + configurable + buildConfiguration()</td></tr>
+<tr><td>blocks/RefineryFurnace.java</td><td>setBars() + setStats() + display 加热流行</td></tr>
+<tr><td>ui/ThermalOverviewDialog.java</td><td>新建全局总览 Dialog</td></tr>
+</table>
+
+<h2 id="appendix-a">附录 A：UI 源码地图</h2>
+<table>
+<tr><th>你要做的事</th><th>类:行号</th><th>说明</th></tr>
+<tr><td>注册状态条</td><td>Block.java:677 addBar</td><td>覆写 setBars() 后调用</td></tr>
+<tr><td>状态条存储字段</td><td>Block.java:422 barMap</td><td>注释 :420</td></tr>
+<tr><td>移除/列出条</td><td>Block.java:681 / :685</td><td>removeBar / listBars</td></tr>
+<tr><td>默认条注册</td><td>Block.java:706 setBars()</td><td>血/电/物/液条</td></tr>
+<tr><td>setBars 调用时机</td><td>Block.java:1475 / :770</td><td>afterPatch 先 clear():769</td></tr>
+<tr><td>条构造/动态</td><td>Bar.java:23 / :31</td><td>静态 / 动态 Prov 版</td></tr>
+<tr><td>条闪烁/吸附/描边</td><td>Bar.java:71/:57/:61</td><td>blink/snap/outline</td></tr>
+<tr><td>信息面板入口</td><td>BuildingComp.java:1561 display</td><td>覆写，先 super</td></tr>
+<tr><td>状态条绘制</td><td>BuildingComp.java:1667 displayBars</td><td>内部被 :1577 调</td></tr>
+<tr><td>建筑配置入口</td><td>BuildingComp.java:1678 buildConfiguration</td><td>需 configurable=true</td></tr>
+<tr><td>图鉴统计入口</td><td>Block.java:641 setStats()</td><td>内容加载时一次</td></tr>
+<tr><td>自定义统计类型</td><td>Stat.java:115 / :122</td><td>类，new Stat(name) 即注册</td></tr>
+<tr><td>统计值工厂</td><td>StatValues.java:35/40/69/115</td><td>string/bool/number/liquid</td></tr>
+<tr><td>往图鉴加值</td><td>Stats.java:93 / :104</td><td>add(Stat,fmt,args) / add(Stat,StatValue)</td></tr>
+<tr><td>弹窗基类</td><td>Dialog.java:29</td><td>extends Table</td></tr>
+<tr><td>弹窗内容/按钮区</td><td>Dialog.java:57 cont/buttons</td><td>正文 cont，按钮 buttons</td></tr>
+<tr><td>弹窗显示/关闭</td><td>Dialog.java:514/:551</td><td>show / hide</td></tr>
+<tr><td>UI 样式</td><td>Styles.java:27/32/61/97</td><td>面板/按钮/标签</td></tr>
+</table>
+
+<h2 id="appendix-b">附录 B：Mindustry UI 体系架构</h2>
+<pre><code class="language-none">内容层（编辑期）
+  Block.setStats() ──► Stats map&lt;StatCat, map&lt;Stat, Seq&lt;StatValue&gt;&gt;&gt;（内容加载时填图鉴）
+实例层（运行期，点建筑）
+  BuildingComp.display(Table)
+       ├─ displayBars() ──► 遍历 Block.barMap（addBar 注册的 Bar 工厂）
+       └─ displayConsumption()
+舞台层（Arc Scene2D）
+  Table（单元格网格：add/row/left/right/label）
+  Dialog extends Table（自带 titleTable / cont / buttons）
+样式层
+  Styles.*（Mindustry 封装好的 Drawable / ButtonStyle / LabelStyle）</code></pre>
+<p>记住这条线：<strong>addBar 喂数据给 barMap → display 把 displayBars 摆进 Table → setStats 在内容期填图鉴 → Dialog 是另一个独立 Table 挂到 Core.scene。</strong></p>
+
+<p style="margin-top:40px;color:var(--muted);font-size:12.5px;">教程完 · 基于 v159.7 本地源码核验 · 行号漂移时按方法名检索。</p>
+</main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-java.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-groovy.min.js"></script>
+<script>
+// 代码块复制按钮
+document.querySelectorAll('pre').forEach(function(pre){
+  var btn = document.createElement('button');
+  btn.className = 'copy-btn';
+  btn.textContent = '复制';
+  btn.addEventListener('click', function(){
+    var code = pre.querySelector('code');
+    navigator.clipboard.writeText(code.innerText).then(function(){
+      btn.textContent = '已复制 ✓';
+      setTimeout(function(){ btn.textContent = '复制'; }, 1500);
+    });
+  });
+  pre.appendChild(btn);
+});
+// 侧边导航高亮
+var links = document.querySelectorAll('#toc a');
+var sections = [];
+links.forEach(function(a){
+  var id = a.getAttribute('href').slice(1);
+  var el = document.getElementById(id);
+  if(el) sections.push({a:a, el:el});
+});
+window.addEventListener('scroll', function(){
+  var pos = window.scrollY + 120;
+  var current = null;
+  sections.forEach(function(s){ if(s.el.offsetTop <= pos) current = s; });
+  links.forEach(function(a){ a.classList.remove('active'); });
+  if(current) current.a.classList.add('active');
+});
+</script>
+</body>
+</html>
