@@ -1,0 +1,11 @@
+{
+  "name": "Thermal Mod",
+  "displayName": "热力学系统",
+  "author": "Thermal Mod Team",
+  "description": "基于热力学系统设计手册的热量交换模组：双缓冲热流结算、惰性温度、环境温度查表。",
+  "version": "0.1.0",
+  "main": "com.thermal.mod.ThermalModMain",
+  "minGameVersion": "154",
+  "java": true,
+  "dependencies": []
+}
