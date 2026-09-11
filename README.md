@@ -45,7 +45,7 @@ mod-tutorial-site/
 | **版本考古全记录** | 数据目录路径演进、像素风转变（v70）、minGameVersion 阈值矩阵、设置项演进史（v136 起） |
 | **🟢 v160 变更速查** | v159.7→v160（499 提交）：新方块 HeatCrafter + HeatConsumer、StatValues 大改、GenericCrafter 分批输出、未变确认表 |
 
-> 提示：门户首页每张卡片都提供"🔗 网页直链"（aka 链接，可在线直接打开）与相对路径链接（本地/GitHub 使用）两种入口。
+> 提示：门户已部署于 GitHub Pages（rainfallllll.github.io/Learn-Mindustry-Mod/），卡片内均为仓库相对链接，在 GitHub 与本地均可直接点开。
 
 ## 如何本地打开
 
