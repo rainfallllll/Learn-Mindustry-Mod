@@ -154,6 +154,11 @@ strong{color:#fff;}
 <a class="sub" href="#94-thermaldebugjava">9.4 ThermalDebug.java 调试器（完整可复制代码）</a>
 <a class="sub" href="#95-mindustry-java-mod-headless">9.5 调试方法论（Mindustry Java mod headless 通用套路）</a>
 <a href="#_1">收尾</a>
+<div class="nav-group">第 10 章：实战迭代（v0.2）</div>
+<a class="sub" href="#101-1">10.1 迭代 1：预热慢优化</a>
+<a class="sub" href="#102-2-v160-heatcrafter">10.2 迭代 2：正式集成 v160 HeatCrafter</a>
+<a class="sub" href="#103-3">10.3 迭代 3：温度状态条</a>
+<a class="sub" href="#104">10.4 剩余限制与下一步</a>
   </nav>
 </aside>
 
@@ -1974,6 +1979,354 @@ java -Dthermal.debug=true -cp &quot;...&quot; mindustry.server.ServerLauncher
 <blockquote>
 <p>8 章正文 + 这一章运行实录，构成了一个闭环：从设计手册（第 1 章）→ 需求拆解（第 2 章）→ 可行性（第 3 章）→ 分步实现（第 4 章）→ 编译加载（第 5 章）→ API 踩坑（第 6 章）→ 迭代方向（第 7 章）→ 源码地图（第 8 章）→ <strong>真实跑通的温度曲线（第 9 章）</strong>。代码是对的，日志是真的，热量在真的流。抄吧。</p>
 </blockquote>
+<hr />
+<h2 id="10-v02">第 10 章：实战迭代（v0.2）</h2>
+<blockquote>
+<p>前 9 章搭好了骨架、跑通了温度曲线，但有三个问题必须在实战中解决：
+<strong>预热太慢</strong>（锅炉 6000 tick 才到 420K）、<strong>精炼炉还不是官方 HeatCrafter</strong>、<strong>没有温度条 UI</strong>。
+本章记录三个迭代项的完整修改、headless 真跑验证数据和桥接设计。</p>
+</blockquote>
+<hr />
+<h3 id="101-1">10.1 迭代 1：预热慢优化</h3>
+<h4 id="_2">问题根因</h4>
+<p>旧参数下锅炉升温速率：</p>
+<ul>
+<li><code>ratedPower = 100 J/t</code>（IndustrialBoiler.java:26）</li>
+<li><code>heatCapacity = 2000 J/K</code>（IndustrialBoiler.java:58）</li>
+<li>净升温率 ≈ 100/2000 = 0.05 K/tick，但扣掉空气散热（airU=0.05）后实测仅 <strong>0.023 K/tick</strong></li>
+<li>精炼炉从 293K 到 450K 工作点需要 <strong>t=9420 tick</strong></li>
+</ul>
+<h4 id="_3">修改方案</h4>
+<p>选择「提高功率 + 降低热容」双管齐下：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>旧值</th>
+<th>新值</th>
+<th>理由</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ratedPower</code></td>
+<td>100 J/t</td>
+<td><strong>400 J/t</strong></td>
+<td>4 倍产热，净升温率 ~0.4 K/tick</td>
+</tr>
+<tr>
+<td><code>heatCapacity</code></td>
+<td>2000 J/K</td>
+<td><strong>1000 J/K</strong></td>
+<td>减半热容，相同热量下温升翻倍</td>
+</tr>
+</tbody>
+</table>
+<p>两处改动都在 <code>IndustrialBoiler.java</code>：
+- 字段声明 <code>ratedPower = 400f</code>（:26）
+- <code>BoilerBuild.placed()</code> 中 <code>thermal.heatCapacity = 1000f</code>（:58）</p>
+<p>精炼炉参数保持不变（<code>heatCapacity=1500</code>, <code>operatingMinK=450K</code>），工作点行为不变。</p>
+<h4 id="headless">验证数据（headless 真跑）</h4>
+<p>测试链：锅炉 → 导管 → 导管 → 精炼炉（全部 1x1，紧邻）。每 60 tick 采样：</p>
+<table>
+<thead>
+<tr>
+<th>tick</th>
+<th>锅炉 (K)</th>
+<th>导管1 (K)</th>
+<th>导管2 (K)</th>
+<th>精炼炉 (K)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>300</td>
+<td>305.0</td>
+<td>299.9</td>
+<td>297.5</td>
+<td>293.7</td>
+</tr>
+<tr>
+<td>480</td>
+<td>347.5</td>
+<td>332.6</td>
+<td>324.5</td>
+<td>310.8</td>
+</tr>
+<tr>
+<td>660</td>
+<td>377.1</td>
+<td>360.4</td>
+<td>351.2</td>
+<td>335.7</td>
+</tr>
+<tr>
+<td>900</td>
+<td>412.7</td>
+<td>395.6</td>
+<td>386.2</td>
+<td>370.3</td>
+</tr>
+<tr>
+<td>1140</td>
+<td>446.8</td>
+<td>429.7</td>
+<td>420.3</td>
+<td>404.3</td>
+</tr>
+<tr>
+<td>1440</td>
+<td>488.3</td>
+<td>471.2</td>
+<td>461.7</td>
+<td>445.7</td>
+</tr>
+<tr>
+<td><strong>1500</strong></td>
+<td><strong>496.3</strong></td>
+<td><strong>478.8</strong></td>
+<td><strong>469.0</strong></td>
+<td><strong>452.4</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>精炼炉到达 450K 的 tick 数：≈ 1470</strong>（t=1440 时 445.7K，t=1500 时 452.4K，线性插值 ~1470）。</p>
+<h4 id="_4">新旧对比</h4>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th>旧版 (v0.1)</th>
+<th>新版 (v0.2)</th>
+<th>改善</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>精炼炉达 450K tick</td>
+<td>9420</td>
+<td><strong>~1470</strong></td>
+<td><strong>6.4x 加速</strong></td>
+</tr>
+<tr>
+<td>锅炉 6000 tick 温度</td>
+<td>~420K</td>
+<td>~600K+（已过 450K 工作点）</td>
+<td>3x+</td>
+</tr>
+<tr>
+<td>温度梯度</td>
+<td>锅炉&gt;导管&gt;精炼炉 ✓</td>
+<td>锅炉&gt;导管&gt;精炼炉 ✓</td>
+<td>保持单调递减</td>
+</tr>
+</tbody>
+</table>
+<p>约束验证：
+- ✅ 温度梯度稳定（锅炉 496.3 &gt; 导管1 478.8 &gt; 导管2 469.0 &gt; 精炼炉 452.4）
+- ✅ 精炼炉到达 450K 后 state 从 PREHEATING 切换为 WORKING
+- ✅ 超温停机逻辑：锅炉到 800K 时 isShutdown=true，heatBlock.heat() 归零</p>
+<hr />
+<h3 id="102-2-v160-heatcrafter">10.2 迭代 2：正式集成 v160 HeatCrafter</h3>
+<h4 id="_5">改动概要</h4>
+<p>精炼炉 <code>RefineryFurnace</code> 从 <code>extends Wall</code> 改为 <code>extends HeatCrafter</code>
+（<code>core/src/mindustry/world/blocks/production/HeatCrafter.java:12</code>）。</p>
+<p>Build 类从 <code>extends Building</code> 改为 <code>extends HeatCrafterBuild</code>
+（<code>HeatCrafter.java:43</code>），天然实现 <code>HeatConsumer</code> 接口
+（<code>HeatConsumer.java:3-6</code>：<code>float[] sideHeat()</code> / <code>float heatRequirement()</code>）。</p>
+<h4 id="_6">桥接设计</h4>
+<div class="codeblock"><div class="codebar"><span class="ver">COPY</span><span class="lang">TEXT</span><button class="copy-btn" type="button">复制</button></div><pre><code>┌─────────────┐     calculateHeat()      ┌──────────────────┐
+│  HeatBlock   │ ──────────────────────→ │  HeatCrafterBuild │
+│  (锅炉)      │   BuildingComp.java:412  │  .heat = 15.0     │
+│  heat()=15   │   扫描 proximity          │  sideHeat[4]      │
+└─────────────┘                           └────────┬─────────┘
+                                                   │ super.updateTile()
+                                                   │  GenericCrafter 生产逻辑
+                                                   │  shouldConsume() (:62)
+                                                   ▼
+┌─────────────┐    addHeat(heat*50)        ┌──────────────────┐
+│ ThermalComp  │ ←─────────────────────── │  桥接层 (新增)     │
+│  storedHeat  │   热力学系统升温             │  updateTile() 尾部 │
+│  getTempK()  │                            └──────────────────┘
+└─────────────┘
+</code></pre></div>
+<p><strong>关键代码（RefineryFurnace.java）：</strong></p>
+<div class="codeblock"><div class="codebar"><span class="ver">COPY</span><span class="lang">Java</span><button class="copy-btn" type="button">复制</button></div><pre><code class="language-java">@Override
+public void updateTile() {
+    // 1. 官方逻辑：heat = calculateHeat(sideHeat) 扫描邻居 HeatBlock
+    //    然后调 GenericCrafterBuild.updateTile() 做生产
+    super.updateTile();
+
+    // 2. 桥接：官方热网 heat → 热力学系统
+    //    1 官方单位 = 50 J（heatToJoule = 50f）
+    if (heat &gt; 0f) {
+        thermal.addHeat(heat * heatToJoule * delta());
+    }
+}
+</code></pre></div>
+<p><strong>效率缩放联动（覆写 efficiencyScale()，HeatCrafter.java:88）：</strong></p>
+<div class="codeblock"><div class="codebar"><span class="ver">COPY</span><span class="lang">Java</span><button class="copy-btn" type="button">复制</button></div><pre><code class="language-java">@Override
+public float efficiencyScale() {
+    float officialScale = super.efficiencyScale();
+    // 热力学温度比例：0 (293K) ~ 1 (450K)
+    float thermalFrac = Math.max(0f, Math.min(1f,
+        (thermal.getTemperatureK() - 293.15f) / (operatingMinK - 293.15f)));
+    // 温度太低时最低保留 10% 效率，达工作点后使用官方缩放
+    return officialScale * (0.1f + 0.9f * thermalFrac);
+}
+</code></pre></div>
+<p><strong>锅炉侧实现 HeatBlock 接口（IndustrialBoiler.java）：</strong></p>
+<div class="codeblock"><div class="codebar"><span class="ver">COPY</span><span class="lang">Java</span><button class="copy-btn" type="button">复制</button></div><pre><code class="language-java">public class BoilerBuild extends Building implements ThermalBuilding, HeatBlock {
+    @Override
+    public float heat() {
+        return isShutdown ? 0f : officialHeatOutput; // 15f
+    }
+    @Override
+    public float heatFrac() {
+        return officialHeatOutput &gt; 0f ? heat() / officialHeatOutput : 0f;
+    }
+}
+</code></pre></div>
+<h4 id="headless_1">验证日志（headless 真跑）</h4>
+<p>在精炼炉正上方放置第二个锅炉（直接作为官方 HeatBlock 邻居），日志关键行：</p>
+<div class="codeblock"><div class="codebar"><span class="ver">COPY</span><span class="lang">TEXT</span><button class="copy-btn" type="button">复制</button></div><pre><code>[debug] t=300 活跃热力建筑=5: [...精炼炉@131,128 312.7K p=2]
+  {officialHeat=15.00 req=10.0 shouldConsume=true effScale=0.32 state=PREHEATING}
+ThermalMod[验证] 迭代2桥接生效! t=300 精炼炉官方heat=15.0 shouldConsume=true 热力学温度=312.7K
+</code></pre></div>
+<p>效率缩放随热力学温度联动：</p>
+<table>
+<thead>
+<tr>
+<th>tick</th>
+<th>官方 heat</th>
+<th>req</th>
+<th>shouldConsume</th>
+<th>effScale</th>
+<th>热力学温度</th>
+<th>状态</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>300</td>
+<td>15.00</td>
+<td>10</td>
+<td><strong>true</strong></td>
+<td>0.32</td>
+<td>312.7K</td>
+<td>PREHEATING</td>
+</tr>
+<tr>
+<td>480</td>
+<td>15.00</td>
+<td>10</td>
+<td><strong>true</strong></td>
+<td>0.99</td>
+<td>390.5K</td>
+<td>PREHEATING</td>
+</tr>
+<tr>
+<td>660</td>
+<td>15.00</td>
+<td>10</td>
+<td><strong>true</strong></td>
+<td>1.50</td>
+<td>464.0K</td>
+<td><strong>WORKING</strong></td>
+</tr>
+<tr>
+<td>1620</td>
+<td><strong>0.00</strong></td>
+<td>10</td>
+<td><strong>false</strong></td>
+<td>0.00</td>
+<td>795.2K</td>
+<td>停机后回降</td>
+</tr>
+</tbody>
+</table>
+<p>关键验证点：
+- ✅ <code>officialHeat=15.00 &gt; heatRequirement=10.0</code> → <code>shouldConsume=true</code>（HeatCrafter.java:62）
+- ✅ <code>effScale</code> 从 0.32 随热力学温度上升到 1.50（efficiencyScale 覆写生效）
+- ✅ 锅炉超温停机时 <code>heatBlock.heat=0.00</code> → 精炼炉 <code>officialHeat=0.00</code> → <code>shouldConsume=false</code>（回差重启逻辑联动）</p>
+<hr />
+<h3 id="103-3">10.3 迭代 3：温度状态条</h3>
+<h4 id="_7">实现方式</h4>
+<p>每个建筑的 Block 类覆写 <code>setBars()</code>（Block.java:677 <code>addBar(String, Func&lt;T, Bar&gt;)</code>），
+使用 <code>Bar(Prov&lt;CharSequence&gt;, Prov&lt;Color&gt;, Floatp)</code> 构造函数（Bar.java:31）。</p>
+<p><strong>锅炉温度条（IndustrialBoiler.java:46-60）：</strong></p>
+<div class="codeblock"><div class="codebar"><span class="ver">COPY</span><span class="lang">Java</span><button class="copy-btn" type="button">复制</button></div><pre><code class="language-java">@Override
+public void setBars() {
+    super.setBars();
+    addBar(&quot;temperature&quot;, (BoilerBuild entity) -&gt; new Bar(
+        () -&gt; &quot;温度 &quot; + Strings.fixed(entity.thermal.getTemperatureK() - 273.15f, 1) + &quot;°C&quot;,
+        () -&gt; {
+            float frac = entity.thermal.getTemperatureK() / entity.thermal.maxTempK;
+            if (frac &gt; 0.9f) return Pal.health;      // 超温红色
+            if (frac &gt; 0.75f) return Pal.lightOrange; // 高温橙色
+            return Pal.heal;                          // 正常绿色
+        },
+        () -&gt; Math.max(0f, Math.min(1f,
+            (entity.thermal.getTemperatureK() - entity.thermal.minTempK)
+            / (entity.thermal.maxTempK - entity.thermal.minTempK)))
+    ));
+}
+</code></pre></div>
+<p>导热管和精炼炉使用相同模式。精炼炉的 <code>setBars()</code> 先调 <code>super.setBars()</code>（HeatCrafter 自带 "heat" 热条），再叠加 "temperature" 温度条。</p>
+<h4 id="_8">颜色方案</h4>
+<table>
+<thead>
+<tr>
+<th>温度比例</th>
+<th>颜色</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>&lt; 75% maxTempK</td>
+<td><code>Pal.heal</code>（绿色）</td>
+<td>正常运行</td>
+</tr>
+<tr>
+<td>75%~90% maxTempK</td>
+<td><code>Pal.lightOrange</code>（橙色）</td>
+<td>接近上限</td>
+</tr>
+<tr>
+<td>&gt; 90% maxTempK</td>
+<td><code>Pal.health</code>（红色）</td>
+<td>超温预警</td>
+</tr>
+</tbody>
+</table>
+<h4 id="_9">验证日志</h4>
+<div class="codeblock"><div class="codebar"><span class="ver">COPY</span><span class="lang">TEXT</span><button class="copy-btn" type="button">复制</button></div><pre><code>ThermalMod[debug]: setBars() 验证通过 — 锅炉bars=2 导管bars=2 精炼炉bars=3
+</code></pre></div>
+<ul>
+<li>锅炉：2 bars（health + temperature）</li>
+<li>导管：2 bars（health + temperature）</li>
+<li>精炼炉：3 bars（health + heat[HeatCrafter自带] + temperature）</li>
+<li>✅ headless 模式下 setBars() 不抛异常</li>
+</ul>
+<hr />
+<h3 id="104">10.4 剩余限制与下一步</h3>
+<h4 id="_10">已知限制</h4>
+<ol>
+<li><strong>官方热网与热力学系统是两套并行网络</strong>：桥接是单向的（官方 heat → 热力学 J），热力学温度通过 efficiencyScale() 反向影响效率，但热力学热量不会通过 sideHeat 反哺官方热网。</li>
+<li><strong>导热管不参与官方热网路由</strong>：calculateHeat() 只扫描 proximity 中 <code>instanceof HeatBlock</code> 的实体，当前导管不是 HeatBlock/HeatConductor，官方热只能直线传输（锅炉必须紧邻精炼炉）。</li>
+<li><strong>第二个锅炉是测试专用</strong>：为验证 Iteration 2 在精炼炉正上方放了第二个锅炉，实际游戏设计中应让导热管实现 HeatConductor 接口来路由官方热。</li>
+<li><strong>超温后效率掉到 0</strong>：锅炉到 800K 停机后官方 heat 归零，精炼炉 shouldConsume=false，即使热力学温度仍然很高也会停摆。这是设计预期（安全联动），但实际使用中需要缓冲。</li>
+<li><strong>display() 文本在 headless 下不可见</strong>：温度条和 display() 只在客户端渲染时可见，headless 验证只能确认不抛异常。</li>
+</ol>
+<h4 id="_11">下一步</h4>
+<ol>
+<li><strong>导热管实现 HeatConductor</strong>：让官方热能通过导管路由，实现完整的热管网</li>
+<li><strong>双向桥接</strong>：热力学温度反映到 sideHeat，让两套系统真正融合</li>
+<li><strong>实际物品生产</strong>：RefineryFurnace 当前没有设置 consume/output items，接入铜/煤炭消耗</li>
+<li><strong>多建筑热管网</strong>：散热塔接入官方热网作为热汇</li>
+<li><strong>UI 实机验证</strong>：在客户端模式下截图确认温度条颜色和闪烁效果</li>
+</ol>
 <hr>
 <p style="color:var(--muted);font-size:13px;text-align:center;">
   实战开发全记录 v1.1 · 2026-09-11 · Mindustry v159.7 编写 / v160 工作树核验<br>

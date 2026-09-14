@@ -1055,7 +1055,7 @@ Plugins 的元文件命名为 `plugin.[h]json`，文件结构与其他 Java mod 
 | noUpdateDisabled | boolean | false | if true, stops updating when disabled. |
 | updateInUnits | boolean | true | if true, updates when it's a payload in a unit. |
 | alwaysUpdateInUnits | boolean | false | if true, updates in payloads regardless of game rule. |
-| canPickup | boolean | true | if true, can be picked up in payloads. |
+| ~~canPickup~~ → **allowedInPayloads** | boolean | true | 是否能被装入 payload 运输。**v160.3 起 `canPickup` 废弃**，新代码用 `allowedInPayloads`（Block.java，@Deprecated 兼容保留） |
 | deconstructDropAllLiquid | boolean | false | if false, only incinerable liquids dropped when deconstructing. |
 | useColor | boolean | true | Whether to use this block's color in minimap. |
 | itemDrop | Item | null | item that drops from this block, used for drills. |

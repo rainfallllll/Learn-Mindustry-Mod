@@ -113,6 +113,7 @@ blockquote{
   <a href="#genericcrafter">5. GenericCrafter 变化</a>
   <a href="#unchanged">6. 核心机制未变表</a>
   <a href="#impact">7. 教程影响矩阵</a>
+  <a href="#hotfix">8. v160.1→v160.3 热修复</a>
 </nav>
 <main>
 
@@ -397,6 +398,44 @@ public float scaleOutput(float amount){   // :304
 <tr><td>API 参考表（API-Reference）</td><td><b>GenericCrafter 条目 + 新增 HeatCrafter 条目</b></td><td><code>outputAccumulator</code> / <code>scaleOutput</code> / <code>afterPatch</code> 顺序；新方块 <code>HeatCrafter</code> 全参数表 + 最小实现；<code>Block.diagonalConfigInventory</code> / <code>maxConsecutive</code> 标注</td></tr>
 <tr><td>画廊 v2（Template-Gallery-v2）</td><td><b>工厂类模板卡片</b></td><td>GenericCrafter 输出行为变更加注；新增一张 HeatCrafter 热力工厂模板卡片（或在现有工厂卡补注）</td></tr>
 <tr><td>热力学 mod / 其他实战</td><td>正向利好</td><td>现有自建双缓冲热力系统可对接官方 <code>HeatConsumer</code> 接口，详见 API 参考表 HeatCrafter 条目</td></tr>
+</table>
+
+<h2 id="hotfix">8. v160.1 → v160.3 热修复速查</h2>
+<blockquote>anuke 在 v160 之后连续打了 3 个小版本：<b>v160.1（8 提交）/ v160.2（+15）/ v160.3（+6）</b>，合计 29 提交、28 文件（+287/−236）。绝大多数是 bugfix 与翻译；<b>对模组作者只有 1 处破坏性 API 变更</b>（8.1），其余为新增字段或行为修复。</blockquote>
+
+<h3>8.1 破坏性变更：<code>Block.canPickup</code> 废弃 → <code>allowedInPayloads</code>【必须迁移】</h3>
+<table>
+<tr><th>位置</th><th>内容</th></tr>
+<tr><td><code>Block.java</code>（v160.3）</td><td>新增 <code>public boolean allowedInPayloads = true</code>；旧字段 <code>canPickup</code> 标记 <code>@Deprecated</code></td></tr>
+<tr><td><code>BuildingComp.canPickup()</code>（:1843-1846）</td><td>改为返回 <code>block.allowedInPayloads</code></td></tr>
+<tr><td>官方实例</td><td><code>BaseShield</code> / <code>TargetDummy</code> 已改为 <code>allowedInPayloads = false</code></td></tr>
+<tr><td>迁移方式</td><td>新代码写 <code>allowedInPayloads</code>；旧代码 <code>canPickup</code> 仍可编译（兼容），但有弃用警告</td></tr>
+<tr><td>配套修复</td><td>禁止 dummy 进 payload（c6512c0b0）+ dummy 值加强校验（c7945610e）同批发布</td></tr>
+</table>
+
+<h3>8.2 新增字段 / 方法【不破坏，可选使用】</h3>
+<table>
+<tr><th>位置</th><th>新增</th><th>用途</th></tr>
+<tr><td><code>UnitType</code>（UnitTypes.java:4647）</td><td><code>internal</code> / <code>internalGenerateSprites</code></td><td>标记内部单位（不占上限、不生成默认贴图）</td></tr>
+<tr><td><code>Rules</code>（Rules.java:343）</td><td><code>isInfiniteResources(Team)</code></td><td>团队级无限资源判断</td></tr>
+<tr><td><code>TargetDummy</code></td><td><code>canOverdrive = false</code></td><td>假人不可超频</td></tr>
+</table>
+
+<h3>8.3 行为修复【对 mod 运行有间接影响】</h3>
+<table>
+<tr><th>修复</th><th>说明</th></tr>
+<tr><td>粒子效果尺寸（e433d5f3，#11477）</td><td>粒子尺寸曾经 ×2 的 bug 已修——依赖粒子视觉参数的 mod 渲染变为预期值</td></tr>
+<tr><td>逻辑 fetch 坐标（LExecutor.java:1583）</td><td><code>Mathf.round()</code> → <code>numi()</code>，坐标取整行为一致</td></tr>
+<tr><td>逻辑画布紧凑模式（LStatements）</td><td>逻辑编辑器 UI 布局调整，不影响运行时</td></tr>
+<tr><td>声音系统</td><td>SoundControl 崩溃修复；数据贴图声音改一次性 wav 流（用 <code>DataAudioLoader</code> 的 mod 请关注）</td></tr>
+</table>
+
+<h3>8.4 对教程体系的影响</h3>
+<table>
+<tr><th>教程</th><th>影响</th><th>处理</th></tr>
+<tr><td>官方教程 v2（official-mod-tutorial-v2）</td><td>字段表 <code>canPickup</code></td><td><b>已更新为 <code>allowedInPayloads</code></b> 并标注 v160.3 废弃</td></tr>
+<tr><td>API 参考表</td><td>无直接条目</td><td><code>canPickup</code> 未出现在 35 类参数表中，无需改</td></tr>
+<tr><td>主线 / UI / 画廊 / 热力学 mod</td><td>无</td><td>未使用 <code>canPickup</code></td></tr>
 </table>
 
 <h3>附：本次核验用到的命令</h3>

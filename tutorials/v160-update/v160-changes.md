@@ -336,6 +336,43 @@ public void craft(){
 
 ---
 
+## 8. v160.1 → v160.3 热修复速查（2026-09 追加）
+
+> anuke 在 v160 之后连续打了 3 个小版本：**v160.1（8 提交）/ v160.2（+15 提交）/ v160.3（+6 提交）**，合计 29 提交、28 文件（+287/−236）。绝大多数是 bugfix 与翻译；**对模组作者只有 1 处破坏性 API 变更**（见 8.1），其余均为新增字段或行为修复。
+
+### 8.1 破坏性变更：`Block.canPickup` 废弃 → `allowedInPayloads`【必须迁移】
+
+- **位置**：`Block.java`（v160.3）新增字段 `public boolean allowedInPayloads = true`；旧字段 `canPickup` 标记 `@Deprecated`
+- **调用侧**：`BuildingComp.canPickup()`（BuildingComp.java:1843-1846）改为返回 `block.allowedInPayloads`
+- **官方实例**：`BaseShield` / `TargetDummy` 已从 `canPickup = true` 改为 `allowedInPayloads = false`
+- **迁移方式**：新代码一律写 `allowedInPayloads`；旧代码 `canPickup` 仍能编译运行（兼容），但会有弃用警告
+- **配套修复**：禁止 dummy 进 payload（c6512c0b0）、dummy 值加强校验（c7945610e）——与本次重命名同批发布
+
+### 8.2 新增字段 / 方法【不破坏，可选使用】
+
+| 位置 | 新增内容 | 用途 |
+|---|---|---|
+| `UnitType`（UnitTypes.java:4647-4650） | `internal` / `internalGenerateSprites` | 标记内部单位（不占单位上限、不生成默认贴图） |
+| `Rules`（Rules.java:343-347） | `isInfiniteResources(Team)` | 团队级无限资源判断（规则层，非 mod API） |
+| `TargetDummy` | `canOverdrive = false` | 假人不可超频（防御类行为修正） |
+
+### 8.3 行为修复【对 mod 运行有间接影响】
+
+- **粒子效果尺寸修复**（e433d5f3，#11477）：`ParticleEffect` 粒子曾经尺寸×2 的 bug 已修——如果你的 mod 依赖粒子视觉参数，渲染大小会变为预期值
+- **逻辑指令 fetch 坐标取整**（LExecutor.java:1583-1586）：`Mathf.round()` → `numi()`，坐标取整行为一致，无感知差异
+- **逻辑画布紧凑模式**（LStatements）：逻辑编辑器 UI 布局调整，不影响运行时逻辑
+- **声音系统**：SoundControl 崩溃修复 + 数据贴图声音改为一次性 wav 流（与 mod 自定义音效加载相关，若 mod 用 `DataAudioLoader` 请关注）
+
+### 8.4 对教程体系的影响
+
+| 教程 | 影响 | 处理 |
+|---|---|---|
+| 官方教程 v2（official-mod-tutorial-v2） | 字段表 `canPickup` | **已更新为 `allowedInPayloads`** 并标注 v160.3 废弃 |
+| API 参考表 | 无直接条目 | `canPickup` 未出现在 35 类参数表中，无需改 |
+| 主线 / UI / 画廊 / 热力学 mod | 无 | 未使用 `canPickup` |
+
+---
+
 ## 附：本次核验用到的命令
 
 ```bash

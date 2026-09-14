@@ -1706,10 +1706,10 @@ version: &quot;99.99&quot;
 <td>if true, updates in payloads regardless of game rule.</td>
 </tr>
 <tr>
-<td>canPickup</td>
+<td><s>canPickup</s> → <b>allowedInPayloads</b></td>
 <td>boolean</td>
 <td>true</td>
-<td>if true, can be picked up in payloads.</td>
+<td>是否能被装入 payload 运输。<b>v160.3 起 <code>canPickup</code> 废弃</b>，新代码用 <code>allowedInPayloads</code>（Block.java，<code>@Deprecated</code> 兼容保留）</td>
 </tr>
 <tr>
 <td>deconstructDropAllLiquid</td>
