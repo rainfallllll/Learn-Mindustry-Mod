@@ -303,13 +303,13 @@ build/libs/example-java-mod-1.0.0.jar
 **确认加载成功：**
 
 1. 启动游戏，进 **模组（Mods）** 菜单，应能看到"示例 Java 模组"。
-2. 进入一局游戏（创造模式）。
+2. 进入一局游戏（沙盒模式）。
 3. 游戏控制台（按开放控制台的快捷键，或日志里）应打印：
    ```text
    ExampleJavaMod: 内容加载完成!
    ExampleJavaMod: 模组初始化完成!
    ```
-4. 如果方块/物品贴图缺失，游戏会显示成**紫黑相间的"缺贴图"方块**——这是正常的，说明代码加载成功，只是你还没放 `sprites/...png`。
+4. 如果方块/物品贴图缺失，游戏会显示成写着 **"oh no"** 的红色占位贴图（`sprites/error.png`）——这是正常的，说明代码加载成功，只是你还没放 `sprites/...png`。
 
 > **贴图放哪？** 物品贴图放 `src/main/resources/sprites/items/example-item.png`；方块贴图放 `src/main/resources/sprites/blocks/example-wall.png`。文件名必须和 `new Item("example-item")` / `new Wall("example-wall")` 里的名字对应。没有贴图也能跑，只是难看。
 
@@ -674,7 +674,7 @@ public String[] contentOrder;
 ## 2.6 在游戏中验证
 
 1. 重新 `./gradlew jar`，把新 jar 拷进 `mods` 覆盖旧的。
-2. 进**创造模式**，打开建造菜单。
+2. 进**沙盒模式**，打开建造菜单。
 3. 在 **防御（defense）** 分类下，能看到 `example-wall`。
 4. 放下去，点它查看血量信息（需要 `requirements` 正常才会出现在菜单）。
 5. 如果在菜单里**找不到**方块：
@@ -959,8 +959,8 @@ public float handleDamage(float amount) {
 游戏内按 **开放控制台**（默认 `/` 键，或在设置里开）即可看到 `Log.info` 的输出。
 
 **测试方法：**
-- 创造模式放下墙，用不同伤害的炮塔打它。
-- 用 `/kill`、或者直接看墙的血条（创造模式选中方块可见血量）。
+- 沙盒模式放下墙，用不同伤害的炮塔打它。
+- 用 `/kill`、或者直接看墙的血条（沙盒模式选中方块可见血量）。
 - 确认：普通墙被一炮打穿，而你的 `maxOneDamageWall` 血条掉得非常慢（每炮只掉 1）。
 
 ---
@@ -1255,7 +1255,7 @@ TechTree.node(ModBlocks.maxOneDamageWall,
 );
 ```
 
-> 对新手教程而言，**最简单的做法是让方块"默认可造"**：在 `requirements` 时把 `buildVisibility` 设为 `shown`，或者直接在创造模式测试。正式发版时再用 `TechTree.node` 接进树。`alwaysUnlocked = true` 也能让方块无需研究直接解锁。
+> 对新手教程而言，**最简单的做法是让方块"默认可造"**：在 `requirements` 时把 `buildVisibility` 设为 `shown`，或者直接在沙盒模式测试。正式发版时再用 `TechTree.node` 接进树。`alwaysUnlocked = true` 也能让方块无需研究直接解锁。
 
 ## 4.7 模组开发进阶资源
 
