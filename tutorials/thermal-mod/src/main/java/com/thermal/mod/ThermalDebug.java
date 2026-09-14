@@ -2,6 +2,8 @@ package com.thermal.mod;
 
 import arc.Events;
 import arc.util.Log;
+import com.thermal.mod.blocks.RefineryFurnace.FurnaceBuild;
+import com.thermal.mod.blocks.IndustrialBoiler.BoilerBuild;
 import com.thermal.mod.content.ThermalBlocks;
 import com.thermal.mod.core.ThermalBuilding;
 import mindustry.Vars;
@@ -15,19 +17,18 @@ import mindustry.world.Tile;
  *
  * <p>启用方式：JVM 启动参数加 {@code -Dthermal.debug=true}。</p>
  *
- * <p>行为：
+ * <p>v0.2 增强日志：
  * <ol>
- *   <li>监听 {@link WorldLoadEvent}：在世界中心附近搜索空地，自动放置
- *       「锅炉 - 导热管 - 导热管 - 精炼炉」测试链（全部 1x1，紧密相邻）；</li>
- *   <li>全部放置后统一刷新邻居关系（逐个放置时邻居尚未就位）；</li>
- *   <li>监听 {@link Trigger#update}：每 60 tick 打印所有热力建筑的
- *       坐标、温度与 proximity 大小。</li>
+ *   <li>每 60 tick 打印所有热力建筑温度（迭代1 升温曲线验证）</li>
+ *   <li>精炼炉额外打印官方 heat / shouldConsume 状态（迭代2 HeatCrafter 桥接验证）</li>
+ *   <li>确认 setBars() 不抛异常（迭代3 温度条验证）</li>
  * </ol>
  * </p>
  */
 public class ThermalDebug {
 
     private static int tickCounter = 0;
+    private static boolean loggedFurnaceHeat = false;
 
     public static void install() {
         Events.on(EventType.WorldLoadEvent.class, e -> {
@@ -43,13 +44,29 @@ public class ThermalDebug {
                 place(ThermalBlocks.heatConduit, origin.nearby(1, 0));
                 place(ThermalBlocks.heatConduit, origin.nearby(2, 0));
                 place(ThermalBlocks.refineryFurnace, origin.nearby(3, 0));
-                // 全部放置后统一刷新邻居关系（逐个放置时邻居尚未就位）
+                // 迭代2验证：在精炼炉正上方放第二个锅炉，直接作为官方 HeatBlock 邻居
+                place(ThermalBlocks.industrialBoiler, origin.nearby(3, 1));
+                // 全部放置后统一刷新邻居关系
                 for (ThermalBuilding tb : ThermalModMain.thermalSystem.getBuildings()) {
                     tb.asBuilding().updateProximity();
                 }
                 Log.info("ThermalMod[debug]: 测试链已放置 @" + origin.x + "," + origin.y
                     + " 锅炉build=" + (origin.build != null ? origin.build.block.name : "null")
-                    + " 右1格build=" + (Vars.world.build(origin.x + 1, origin.y) != null ? Vars.world.build(origin.x + 1, origin.y).block.name : "null"));
+                    + " 精炼炉=" + (Vars.world.build(origin.x + 3, origin.y) != null ? Vars.world.build(origin.x + 3, origin.y).block.name : "null")
+                    + " 官方热源(精炼炉上方)=" + (Vars.world.build(origin.x + 3, origin.y + 1) != null ? Vars.world.build(origin.x + 3, origin.y + 1).block.name : "null"));
+
+                // 验证 setBars() 不抛异常（迭代3）
+                try {
+                    ThermalBlocks.industrialBoiler.listBars();
+                    ThermalBlocks.heatConduit.listBars();
+                    ThermalBlocks.refineryFurnace.listBars();
+                    Log.info("ThermalMod[debug]: setBars() 验证通过 — "
+                        + "锅炉bars=" + countBars(ThermalBlocks.industrialBoiler)
+                        + " 导管bars=" + countBars(ThermalBlocks.heatConduit)
+                        + " 精炼炉bars=" + countBars(ThermalBlocks.refineryFurnace));
+                } catch (Throwable t) {
+                    Log.err("ThermalMod[debug]: setBars() 异常", t);
+                }
             } catch (Throwable t) {
                 Log.err("ThermalMod[debug]: 放置异常", t);
             }
@@ -66,10 +83,38 @@ public class ThermalDebug {
                     Building b = tb.asBuilding();
                     float temp = tb.getThermal().getTemperatureK();
                     sb.append(String.format("[%s@%d,%d %.1fK p=%d]", b.block.name, b.tile.x, b.tile.y, temp, b.proximity.size));
+
+                    // 迭代2 验证：精炼炉打印官方 heat / shouldConsume
+                    if (b instanceof FurnaceBuild fb) {
+                        sb.append(String.format(" {officialHeat=%.2f req=%.1f shouldConsume=%s effScale=%.2f state=%s}",
+                            fb.heat, fb.heatRequirement(), fb.shouldConsume(),
+                            fb.efficiencyScale(), fb.state));
+                    }
+                    // 迭代2 验证：锅炉打印 HeatBlock.heat()
+                    if (b instanceof BoilerBuild bb) {
+                        sb.append(String.format(" {heatBlock.heat=%.2f}", bb.heat()));
+                    }
                 }
                 Log.info(sb.toString());
+
+                // 首次检测到精炼炉 heat>0 时记录
+                for (ThermalBuilding tb : buildings) {
+                    if (tb.asBuilding() instanceof FurnaceBuild fb && fb.heat > 0f && !loggedFurnaceHeat) {
+                        loggedFurnaceHeat = true;
+                        Log.info("ThermalMod[验证] 迭代2桥接生效! t=" + tickCounter
+                            + " 精炼炉官方heat=" + fb.heat
+                            + " shouldConsume=" + fb.shouldConsume()
+                            + " 热力学温度=" + String.format("%.1fK", fb.thermal.getTemperatureK()));
+                    }
+                }
             }
         });
+    }
+
+    private static int countBars(mindustry.world.Block block) {
+        int count = 0;
+        for (var b : block.listBars()) count++;
+        return count;
     }
 
     /** 放置方块（带团队与默认配置）。setBlock 不会调用 placed()，需手动触发注册。 */
@@ -77,8 +122,8 @@ public class ThermalDebug {
         if (tile != null && tile.block() == Blocks.air) {
             tile.setBlock(block, mindustry.game.Team.sharded, 0);
             if (tile.build != null) {
-                tile.build.placed(); // 手动触发 placed()：注册进热力系统 + 初始化参数
-                tile.build.updateProximity(); // 手动填充邻居列表（setBlock 不自动做）
+                tile.build.placed();
+                tile.build.updateProximity();
             }
         }
     }

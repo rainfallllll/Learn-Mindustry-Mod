@@ -1,10 +1,13 @@
 package com.thermal.mod.blocks;
 
 import arc.scene.ui.layout.Table;
+import arc.util.Strings;
 import com.thermal.mod.ThermalModMain;
 import com.thermal.mod.core.ThermalBuilding;
 import com.thermal.mod.core.ThermalComponent;
 import mindustry.gen.Building;
+import mindustry.graphics.Pal;
+import mindustry.ui.Bar;
 import mindustry.world.blocks.defense.Wall;
 
 /**
@@ -18,6 +21,8 @@ import mindustry.world.blocks.defense.Wall;
  *   <li>自身无产热/耗热逻辑，纯导热</li>
  * </ul>
  * </p>
+ *
+ * <p>v0.2：新增温度状态条（setBars）。</p>
  */
 public class HeatConduit extends Wall {
 
@@ -27,6 +32,24 @@ public class HeatConduit extends Wall {
         solid = true;
         noUpdateDisabled = true;
         rotate = false;
+    }
+
+    @Override
+    public void setBars() {
+        super.setBars();
+        // v0.2 迭代3：温度状态条
+        addBar("temperature", (ConduitBuild entity) -> new Bar(
+            () -> "温度 " + Strings.fixed(entity.thermal.getTemperatureK() - 273.15f, 1) + "°C",
+            () -> {
+                float frac = entity.thermal.getTemperatureK() / entity.thermal.maxTempK;
+                if (frac > 0.9f) return Pal.health;
+                if (frac > 0.75f) return Pal.lightOrange;
+                return Pal.lightOrange;
+            },
+            () -> Math.max(0f, Math.min(1f,
+                (entity.thermal.getTemperatureK() - entity.thermal.minTempK)
+                / (entity.thermal.maxTempK - entity.thermal.minTempK)))
+        ));
     }
 
     public class ConduitBuild extends Building implements ThermalBuilding {
